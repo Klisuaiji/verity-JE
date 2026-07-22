@@ -45,7 +45,7 @@ extends Screen {
         int varmiteY = this.height / 4 + 48 + 72;
         int varmiteWidth = 200;
         boolean foundMods = false;
-        for (GuiEventListener listener : this.m_6702_()) {
+        for (GuiEventListener listener : this.children()) {
             if (!(listener instanceof AbstractWidget)) continue;
             widget = (AbstractWidget)listener;
             String widgetText = widget.getMessage().getString();
@@ -58,12 +58,12 @@ extends Screen {
             foundMods = true;
         }
         if (foundMods) {
-            for (GuiEventListener listener : this.m_6702_()) {
+            for (GuiEventListener listener : this.children()) {
                 if (!(listener instanceof AbstractWidget) || (widget = (AbstractWidget)listener).getY() < varmiteY) continue;
                 widget.setY(widget.getY() + 24);
             }
         }
-        this.m_142416_((GuiEventListener)Button.builder((Component)Component.getContents((String)"Mod by Varmite").m_130940_(ChatFormatting.BOLD), button -> Util.getPlatform().m_137646_("https://www.youtube.com/@varmite")).pos(varmiteX, varmiteY, varmiteWidth, 20).pos());
+        this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.getContents((String)"Mod by Varmite").withStyle(ChatFormatting.BOLD), button -> Util.getPlatform().openUri("https://www.youtube.com/@varmite")).pos(varmiteX, varmiteY, varmiteWidth, 20).pos());
     }
 }
 

@@ -51,7 +51,7 @@ public class VeritySpawnScheduler {
     public static void scheduleSpawn(Level level, BlockPos pos, int delayTicks) {
         if (level instanceof ServerLevel) {
             ServerLevel serverLevel = (ServerLevel)level;
-            long executeAt = serverLevel.getServer().m_129921_() + delayTicks;
+            long executeAt = serverLevel.getServer().getTickCount() + delayTicks;
             SCHEDULED_SPAWNS.add(new ScheduledSpawn(serverLevel, pos, executeAt));
         }
     }
@@ -61,7 +61,7 @@ public class VeritySpawnScheduler {
         if (event.phase != TickEvent.Phase.END) {
             return;
         }
-        long currentTick = event.getServer().m_129921_();
+        long currentTick = event.getServer().getTickCount();
         Iterator iterator = SCHEDULED_SPAWNS.iterator();
         while (iterator.hasNext()) {
             ScheduledSpawn task = (ScheduledSpawn)iterator.next();
@@ -73,12 +73,12 @@ public class VeritySpawnScheduler {
 
     private static void executeVerityEvent(ServerLevel level, BlockPos chestPos) {
         Entity verity;
-        BlockPos abovePos = chestPos.m_7494_();
-        if (!level.getBlockState(abovePos).m_60795_()) {
+        BlockPos abovePos = chestPos.above();
+        if (!level.getBlockState(abovePos).isAir()) {
             level.destroyBlock(abovePos, true);
         }
-        if ((verity = ((EntityType)ModEntities.VERITY_ENTITY.get()).m_20615_((Level)level)) != null) {
-            verity.variantArea((double)chestPos.m_123341_() + 0.5, (double)chestPos.m_123342_() + 1.0, (double)chestPos.m_123343_() + 0.5, 0.0f, 0.0f);
+        if ((verity = ((EntityType)ModEntities.VERITY_ENTITY.get()).create((Level)level)) != null) {
+            verity.variantArea((double)chestPos.getX() + 0.5, (double)chestPos.getY() + 1.0, (double)chestPos.getZ() + 0.5, 0.0f, 0.0f);
             level.destroyBlock(verity);
             ModNetwork.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> verity), (Object)new PlayTtsPayload(verity.getId(), "You can't trap me lil bro."));
             level.createTick(null, verity.blockPosition(), SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, 1.0f, 1.0f);

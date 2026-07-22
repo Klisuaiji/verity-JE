@@ -66,7 +66,7 @@ public class ModBusClientSetup {
         ResourceLocation verityItemId = new ResourceLocation("verity", "verity_item");
         for (Map.Entry entry : event.getModels().entrySet()) {
             ResourceLocation key = (ResourceLocation)entry.getKey();
-            if (!key.m_135827_().equals(verityItemId.m_135827_()) || !key.m_135815_().equals(verityItemId.m_135815_())) continue;
+            if (!key.getNamespace().equals(verityItemId.getNamespace()) || !key.getPath().equals(verityItemId.getPath())) continue;
             event.getModels().put(key, new UnshadedBakedModel((BakedModel)entry.getValue()));
         }
     }

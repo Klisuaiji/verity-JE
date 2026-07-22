@@ -64,7 +64,7 @@ public class ChestCloseHandler {
             }
             for (Slot slot : chestMenu.slots) {
                 Container container;
-                if (slot.container == event.getEntity().m_150109_() || !slot.getItem().m_150930_((Item)ModItems.VERITY_ITEM.get())) continue;
+                if (slot.container == event.getEntity().getInventory() || !slot.getItem().is((Item)ModItems.VERITY_ITEM.get())) continue;
                 foundVerityItem = true;
                 slot.getItem(ItemStack.EMPTY);
                 slot.setByPlayer();

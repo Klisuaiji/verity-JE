@@ -46,8 +46,8 @@ extends Screen {
             SoundEvent event = SoundEvent.create((ResourceLocation)soundId, (float)1.0f);
             this.minecraft.getSoundManager().prepare((SoundInstance)SimpleSoundInstance.forUI((SoundEvent)event, (float)1.0f, (float)1.0f));
             Minecraft mc = Minecraft.getInstance();
-            mc.options.m_246669_(SoundSource.MUSIC).m_231514_((Object)0.0);
-            mc.options.m_92169_();
+            mc.options.getSoundSourceOptionInstance(SoundSource.MUSIC).set((Object)0.0);
+            mc.options.save();
             this.videoStarted = true;
         }
     }
@@ -74,12 +74,12 @@ extends Screen {
         guiGraphics.drawManaged(frameLoc, drawX, drawY, 0.0f, 0.0f, drawW, drawH, drawW, drawH);
     }
 
-    public boolean m_7933_(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == 256) {
             this.skip();
             return true;
         }
-        return super.m_7933_(keyCode, scanCode, modifiers);
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     private void skip() {

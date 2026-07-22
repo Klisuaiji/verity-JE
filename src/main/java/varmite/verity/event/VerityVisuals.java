@@ -29,7 +29,7 @@ public class VerityVisuals {
     @SubscribeEvent
     public static void onComputeFogColor(ViewportEvent.ComputeFogColor event) {
         ClientLevel level = Minecraft.getInstance().level;
-        if (level != null && level.m_46472_() == Level.OVERWORLD) {
+        if (level != null && level.dimension() == Level.OVERWORLD) {
             float partialTick = (float)event.getPartialTick();
             float angle = level.getTimeOfDay(partialTick);
             float brightness = Mth.cos((float)(angle * ((float)Math.PI * 2))) * 2.0f + 0.5f;
@@ -45,7 +45,7 @@ public class VerityVisuals {
 
     @SubscribeEvent
     public static void onRenderFog(ViewportEvent.RenderFog event) {
-        if (Minecraft.getInstance().level != null && Minecraft.getInstance().level.m_46472_() == Level.OVERWORLD) {
+        if (Minecraft.getInstance().level != null && Minecraft.getInstance().level.dimension() == Level.OVERWORLD) {
             float farDistance = event.getFarPlaneDistance();
             event.setNearPlaneDistance(farDistance * 0.1f);
             event.setFarPlaneDistance(farDistance * 0.75f);

@@ -19,12 +19,12 @@ public class SetEntityTalkingPacket {
     }
 
     public void encode(FriendlyByteBuf buffer) {
-        buffer.m_130130_(this.entityId);
-        buffer.m_130130_(this.durationTicks);
+        buffer.writeVarInt(this.entityId);
+        buffer.writeVarInt(this.durationTicks);
     }
 
     public static SetEntityTalkingPacket decode(FriendlyByteBuf buffer) {
-        return new SetEntityTalkingPacket(buffer.m_130242_(), buffer.m_130242_());
+        return new SetEntityTalkingPacket(buffer.readVarInt(), buffer.readVarInt());
     }
 
     public int getEntityId() {

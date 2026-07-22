@@ -19,7 +19,7 @@ public class DemonNodeEvaluator
 extends WalkNodeEvaluator {
     public BlockPathTypes prepare(BlockGetter level, int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
-        String blockName = level.getBlockState(pos).m_60734_().getDescriptionId().toLowerCase();
+        String blockName = level.getBlockState(pos).getBlock().getDescriptionId().toLowerCase();
         if (blockName.contains("glass") || blockName.contains("pane") || blockName.contains("leaves")) {
             return BlockPathTypes.OPEN;
         }

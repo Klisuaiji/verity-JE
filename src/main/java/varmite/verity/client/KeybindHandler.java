@@ -50,10 +50,10 @@ public class KeybindHandler {
         if (KeybindRegistry.PUSH_TO_TALK == null || KeybindRegistry.CYCLE_MIC == null) {
             return;
         }
-        if (KeybindRegistry.CYCLE_MIC.m_90859_()) {
+        if (KeybindRegistry.CYCLE_MIC.consumeClick()) {
             MicrophoneManager.cycleMicrophone();
         }
-        if ((isKeyDown = KeybindRegistry.PUSH_TO_TALK.m_90857_()) && !isRecording) {
+        if ((isKeyDown = KeybindRegistry.PUSH_TO_TALK.isDown()) && !isRecording) {
             isRecording = true;
             AiAPI.interruptSpeech();
             RECORDER.startRecording();
@@ -76,7 +76,7 @@ public class KeybindHandler {
                 String safeText;
                 String string = safeText = transcribedText.length() > 256 ? transcribedText.substring(0, 256) : transcribedText;
                 if (Minecraft.getInstance().getConnection() != null) {
-                    Minecraft.getInstance().getConnection().m_246175_(safeText);
+                    Minecraft.getInstance().getConnection().sendChat(safeText);
                 }
             });
         }

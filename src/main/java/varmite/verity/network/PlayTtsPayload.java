@@ -37,12 +37,12 @@ public class PlayTtsPayload {
 
     public static void encode(PlayTtsPayload payload, FriendlyByteBuf buf) {
         buf.writeInt(payload.entityId);
-        buf.m_130070_(payload.text);
+        buf.writeUtf(payload.text);
     }
 
     public static PlayTtsPayload decode(FriendlyByteBuf buf) {
         int entityId = buf.readInt();
-        String text = buf.m_130136_(Short.MAX_VALUE);
+        String text = buf.readUtf(Short.MAX_VALUE);
         return new PlayTtsPayload(entityId, text);
     }
 

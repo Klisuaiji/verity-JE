@@ -74,64 +74,64 @@ public class FlashlightServerLogic {
         if (event.getServer() == null) {
             return;
         }
-        for (ServerPlayer player : event.getServer().m_6846_().m_11314_()) {
-            ServerLevel level = player.m_284548_();
+        for (ServerPlayer player : event.getServer().getPlayerList().getPlayers()) {
+            ServerLevel level = player.serverLevel();
             UUID uuid = player.getUUID();
             boolean isFlashlightOn = false;
             ItemStack main = player.getMainHandItem();
             ItemStack off = player.getOffhandItem();
-            if (main.m_150930_((Item)ModItems.FLASHLIGHT.get()) && main.m_41784_().m_128471_("FlashlightOn") || off.m_150930_((Item)ModItems.FLASHLIGHT.get()) && off.m_41784_().m_128471_("FlashlightOn")) {
+            if (main.is((Item)ModItems.FLASHLIGHT.get()) && main.getOrCreateTag().getBoolean("FlashlightOn") || off.is((Item)ModItems.FLASHLIGHT.get()) && off.getOrCreateTag().getBoolean("FlashlightOn")) {
                 isFlashlightOn = true;
             }
             if (isFlashlightOn) {
                 List currentPositions;
                 Vec3 eyePos = player.getEyePosition();
-                Vec3 lookVec = player.m_20252_(1.0f);
+                Vec3 lookVec = player.getViewVector(1.0f);
                 double maxDist = 25.0;
-                Vec3 endPos = eyePos.m_82549_(lookVec.m_82490_(maxDist));
+                Vec3 endPos = eyePos.add(lookVec.scale(maxDist));
                 BlockHitResult hitResult = level.getBlockEntity(new ClipContext(eyePos, endPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, (Entity)player));
                 double hitDistance = maxDist;
                 if (hitResult.getType() == HitResult.Type.BLOCK) {
-                    hitDistance = hitResult.getLocation().m_82554_(eyePos);
+                    hitDistance = hitResult.getLocation().distanceTo(eyePos);
                 }
                 ArrayList<BlockPos> desiredPositions = new ArrayList<BlockPos>();
                 for (double i = 2.0; i <= hitDistance - 1.5; i += 2.5) {
-                    desiredPositions.add(BlockPos.offset((Position)eyePos.m_82549_(lookVec.m_82490_(i))));
+                    desiredPositions.add(BlockPos.offset((Position)eyePos.add(lookVec.scale(i))));
                 }
                 double finalHitDist = Math.max(0.5, hitDistance - 0.5);
-                Vec3 hitVec = eyePos.m_82549_(lookVec.m_82490_(finalHitDist));
+                Vec3 hitVec = eyePos.add(lookVec.scale(finalHitDist));
                 BlockPos hitCenter = BlockPos.offset((Position)hitVec);
                 if (!desiredPositions.contains(hitCenter)) {
                     desiredPositions.add(hitCenter);
                 }
                 if (hitDistance > 4.0) {
-                    Vec3 up = player.m_20289_(1.0f);
-                    Vec3 right = lookVec.m_82537_(up).m_82541_();
-                    if (right.m_82556_() < 0.001) {
+                    Vec3 up = player.getUpVector(1.0f);
+                    Vec3 right = lookVec.cross(up).normalize();
+                    if (right.lengthSqr() < 0.001) {
                         float yawRad = player.getYRot() * ((float)Math.PI / 180);
-                        right = new Vec3(-Math.cos(yawRad), 0.0, -Math.sin(yawRad)).m_82541_();
+                        right = new Vec3(-Math.cos(yawRad), 0.0, -Math.sin(yawRad)).normalize();
                     }
-                    Vec3 trueUp = right.m_82537_(lookVec).m_82541_();
-                    desiredPositions.add(BlockPos.offset((Position)hitVec.m_82549_(right.m_82490_(1.5))));
-                    desiredPositions.add(BlockPos.offset((Position)hitVec.m_82546_(right.m_82490_(1.5))));
-                    desiredPositions.add(BlockPos.offset((Position)hitVec.m_82549_(trueUp.m_82490_(1.5))));
-                    desiredPositions.add(BlockPos.offset((Position)hitVec.m_82546_(trueUp.m_82490_(1.5))));
+                    Vec3 trueUp = right.cross(lookVec).normalize();
+                    desiredPositions.add(BlockPos.offset((Position)hitVec.add(right.scale(1.5))));
+                    desiredPositions.add(BlockPos.offset((Position)hitVec.subtract(right.scale(1.5))));
+                    desiredPositions.add(BlockPos.offset((Position)hitVec.add(trueUp.scale(1.5))));
+                    desiredPositions.add(BlockPos.offset((Position)hitVec.subtract(trueUp.scale(1.5))));
                 }
                 if (desiredPositions.equals(currentPositions = (List)activeLights.getOrDefault(uuid, new ArrayList()))) continue;
                 for (BlockPos pos : currentPositions) {
                     BlockState state;
-                    if (desiredPositions.contains(pos) || !(state = level.getBlockState(pos)).m_60713_((Block)ModBlocks.FLASHLIGHT_LIGHT.get())) continue;
-                    boolean wasWater = (Boolean)state.m_61143_((Property)BlockStateProperties.WATERLOGGED);
+                    if (desiredPositions.contains(pos) || !(state = level.getBlockState(pos)).is((Block)ModBlocks.FLASHLIGHT_LIGHT.get())) continue;
+                    boolean wasWater = (Boolean)state.getValue((Property)BlockStateProperties.WATERLOGGED);
                     level.setBlock(pos, wasWater ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 3);
                 }
                 for (BlockPos pos : desiredPositions) {
                     boolean isWaterSource;
                     if (currentPositions.contains(pos)) continue;
                     BlockState targetState = level.getBlockState(pos);
-                    boolean isAir = targetState.m_60795_();
-                    boolean bl = isWaterSource = targetState.m_60713_(Blocks.WATER) && targetState.m_60819_().m_76170_();
+                    boolean isAir = targetState.isAir();
+                    boolean bl = isWaterSource = targetState.is(Blocks.WATER) && targetState.getFluidState().isSource();
                     if (!isAir && !isWaterSource) continue;
-                    level.setBlock(pos, (BlockState)((Block)ModBlocks.FLASHLIGHT_LIGHT.get()).defaultBlockState().m_61124_((Property)BlockStateProperties.WATERLOGGED, (Comparable)Boolean.valueOf(isWaterSource)), 3);
+                    level.setBlock(pos, (BlockState)((Block)ModBlocks.FLASHLIGHT_LIGHT.get()).defaultBlockState().setValue((Property)BlockStateProperties.WATERLOGGED, (Comparable)Boolean.valueOf(isWaterSource)), 3);
                 }
                 activeLights.put(uuid, desiredPositions);
                 continue;
@@ -149,11 +149,11 @@ public class FlashlightServerLogic {
     private static void cleanupLight(ServerPlayer player, UUID uuid) {
         List positions = (List)activeLights.get(uuid);
         if (positions != null) {
-            ServerLevel level = player.m_284548_();
+            ServerLevel level = player.serverLevel();
             for (BlockPos pos : positions) {
                 BlockState state = level.getBlockState(pos);
-                if (!state.m_60713_((Block)ModBlocks.FLASHLIGHT_LIGHT.get())) continue;
-                boolean wasWater = (Boolean)state.m_61143_((Property)BlockStateProperties.WATERLOGGED);
+                if (!state.is((Block)ModBlocks.FLASHLIGHT_LIGHT.get())) continue;
+                boolean wasWater = (Boolean)state.getValue((Property)BlockStateProperties.WATERLOGGED);
                 level.setBlock(pos, wasWater ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 3);
             }
             activeLights.remove(uuid);

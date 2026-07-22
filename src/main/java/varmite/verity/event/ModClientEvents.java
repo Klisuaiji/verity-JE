@@ -78,9 +78,9 @@ public class ModClientEvents {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player != null && (Double)mc.options.m_231927_().m_231551_() > 0.0) {
-            mc.options.m_231927_().m_231514_((Object)0.0);
-            mc.options.m_92169_();
+        if (mc.player != null && (Double)mc.options.gamma().get() > 0.0) {
+            mc.options.gamma().set((Object)0.0);
+            mc.options.save();
         }
     }
 
@@ -95,13 +95,13 @@ public class ModClientEvents {
         }
         ArrayList<DynamicLightManager.Beam> beams = new ArrayList<DynamicLightManager.Beam>();
         float pt = event.renderTickTime;
-        for (Player player : mc.level.m_6907_()) {
+        for (Player player : mc.level.players()) {
             CompoundTag tag;
             ItemStack flashlight = ModClientEvents.getFlashlight((Player)player);
-            if (flashlight.m_41619_() || (tag = flashlight.m_41783_()) == null || !tag.m_128471_("FlashlightOn")) continue;
-            Vec3 start = player.m_20299_(pt);
-            Vec3 forward = player.m_20252_(pt);
-            Vec3 end = start.m_82549_(forward.m_82490_(30.0));
+            if (flashlight.isEmpty() || (tag = flashlight.getTag()) == null || !tag.getBoolean("FlashlightOn")) continue;
+            Vec3 start = player.getEyePosition(pt);
+            Vec3 forward = player.getViewVector(pt);
+            Vec3 end = start.add(forward.scale(30.0));
             beams.add(new DynamicLightManager.Beam(start, end, player.getUUID()));
         }
         DynamicLightManager.updateBeams(beams);
@@ -113,10 +113,10 @@ public class ModClientEvents {
         HashSet<SectionPos> currentSections = new HashSet<SectionPos>();
         if (!beams.isEmpty()) {
             for (DynamicLightManager.Beam beam : beams) {
-                double distance = beam.start.m_82554_(beam.end);
-                Vec3 dir = beam.end.m_82546_(beam.start).m_82541_();
+                double distance = beam.start.distanceTo(beam.end);
+                Vec3 dir = beam.end.subtract(beam.start).normalize();
                 for (double i = 0.0; i <= distance; i += 1.0) {
-                    Vec3 point = beam.start.m_82549_(dir.m_82490_(i));
+                    Vec3 point = beam.start.add(dir.scale(i));
                     currentCenterBlocks.add(BlockPos.offset((double)point.x, (double)point.y, (double)point.z));
                     int radius = (int)Math.ceil(2.0 + i / distance * 5.0);
                     int minSecX = SectionPos.of((int)((int)Math.floor(point.x - (double)radius)));
@@ -151,11 +151,11 @@ public class ModClientEvents {
 
     private static ItemStack getFlashlight(Player player) {
         ItemStack main = player.getMainHandItem();
-        if (main.m_150930_((Item)ModItems.FLASHLIGHT.get())) {
+        if (main.is((Item)ModItems.FLASHLIGHT.get())) {
             return main;
         }
         ItemStack off = player.getOffhandItem();
-        if (off.m_150930_((Item)ModItems.FLASHLIGHT.get())) {
+        if (off.is((Item)ModItems.FLASHLIGHT.get())) {
             return off;
         }
         return ItemStack.EMPTY;

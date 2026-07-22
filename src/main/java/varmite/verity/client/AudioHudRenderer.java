@@ -67,8 +67,8 @@ public class AudioHudRenderer {
             return;
         }
         GuiGraphics graphics = event.getGuiGraphics();
-        int screenWidth = event.getWindow().m_85445_();
-        int screenHeight = event.getWindow().m_85446_();
+        int screenWidth = event.getWindow().getGuiScaledWidth();
+        int screenHeight = event.getWindow().getGuiScaledHeight();
         int barWidth = 80;
         int barHeight = 4;
         int x = (screenWidth - barWidth) / 2;
@@ -86,7 +86,7 @@ public class AudioHudRenderer {
             graphics.drawManaged(x, y, x + filledWidth, y + barHeight, activeFillColor);
         }
         String statusText = "\u25cf RECORDING";
-        int textWidth = mc.font.m_92895_(statusText);
+        int textWidth = mc.font.width(statusText);
         int textX = (screenWidth - textWidth) / 2;
         int textY = y - 10;
         int textShadowColor = AudioHudRenderer.applyAlpha((int)-1442840576, (float)alphaMultiplier);

@@ -167,7 +167,7 @@ Enemy {
 
     public VerityDemonEntity(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
-        this.m_274367_(1.5f);
+        this.setMaxUpStep(1.5f);
         this.getPathfindingMalus(BlockPathTypes.WATER, 0.0f);
         this.getPathfindingMalus(BlockPathTypes.WATER_BORDER, 0.0f);
         this.setPersistenceRequired();
@@ -236,21 +236,21 @@ Enemy {
         if (id == 0) {
             return null;
         }
-        Entity entity = this.level().m_6815_(id);
+        Entity entity = this.level().getEntity(id);
         return entity instanceof LivingEntity ? (LivingEntity)entity : null;
     }
 
     protected void registerGoals() {
-        this.goalSelector.m_25352_(1, (Goal)new DemonGlassBreakAndLeapGoal(this));
-        this.goalSelector.m_25352_(2, (Goal)new DemonBreakDoorGoal(this));
-        this.goalSelector.m_25352_(3, (Goal)new DemonWindowStalkGoal(this));
-        this.goalSelector.m_25352_(4, (Goal)new DemonStareAndBreakGoal(this));
-        this.goalSelector.m_25352_(5, (Goal)new DemonAttackGoal(this));
-        this.goalSelector.m_25352_(6, (Goal)new WaterAvoidingRandomStrollGoal((PathfinderMob)this, 1.0));
-        this.goalSelector.m_25352_(7, (Goal)new LookAtPlayerGoal((Mob)this, Player.class, 3.0f, 1.0f));
-        this.targetSelector.m_25352_(0, (Goal)new HurtByTargetGoal((PathfinderMob)this, new Class[0]));
-        this.targetSelector.m_25352_(1, (Goal)new Goal() { public boolean canUse() { return false; } });
-        this.targetSelector.m_25352_(2, (Goal)new Goal() { public boolean canUse() { return false; } });
+        this.goalSelector.addGoal(1, (Goal)new DemonGlassBreakAndLeapGoal(this));
+        this.goalSelector.addGoal(2, (Goal)new DemonBreakDoorGoal(this));
+        this.goalSelector.addGoal(3, (Goal)new DemonWindowStalkGoal(this));
+        this.goalSelector.addGoal(4, (Goal)new DemonStareAndBreakGoal(this));
+        this.goalSelector.addGoal(5, (Goal)new DemonAttackGoal(this));
+        this.goalSelector.addGoal(6, (Goal)new WaterAvoidingRandomStrollGoal((PathfinderMob)this, 1.0));
+        this.goalSelector.addGoal(7, (Goal)new LookAtPlayerGoal((Mob)this, Player.class, 3.0f, 1.0f));
+        this.targetSelector.addGoal(0, (Goal)new HurtByTargetGoal((PathfinderMob)this, new Class[0]));
+        this.targetSelector.addGoal(1, (Goal)new Goal() { public boolean canUse() { return false; } });
+        this.targetSelector.addGoal(2, (Goal)new Goal() { public boolean canUse() { return false; } });
     }
 
     public void forceCrawl(int ticks) {
@@ -261,15 +261,15 @@ Enemy {
         return LivingEntity.createLivingAttributes().add(Attributes.MAX_HEALTH, 400.0).add(Attributes.MOVEMENT_SPEED, 0.45).add(Attributes.FOLLOW_RANGE, 512.0).add(Attributes.ATTACK_DAMAGE, 19.0).add(Attributes.ATTACK_KNOCKBACK, 1.0).add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
     }
 
-    public boolean m_6469_(DamageSource source, float amount) {
+    public boolean hurt(DamageSource source, float amount) {
         Player player;
         LivingEntity attacker;
         Entity entity;
         if (source.getFoodExhaustion(DamageTypes.FALL) || source.getFoodExhaustion(DamageTypes.IN_WALL)) {
             return false;
         }
-        boolean wasHurt = super.m_6469_(source, amount);
-        if (wasHurt && (entity = source.getEntity()) instanceof LivingEntity && (!((attacker = (LivingEntity)entity) instanceof Player) || !(player = (Player)attacker).m_7500_() && !player.m_5833_())) {
+        boolean wasHurt = super.hurt(source, amount);
+        if (wasHurt && (entity = source.getEntity()) instanceof LivingEntity && (!((attacker = (LivingEntity)entity) instanceof Player) || !(player = (Player)attacker).isCreative() && !player.isSpectator())) {
             if (this.isEating()) {
                 this.eatTicks = 0;
                 this.entityData.get(IS_EATING, (Object)false);
@@ -286,32 +286,32 @@ Enemy {
         return wasHurt;
     }
 
-    public boolean m_214076_(ServerLevel level, LivingEntity killedEntity) {
+    public boolean killedEntity(ServerLevel level, LivingEntity killedEntity) {
         this.startEating();
-        return super.m_214076_(level, killedEntity);
+        return super.killedEntity(level, killedEntity);
     }
 
     public boolean hasLineOfSightThroughGlass(Player player) {
         Vec3 end;
         Vec3 start = new Vec3(player.getX(), player.getEyeY(), player.getZ());
-        double distance = start.m_82554_(end = new Vec3(this.getX(), this.getEyeY(), this.getZ()));
+        double distance = start.distanceTo(end = new Vec3(this.getX(), this.getEyeY(), this.getZ()));
         if (distance > 128.0) {
             return false;
         }
-        Vec3 dir = end.m_82546_(start).m_82541_();
+        Vec3 dir = end.subtract(start).normalize();
         for (double d = 0.0; d < distance; d += 1.0) {
             String name;
-            Vec3 point = start.m_82549_(dir.m_82490_(d));
+            Vec3 point = start.add(dir.scale(d));
             BlockPos pos = BlockPos.offset((Position)point);
             BlockState state = this.level().getBlockState(pos);
-            if (!state.m_280555_() || (name = state.m_60734_().getDescriptionId().toLowerCase()).contains("glass") || name.contains("pane") || state.m_204336_(BlockTags.LEAVES)) continue;
+            if (!state.blocksMotion() || (name = state.getBlock().getDescriptionId().toLowerCase()).contains("glass") || name.contains("pane") || state.is(BlockTags.LEAVES)) continue;
             return false;
         }
         return true;
     }
 
-    public void m_8119_() {
-        super.m_8119_();
+    public void tick() {
+        super.tick();
         if (this.level().isClientSide) {
             if (this.getDemonState() == 1 && !this.isPlayingChaseSound) {
                 this.isPlayingChaseSound = true;
@@ -323,9 +323,9 @@ Enemy {
         ChunkPos currentChunk = this.chunkPosition();
         if (this.lastForcedChunk == null || !this.lastForcedChunk.equals((Object)currentChunk)) {
             if (this.lastForcedChunk != null) {
-                level.m_8602_(this.lastForcedChunk.x, this.lastForcedChunk.z, false);
+                level.setChunkForced(this.lastForcedChunk.x, this.lastForcedChunk.z, false);
             }
-            level.m_8602_(currentChunk.x, currentChunk.z, true);
+            level.setChunkForced(currentChunk.x, currentChunk.z, true);
             this.lastForcedChunk = currentChunk;
         }
         if (this.isGrabbing()) {
@@ -337,38 +337,38 @@ Enemy {
                 return;
             }
             this.getNavigation().stop();
-            this.m_20334_(0.0, 0.0, 0.0);
-            grabbed.m_20334_(0.0, 0.0, 0.0);
+            this.setDeltaMovement(0.0, 0.0, 0.0);
+            grabbed.setDeltaMovement(0.0, 0.0, 0.0);
             double liftProgress = Math.min(1.0, (double)this.grabTicks / 38.0);
-            Vec3 targetPos = this.position().m_82549_(this.getLookAngle().m_82490_(1.5)).m_82520_(0.0, 2.0 + liftProgress, 0.0);
+            Vec3 targetPos = this.position().add(this.getLookAngle().scale(1.5)).add(0.0, 2.0 + liftProgress, 0.0);
             if (grabbed instanceof ServerPlayer) {
                 ServerPlayer serverPlayer = (ServerPlayer)grabbed;
-                serverPlayer.connection.m_9774_(targetPos.x, targetPos.y, targetPos.z, grabbed.getYRot(), grabbed.getXRot());
+                serverPlayer.connection.teleport(targetPos.x, targetPos.y, targetPos.z, grabbed.getYRot(), grabbed.getXRot());
             } else {
                 grabbed.isColliding(targetPos);
             }
             if (this.grabTicks >= 38) {
-                Vec3 launchVector = grabbed.position().m_82546_(this.position()).m_82541_().m_82542_(4.0, 1.2, 4.0).m_82520_(0.0, 0.2, 0.0);
+                Vec3 launchVector = grabbed.position().subtract(this.position()).normalize().multiply(4.0, 1.2, 4.0).add(0.0, 0.2, 0.0);
                 grabbed.setDeltaMovement(launchVector);
                 if (grabbed instanceof ServerPlayer) {
                     ServerPlayer serverPlayer = (ServerPlayer)grabbed;
                     serverPlayer.level().createTick(null, this.blockPosition(), SoundEvents.PHANTOM_FLAP, SoundSource.HOSTILE, 1.5f, 1.0f);
                     serverPlayer.connection.send((Packet)new ClientboundSetEntityMotionPacket((Entity)serverPlayer));
                 }
-                this.getGrabbedEntity().m_6469_(this.getGrabbedEntity().damageSources().fall(), 5.0f);
+                this.getGrabbedEntity().hurt(this.getGrabbedEntity().damageSources().fall(), 5.0f);
                 this.entityData.get(IS_GRABBING, (Object)false);
                 this.entityData.get(GRABBED_ENTITY_ID, (Object)0);
             }
             return;
         }
         if (this.isEating()) {
-            level.m_8767_((ParticleOptions)DustParticleOptions.REDSTONE, this.getX(), this.getY(), this.getZ(), 20, 0.5, 0.5, 0.5, 0.05);
+            level.sendParticles((ParticleOptions)DustParticleOptions.REDSTONE, this.getX(), this.getY(), this.getZ(), 20, 0.5, 0.5, 0.5, 0.05);
             BlockPos centerPos = this.blockPosition();
             for (int i = -1; i <= 1; ++i) {
                 for (int j = -1; j <= 1; ++j) {
                     BlockPos currentPos = centerPos.offset(i, 0, j);
-                    BlockPos belowPos = currentPos.m_7495_();
-                    if (!level.getBlockState(currentPos).m_247087_() || !level.getBlockState(belowPos).m_60783_((BlockGetter)level, belowPos, Direction.UP)) continue;
+                    BlockPos belowPos = currentPos.below();
+                    if (!level.getBlockState(currentPos).canBeReplaced() || !level.getBlockState(belowPos).isFaceSturdy((BlockGetter)level, belowPos, Direction.UP)) continue;
                     level.setBlock(currentPos, Blocks.REDSTONE_WIRE.defaultBlockState(), 3);
                 }
             }
@@ -376,7 +376,7 @@ Enemy {
         if (this.eatTicks > 0) {
             --this.eatTicks;
             this.getNavigation().stop();
-            this.m_20334_(0.0, this.getDeltaMovement().y, 0.0);
+            this.setDeltaMovement(0.0, this.getDeltaMovement().y, 0.0);
             this.defineSynchedData(this.yRotO);
             this.playerTouch(this.xRotO);
             this.setYHeadRot(this.yHeadRotO);
@@ -397,7 +397,7 @@ Enemy {
                 this.lastPos = this.position();
             }
             if (this.tickCount % 10 == 0) {
-                this.stuckTicks = this.position().m_82557_(this.lastPos) < 0.05 ? (this.stuckTicks += 10) : 0;
+                this.stuckTicks = this.position().distanceToSqr(this.lastPos) < 0.05 ? (this.stuckTicks += 10) : 0;
                 this.lastPos = this.position();
             }
         }
@@ -406,8 +406,8 @@ Enemy {
             AABB box = this.getBoundingBox().setMinZ(0.5, 0.5, 0.5);
             BlockPos.getY((BlockPos)BlockPos.offset((double)box.minX, (double)box.minY, (double)box.minZ), (BlockPos)BlockPos.offset((double)box.maxX, (double)box.maxY, (double)box.maxZ)).forEach(pos -> {
                 BlockState state = this.level().getBlockState(pos);
-                String blockName = state.m_60734_().getDescriptionId().toLowerCase();
-                if (state.m_204336_(BlockTags.LEAVES) || blockName.contains("glass") || blockName.contains("pane")) {
+                String blockName = state.getBlock().getDescriptionId().toLowerCase();
+                if (state.is(BlockTags.LEAVES) || blockName.contains("glass") || blockName.contains("pane")) {
                     this.level().destroyBlock(pos, true);
                 }
             });
@@ -421,11 +421,11 @@ Enemy {
                 if (this.horizontalCollision && !this.isEating()) {
                     this.entityData.get(IS_CLIMBING, (Object)true);
                     int headHeightOffset = (int)Math.ceil(this.getBbHeight());
-                    BlockPos overhead1 = feet.m_6630_(headHeightOffset);
-                    BlockPos overhead2 = overhead1.m_7494_();
+                    BlockPos overhead1 = feet.above(headHeightOffset);
+                    BlockPos overhead2 = overhead1.above();
                     for (BlockPos overhead : new BlockPos[]{overhead1, overhead2}) {
                         BlockState state2 = this.level().getBlockState(overhead);
-                        if (!state2.m_280555_() || !(state2.m_60800_((BlockGetter)this.level(), overhead) >= 0.0f)) continue;
+                        if (!state2.blocksMotion() || !(state2.getDestroySpeed((BlockGetter)this.level(), overhead) >= 0.0f)) continue;
                         this.level().destroyBlock(overhead, true);
                         this.triggerAttack();
                     }
@@ -436,21 +436,21 @@ Enemy {
         }
         boolean needsToCrouch = false;
         Predicate<BlockState> isHardCeiling = state -> {
-            String name = state.m_60734_().getDescriptionId().toLowerCase();
-            return state.m_280555_() && !state.m_204336_(BlockTags.LEAVES) && !name.contains("glass") && !name.contains("pane");
+            String name = state.getBlock().getDescriptionId().toLowerCase();
+            return state.blocksMotion() && !state.is(BlockTags.LEAVES) && !name.contains("glass") && !name.contains("pane");
         };
-        if (isHardCeiling.test(this.level().getBlockState(feet.m_6630_(2))) || isHardCeiling.test(this.level().getBlockState(feet.m_6630_(3)))) {
+        if (isHardCeiling.test(this.level().getBlockState(feet.above(2))) || isHardCeiling.test(this.level().getBlockState(feet.above(3)))) {
             needsToCrouch = true;
         }
         if (!needsToCrouch && this.getDemonState() == 1 && target != null) {
-            Vec3 dir = target.position().m_82546_(this.position());
+            Vec3 dir = target.position().subtract(this.position());
             Vec3 horizDir = new Vec3(dir.x, 0.0, dir.z);
-            if (horizDir.m_82556_() > 0.01) {
-                horizDir = horizDir.m_82541_();
+            if (horizDir.lengthSqr() > 0.01) {
+                horizDir = horizDir.normalize();
                 for (int i = 1; i <= 5; ++i) {
                     BlockPos forwardPos = BlockPos.offset((double)(this.getX() + horizDir.x * (double)i), (double)this.getY(), (double)(this.getZ() + horizDir.z * (double)i));
-                    if (isHardCeiling.test(this.level().getBlockState(forwardPos)) || isHardCeiling.test(this.level().getBlockState(forwardPos.m_6630_(1)))) break;
-                    if (!isHardCeiling.test(this.level().getBlockState(forwardPos.m_6630_(2))) && !isHardCeiling.test(this.level().getBlockState(forwardPos.m_6630_(3)))) continue;
+                    if (isHardCeiling.test(this.level().getBlockState(forwardPos)) || isHardCeiling.test(this.level().getBlockState(forwardPos.above(1)))) break;
+                    if (!isHardCeiling.test(this.level().getBlockState(forwardPos.above(2))) && !isHardCeiling.test(this.level().getBlockState(forwardPos.above(3)))) continue;
                     needsToCrouch = true;
                     break;
                 }
@@ -473,7 +473,7 @@ Enemy {
         return true;
     }
 
-    public EntityDimensions m_6972_(Pose pose) {
+    public EntityDimensions getDimensions(Pose pose) {
         return EntityDimensions.fixed((float)0.4f, (float)((Boolean)this.entityData.get(IS_CRAWLING) != false ? 1.8f : 4.8f));
     }
 
@@ -516,14 +516,14 @@ Enemy {
     }
 
     public boolean onSyncedDataUpdated(FluidState f) {
-        return f.m_205070_(FluidTags.WATER);
+        return f.is(FluidTags.WATER);
     }
 
     public boolean hasCustomName() {
         return false;
     }
 
-    public boolean m_6052_() {
+    public boolean shouldShowName() {
         return false;
     }
 
@@ -534,15 +534,15 @@ Enemy {
     public void push(@NotNull Entity e) {
     }
 
-    public Iterable<ItemStack> m_6168_() {
+    public Iterable<ItemStack> getArmorSlots() {
         return Collections.singleton(ItemStack.EMPTY);
     }
 
-    public ItemStack m_6844_(EquipmentSlot s) {
+    public ItemStack getItemBySlot(EquipmentSlot s) {
         return ItemStack.EMPTY;
     }
 
-    public HumanoidArm m_5737_() {
+    public HumanoidArm getMainArm() {
         return HumanoidArm.RIGHT;
     }
 

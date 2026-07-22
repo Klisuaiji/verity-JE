@@ -25,8 +25,8 @@ public final class VerityVariants {
 
     public static String fromStack(ItemStack stack) {
         CompoundTag tag;
-        if (stack.m_41782_() && (tag = stack.m_41783_()).m_128441_("VerityVariant")) {
-            return VerityVariants.sanitize((String)tag.m_128461_("VerityVariant"));
+        if (stack.hasTag() && (tag = stack.getTag()).contains("VerityVariant")) {
+            return VerityVariants.sanitize((String)tag.getString("VerityVariant"));
         }
         return "happy";
     }

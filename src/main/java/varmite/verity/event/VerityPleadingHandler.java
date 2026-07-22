@@ -33,23 +33,23 @@ public class VerityPleadingHandler {
     public static void onServerChat(ServerChatEvent event) {
         ServerPlayer player = event.getPlayer();
         String message = event.getMessage().getString().toLowerCase();
-        List verities = player.m_284548_().getEntities(VerityEntity.class, new AABB(player.blockPosition()).m_82400_(60.0));
+        List verities = player.serverLevel().getEntities(VerityEntity.class, new AABB(player.blockPosition()).inflate(60.0));
         for (VerityEntity verity : verities) {
             if (!verity.isMonstrous()) continue;
             if ((double)player.setId((Entity)verity) <= 10.0) {
                 if (verity.hasPlayerLooked(player.getUUID())) {
                     boolean pleadedSuccessfully = false;
                     if (message.contains("i came back for you")) {
-                        player.m_213846_((Component)Component.getContents((String)"\u00a7aYou remind Verity of your bond. He calms down."));
+                        player.sendSystemMessage((Component)Component.getContents((String)"\u00a7aYou remind Verity of your bond. He calms down."));
                         pleadedSuccessfully = true;
                     } else if (message.contains("i'm sorry") || message.contains("i am sorry") || message.contains("please forgive me")) {
                         int currentApologies = verity.getApologyCount();
                         verity.setApologyCount(currentApologies + 1);
                         if (verity.getApologyCount() >= 3) {
-                            player.m_213846_((Component)Component.getContents((String)"\u00a7aYour repeated apologies finally reach Verity. He calms down."));
+                            player.sendSystemMessage((Component)Component.getContents((String)"\u00a7aYour repeated apologies finally reach Verity. He calms down."));
                             pleadedSuccessfully = true;
                         } else {
-                            player.m_213846_((Component)Component.getContents((String)("\u00a7eVerity seems to hear you, but remains agitated. (" + verity.getApologyCount() + "/3 apologies)")));
+                            player.sendSystemMessage((Component)Component.getContents((String)("\u00a7eVerity seems to hear you, but remains agitated. (" + verity.getApologyCount() + "/3 apologies)")));
                         }
                     }
                     if (!pleadedSuccessfully) continue;
@@ -61,10 +61,10 @@ public class VerityPleadingHandler {
                     event.setCanceled(true);
                     return;
                 }
-                player.m_213846_((Component)Component.getContents((String)"\u00a7cYou must look at Verity to get his attention!"));
+                player.sendSystemMessage((Component)Component.getContents((String)"\u00a7cYou must look at Verity to get his attention!"));
                 continue;
             }
-            player.m_213846_((Component)Component.getContents((String)"\u00a7cYou need to be closer to Verity to plead with him."));
+            player.sendSystemMessage((Component)Component.getContents((String)"\u00a7cYou need to be closer to Verity to plead with him."));
         }
     }
 }

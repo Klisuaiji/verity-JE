@@ -35,11 +35,11 @@ public class PlayerKarma {
     }
 
     public void saveNBTData(CompoundTag nbt) {
-        nbt.m_128405_("player_karma", this.karma);
+        nbt.putInt("player_karma", this.karma);
     }
 
     public void loadNBTData(CompoundTag nbt) {
-        this.karma = nbt.m_128451_("player_karma");
+        this.karma = nbt.getInt("player_karma");
     }
 }
 

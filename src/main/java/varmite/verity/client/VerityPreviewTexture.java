@@ -32,7 +32,7 @@ public class VerityPreviewTexture {
     private static int lastHue;
 
     public static void init() {
-        try (InputStream stream = ((Resource)Minecraft.getInstance().getResourceManager().m_213713_(new ResourceLocation("verity", "textures/entity/preview.png")).get()).open();){
+        try (InputStream stream = ((Resource)Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation("verity", "textures/entity/preview.png")).get()).open();){
             baseImage = NativeImage.read((InputStream)stream);
         }
         catch (IOException e) {

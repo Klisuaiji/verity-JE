@@ -56,7 +56,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.ConfigScreenHandler;
-import net.neoforged.fml.config.ModConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.NeoForge;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -97,7 +97,7 @@ public class VerityClient {
                 return Component.getContents((String)"0 (Disabled)");
             }
             int rgb = Mth.frac((float)((float)value.intValue() / 360.0f), (float)1.0f, (float)1.0f);
-            return Component.getContents((String)("\u2588\u2588 " + value)).m_130948_(Style.EMPTY.m_178520_(rgb));
+            return Component.getContents((String)("\u2588\u2588 " + value)).withStyle(Style.EMPTY.withColor(rgb));
         })).build()).option(Option.createBuilder().name((Component)Component.getContents((String)"Custom Name")).description(OptionDescription.of((Component[])new Component[]{Component.getContents((String)"Rename Verity to anything you want!")})).binding((Object)"Verity", () -> ((ModConfigSpec.ConfigValue)VerityConfig.VERITY_CUSTOM_NAME).get(), arg_0 -> ((ModConfigSpec.ConfigValue)VerityConfig.VERITY_CUSTOM_NAME).set(arg_0)).controller(StringControllerBuilder::create).build()).option(Option.createBuilder().name((Component)Component.getContents((String)"Personality")).description(OptionDescription.of((Component[])new Component[]{Component.getContents((String)"Can conflict when changed multiple\ntimes in one world")})).binding((Object)"normal", () -> ((ModConfigSpec.ConfigValue)VerityConfig.PERSONALITY).get(), arg_0 -> ((ModConfigSpec.ConfigValue)VerityConfig.PERSONALITY).set(arg_0)).controller(StringControllerBuilder::create).build()).build()).build().generateScreen(previousScreen);
     }
 }

@@ -56,19 +56,19 @@ implements SimpleWaterloggedBlock {
 
     public FlashlightLightBlock() {
         super(BlockBehaviour.Properties.of().replaceable().noCollission().noOcclusion().noLootTable().of(PushReaction.DESTROY).of(state -> 15));
-        this.registerDefaultState((BlockState)((BlockState)this.stateDefinition.m_61090_()).m_61124_((Property)WATERLOGGED, (Comparable)Boolean.valueOf(false)));
+        this.registerDefaultState((BlockState)((BlockState)this.stateDefinition.any()).setValue((Property)WATERLOGGED, (Comparable)Boolean.valueOf(false)));
     }
 
     protected void makeShapes(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.m_61104_(new Property[]{WATERLOGGED});
+        builder.validateProperty(new Property[]{WATERLOGGED});
     }
 
     public FluidState getFluidState(BlockState state) {
-        return (Boolean)state.m_61143_((Property)WATERLOGGED) != false ? Fluids.WATER.createFluidStateDefinition(false) : super.getFluidState(state);
+        return (Boolean)state.getValue((Property)WATERLOGGED) != false ? Fluids.WATER.createFluidStateDefinition(false) : super.getFluidState(state);
     }
 
     public BlockState updateIndirectNeighbourShapes(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        if (((Boolean)state.m_61143_((Property)WATERLOGGED)).booleanValue()) {
+        if (((Boolean)state.getValue((Property)WATERLOGGED)).booleanValue()) {
             level.createTick(pos, (Fluid)Fluids.WATER, Fluids.WATER.getBucket((LevelReader)level));
         }
         return super.updateIndirectNeighbourShapes(state, direction, neighborState, level, pos, neighborPos);

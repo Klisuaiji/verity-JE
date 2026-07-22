@@ -35,9 +35,9 @@ public final class SphereMesh {
     }
 
     public static void render(PoseStack poseStack, MultiBufferSource bufferSource, ResourceLocation texture, float radius, int latitudes, int longitudes, int packedLight, int r, int g, int b, int a) {
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.m_110458_((ResourceLocation)texture));
-        Matrix4f pose = poseStack.last().m_252922_();
-        Matrix3f normal = poseStack.last().m_252943_();
+        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull((ResourceLocation)texture));
+        Matrix4f pose = poseStack.last().pose();
+        Matrix3f normal = poseStack.last().normal();
         SphereMesh.drawSphere((Matrix4f)pose, (Matrix3f)normal, (VertexConsumer)consumer, (float)radius, (int)latitudes, (int)longitudes, (int)packedLight, (int)r, (int)g, (int)b, (int)a);
     }
 

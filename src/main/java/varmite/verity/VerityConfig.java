@@ -13,7 +13,7 @@
  */
 package varmite.verity;
 
-import net.neoforged.fml.config.ModConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import varmite.verity.AiModel;
 import varmite.verity.AiProvider;
 

@@ -102,7 +102,7 @@ implements GeoEntity {
         this.entityData.defineId(HAS_CLICKED, (Object)false);
     }
 
-    public void m_8119_() {
+    public void tick() {
         if (!this.level().isClientSide) {
             if (this.soundEffectTimer < 60) {
                 ++this.soundEffectTimer;
@@ -121,14 +121,14 @@ implements GeoEntity {
                 }
             }
         }
-        super.m_8119_();
+        super.tick();
     }
 
     public boolean hasCustomName() {
         return false;
     }
 
-    public boolean m_6052_() {
+    public boolean shouldShowName() {
         return false;
     }
 
@@ -155,28 +155,28 @@ implements GeoEntity {
     public void triggerOpen() {
         this.triggerAnim("action_controller", "open");
         MinecraftServer server = this.getServer();
-        for (ServerPlayer player : server.m_6846_().m_11314_()) {
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             ModTriggers.UNBOX_VERITY_TRIGGER.trigger(player);
         }
         this.isOpened = true;
     }
 
-    public boolean m_6673_(DamageSource source) {
+    public boolean isInvulnerableTo(DamageSource source) {
         return !source.getFoodExhaustion(DamageTypes.FELL_OUT_OF_WORLD) && !source.getFoodExhaustion(DamageTypes.GENERIC_KILL);
     }
 
-    public Iterable<ItemStack> m_6168_() {
+    public Iterable<ItemStack> getArmorSlots() {
         return Collections.singleton(ItemStack.EMPTY);
     }
 
-    public ItemStack m_6844_(EquipmentSlot slot) {
+    public ItemStack getItemBySlot(EquipmentSlot slot) {
         return ItemStack.EMPTY;
     }
 
-    public void m_8061_(EquipmentSlot slot, ItemStack stack) {
+    public void setItemSlot(EquipmentSlot slot, ItemStack stack) {
     }
 
-    public HumanoidArm m_5737_() {
+    public HumanoidArm getMainArm() {
         return HumanoidArm.RIGHT;
     }
 

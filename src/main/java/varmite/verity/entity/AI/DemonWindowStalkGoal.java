@@ -57,7 +57,7 @@ extends Goal {
         if (this.demon.getDemonState() != 0 || this.demon.getHuntPhase() != 0) {
             return false;
         }
-        return this.targetPlayer != null && this.targetPlayer.isAlive() && !this.targetPlayer.m_7500_() && !this.targetPlayer.m_5833_();
+        return this.targetPlayer != null && this.targetPlayer.isAlive() && !this.targetPlayer.isCreative() && !this.targetPlayer.isSpectator();
     }
 
     public boolean canUse() {
@@ -65,7 +65,7 @@ extends Goal {
             return false;
         }
         this.targetPlayer = this.demon.level().getEntities(this.targetingConditions, (LivingEntity)this.demon, this.demon.getX(), this.demon.getEyeY(), this.demon.getZ());
-        if (this.targetPlayer != null && (this.targetPlayer.m_7500_() || this.targetPlayer.m_5833_())) {
+        if (this.targetPlayer != null && (this.targetPlayer.isCreative() || this.targetPlayer.isSpectator())) {
             return false;
         }
         return this.targetPlayer != null;
@@ -93,15 +93,15 @@ extends Goal {
 
     private boolean isPlayerLookingAtDemon(Player player) {
         Vec3 playerToDemon;
-        Vec3 playerView = player.m_20252_(1.0f).m_82541_();
-        return playerView.m_82526_(playerToDemon = new Vec3(this.demon.getX() - player.getX(), this.demon.getEyeY() - player.getEyeY(), this.demon.getZ() - player.getZ()).m_82541_()) > 0.98 && this.demon.hasLineOfSightThroughGlass(player);
+        Vec3 playerView = player.getViewVector(1.0f).normalize();
+        return playerView.dot(playerToDemon = new Vec3(this.demon.getX() - player.getX(), this.demon.getEyeY() - player.getEyeY(), this.demon.getZ() - player.getZ()).normalize()) > 0.98 && this.demon.hasLineOfSightThroughGlass(player);
     }
 
     private void disappear() {
         Level level = this.demon.level();
         if (level instanceof ServerLevel) {
             ServerLevel serverLevel = (ServerLevel)level;
-            serverLevel.m_8767_((ParticleOptions)ParticleTypes.LARGE_SMOKE, this.demon.getX(), this.demon.getY() + 1.5, this.demon.getZ(), 30, 0.5, 1.0, 0.5, 0.01);
+            serverLevel.sendParticles((ParticleOptions)ParticleTypes.LARGE_SMOKE, this.demon.getX(), this.demon.getY() + 1.5, this.demon.getZ(), 30, 0.5, 1.0, 0.5, 0.01);
             serverLevel.createTick(null, this.demon.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 1.0f, 0.6f);
         }
         this.demon.setHuntPhase(1);
@@ -116,7 +116,7 @@ extends Goal {
             double newZ = this.demon.getZ() + Math.sin(angle) * distance;
             int newY = this.demon.level().getChunk(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int)newX, (int)newZ);
             BlockPos groundPos = BlockPos.offset((double)newX, (double)(newY - 1), (double)newZ);
-            if (!this.demon.level().getFluidState(groundPos).m_76178_()) continue;
+            if (!this.demon.level().getFluidState(groundPos).isEmpty()) continue;
             this.demon.removeTag(newX, (double)newY, newZ);
             this.demon.getNavigation().stop();
             return;

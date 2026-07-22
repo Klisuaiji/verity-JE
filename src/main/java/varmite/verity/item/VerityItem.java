@@ -111,21 +111,21 @@ extends Item {
         if (!entity.level().isClientSide()) {
             if (entity.onGround()) {
                 CompoundTag data = entity.getPersistentData();
-                int groundTicks = data.m_128451_("VerityGroundTicks");
-                data.m_128405_("VerityGroundTicks", ++groundTicks);
+                int groundTicks = data.getInt("VerityGroundTicks");
+                data.putInt("VerityGroundTicks", ++groundTicks);
                 if (groundTicks >= 20) {
                     VerityEntity spawnedEntity;
                     ServerLevel level = (ServerLevel)entity.level();
                     BlockPos pos = entity.blockPosition();
                     String variantToSpawn = "happy";
-                    if (stack.m_41782_() && stack.m_41783_().m_128441_("VerityVariant")) {
-                        variantToSpawn = stack.m_41783_().m_128461_("VerityVariant");
+                    if (stack.hasTag() && stack.getTag().contains("VerityVariant")) {
+                        variantToSpawn = stack.getTag().getString("VerityVariant");
                     }
-                    if ((spawnedEntity = (VerityEntity)((EntityType)ModEntities.VERITY_ENTITY.get()).m_20615_((Level)level)) != null) {
-                        spawnedEntity.variantArea((double)pos.m_123341_() + 0.5, (double)pos.m_123342_(), (double)pos.m_123343_() + 0.5, 0.0f, 0.0f);
+                    if ((spawnedEntity = (VerityEntity)((EntityType)ModEntities.VERITY_ENTITY.get()).create((Level)level)) != null) {
+                        spawnedEntity.variantArea((double)pos.getX() + 0.5, (double)pos.getY(), (double)pos.getZ() + 0.5, 0.0f, 0.0f);
                         spawnedEntity.setVariant(variantToSpawn);
-                        if (stack.m_41782_() && stack.m_41782_()) {
-                            spawnedEntity.hurt(stack.m_41783_());
+                        if (stack.hasTag() && stack.hasTag()) {
+                            spawnedEntity.hurt(stack.getTag());
                         }
                         level.destroyBlock((Entity)spawnedEntity);
                     }
@@ -133,11 +133,11 @@ extends Item {
                     entity.discard();
                     return true;
                 }
-            } else if (entity.getPersistentData().m_128441_("VerityGroundTicks")) {
-                entity.getPersistentData().m_128405_("VerityGroundTicks", 0);
+            } else if (entity.getPersistentData().contains("VerityGroundTicks")) {
+                entity.getPersistentData().putInt("VerityGroundTicks", 0);
             }
-            if (entity.blockPosition().m_123342_() <= -63) {
-                entity.m_20334_(0.0, 1.0, 0.0);
+            if (entity.blockPosition().getY() <= -63) {
+                entity.setDeltaMovement(0.0, 1.0, 0.0);
                 entity.hasImpulse = true;
             }
         }
@@ -156,9 +156,9 @@ extends Item {
                 ServerLevel serverLevel = (ServerLevel)level;
                 BlockPos itemPos = itemEntity.blockPosition();
                 BlockPos safePos = this.findClosestSafeSpawnLocation(serverLevel, itemPos);
-                VerityEntity spawnedEntity = (VerityEntity)((EntityType)ModEntities.VERITY_ENTITY.get()).m_20615_((Level)serverLevel);
+                VerityEntity spawnedEntity = (VerityEntity)((EntityType)ModEntities.VERITY_ENTITY.get()).create((Level)serverLevel);
                 if (spawnedEntity != null) {
-                    spawnedEntity.variantArea((double)safePos.m_123341_() + 0.5, (double)safePos.m_123342_(), (double)safePos.m_123343_() + 0.5, 0.0f, 0.0f);
+                    spawnedEntity.variantArea((double)safePos.getX() + 0.5, (double)safePos.getY(), (double)safePos.getZ() + 0.5, 0.0f, 0.0f);
                     serverLevel.destroyBlock((Entity)spawnedEntity);
                     spawnedEntity.setVariant("serious_1");
                     spawnedEntity.level().createTick(null, safePos, (SoundEvent)ModSounds.BONE_0.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
@@ -169,7 +169,7 @@ extends Item {
                     if (((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
                         return;
                     }
-                    spawnedEntity.getServer().m_6846_().m_240416_((Component)Component.getContents((String)"<%s> \u00a74DO NOT DO THAT.".formatted(VerityConfig.VERITY_CUSTOM_NAME.get())), false);
+                    spawnedEntity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.getContents((String)"<%s> \u00a74DO NOT DO THAT.".formatted(VerityConfig.VERITY_CUSTOM_NAME.get())), false);
                 }
             }
         } else if (damageSource.getFoodExhaustion(DamageTypeTags.IS_EXPLOSION)) {
@@ -179,10 +179,10 @@ extends Item {
             if (itemPos instanceof ServerLevel && (nearestPlayer2 = (serverLevel = (ServerLevel)itemPos).getEntities((Entity)itemEntity, 256.0)) instanceof ServerPlayer) {
                 ServerPlayer p = (ServerPlayer)nearestPlayer2;
                 ItemStack stack = new ItemStack((ItemLike)ModItems.VERITY_ITEM.get());
-                CompoundTag tag = stack.m_41784_();
-                tag.m_128359_("VerityVariant", "serious_3");
-                p.m_150109_().add(stack);
-                p.m_213846_((Component)Component.getContents((String)"<Verity> Ayo chat why u let me explode"));
+                CompoundTag tag = stack.getOrCreateTag();
+                tag.putString("VerityVariant", "serious_3");
+                p.getInventory().add(stack);
+                p.sendSystemMessage((Component)Component.getContents((String)"<Verity> Ayo chat why u let me explode"));
                 ModNetwork.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), (Object)new PlayTtsPayload(p.getId(), "Ayo chat why u let me explode"));
                 serverLevel.getServer().execute(() -> ModEvents.updateAndSyncKarma((ServerLevel)serverLevel, (float)-1.0f));
                 data = WorldSpawnData.get((ServerLevel)serverLevel);
@@ -193,10 +193,10 @@ extends Item {
             if ((nearestPlayer2 = serverLevel.getEntities((Entity)itemEntity, 256.0)) instanceof ServerPlayer) {
                 ServerPlayer p = (ServerPlayer)nearestPlayer2;
                 ItemStack stack = new ItemStack((ItemLike)ModItems.VERITY_ITEM.get());
-                CompoundTag tag = stack.m_41784_();
-                tag.m_128359_("VerityVariant", "serious_3");
-                p.m_150109_().add(stack);
-                p.m_213846_((Component)Component.getContents((String)"<Verity> DON'T DO THAT."));
+                CompoundTag tag = stack.getOrCreateTag();
+                tag.putString("VerityVariant", "serious_3");
+                p.getInventory().add(stack);
+                p.sendSystemMessage((Component)Component.getContents((String)"<Verity> DON'T DO THAT."));
                 ModNetwork.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), (Object)new PlayTtsPayload(p.getId(), "DO NOT DO THAT!"));
                 serverLevel.getServer().execute(() -> ModEvents.updateAndSyncKarma((ServerLevel)serverLevel, (float)-1.0f));
                 data = WorldSpawnData.get((ServerLevel)serverLevel);
@@ -217,10 +217,10 @@ extends Item {
                     double distanceSqr;
                     boolean isHeadEmpty;
                     BlockPos checkPos = startPos.offset(x, y, z);
-                    boolean hasSolidFloor = level.getBlockState(checkPos.m_7495_()).m_60804_((BlockGetter)level, checkPos.m_7495_());
-                    boolean isFeetEmpty = level.getBlockState(checkPos).m_60812_((BlockGetter)level, checkPos).min() && level.getFluidState(checkPos).m_76178_();
-                    boolean bl = isHeadEmpty = level.getBlockState(checkPos.m_7494_()).m_60812_((BlockGetter)level, checkPos.m_7494_()).min() && level.getFluidState(checkPos.m_7494_()).m_76178_();
-                    if (!hasSolidFloor || !isFeetEmpty || !isHeadEmpty || !((distanceSqr = startPos.m_123331_((Vec3i)checkPos)) < minDistanceSqr)) continue;
+                    boolean hasSolidFloor = level.getBlockState(checkPos.below()).isSolidRender((BlockGetter)level, checkPos.below());
+                    boolean isFeetEmpty = level.getBlockState(checkPos).getCollisionShape((BlockGetter)level, checkPos).min() && level.getFluidState(checkPos).isEmpty();
+                    boolean bl = isHeadEmpty = level.getBlockState(checkPos.above()).getCollisionShape((BlockGetter)level, checkPos.above()).min() && level.getFluidState(checkPos.above()).isEmpty();
+                    if (!hasSolidFloor || !isFeetEmpty || !isHeadEmpty || !((distanceSqr = startPos.distSqr((Vec3i)checkPos)) < minDistanceSqr)) continue;
                     minDistanceSqr = distanceSqr;
                     closestSafePos = checkPos;
                 }

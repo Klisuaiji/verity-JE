@@ -39,7 +39,7 @@ public class VerityEntityTexture {
             return;
         }
         currentTexture = textureLocation;
-        try (InputStream stream = ((Resource)Minecraft.getInstance().getResourceManager().m_213713_(textureLocation).orElseThrow()).open();){
+        try (InputStream stream = ((Resource)Minecraft.getInstance().getResourceManager().getResource(textureLocation).orElseThrow()).open();){
             baseImage = NativeImage.read((InputStream)stream);
         }
         catch (IOException e) {

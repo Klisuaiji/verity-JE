@@ -31,7 +31,7 @@ public class PlayTtsClientHandler {
             return;
         }
         System.out.println("[VERITY DEBUG] Client successfully received TTS Payload: " + payload.text());
-        Entity entity = localPlayer.level().m_6815_(payload.entityId());
+        Entity entity = localPlayer.level().getEntity(payload.entityId());
         VerityEntity verityEntity = verityMob = entity instanceof VerityEntity ? (v = (VerityEntity)entity) : null;
         if (verityMob == null) {
             System.out.println("[VERITY DEBUG] Verity not found physically in world. Playing as 'Voice in Head'.");
