@@ -2,7 +2,7 @@
 
 [中文说明](README.md)
 
-> An **AI companion mod** for Minecraft 1.21.1 (NeoForge) — bringing a character named **Verity™** into your world.
+> This isn’t the official Verity™ repository; the official version is only released on CurseForge and is closed-source.An **AI companion mod** for Minecraft 1.21.1 (NeoForge) — bringing a character named **Verity™** into your world.
 
 ## Overview
 
