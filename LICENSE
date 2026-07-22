@@ -1,21 +1,12 @@
-MIT License
+Copyright (c) 2026 Kulisaiji
 
-Copyright (c) 2026 Klisuaiji
+本仓库所有代码（含反编译产物）的版权归属于原始模组作者。
+本仓库仅以“学习研究”目的提供代码阅读参考。
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+严禁以下行为：
+1. 编译本仓库代码生成可运行的 .jar 文件并进行分发；
+2. 将本仓库代码用于任何商业用途；
+3. 将本仓库代码作为基础进行二次开发并发布；
+4. 移除或篡改本声明。
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+本仓库不授予任何形式的开源许可。
