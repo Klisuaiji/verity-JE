@@ -26,6 +26,14 @@ repositories {
         url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
         content { includeGroup("software.bernie.geckolib") }
     }
+
+    // Cloth Config API (config screen library) is served from the Modrinth Maven.
+    // Provides me.shedaniel.clothconfig2 (ConfigBuilder, ConfigCategory, ConfigEntryBuilder, ...).
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup("maven.modrinth") }
+    }
 }
 
 base {
@@ -97,6 +105,9 @@ dependencies {
 
     // GeckoLib 4.x — 3D animation library used for the Verity / Box / Demon entities.
     implementation "software.bernie.geckolib:geckolib-neoforge-1.21.1:4.8.3"
+
+    // Cloth Config API — configuration screen library used by VerityClient.
+    implementation "maven.modrinth:cloth-config:15.0.140+neoforge"
 
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html

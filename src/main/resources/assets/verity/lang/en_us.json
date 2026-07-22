@@ -18,6 +18,8 @@
   "entity.verity.verity_demon": "§4§lVERITY",
 
   "verity.configuration.AISettings": "AI Settings",
+  "verity.config.title": "Verity Configuration",
+  "verity.config.general": "General",
   "verity.configuration.apiKey": "Groq API Key",
   "verity.configuration.canCrash": "Can Crash",
   "verity.configuration.aiModel": "Intelligence Level",
