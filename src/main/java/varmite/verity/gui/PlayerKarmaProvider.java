@@ -4,12 +4,12 @@
  * Could not load the following classes:
  *  net.minecraft.core.Direction
  *  net.minecraft.nbt.CompoundTag
- *  net.neoforged.neoforge.common.capabilities.Capability
- *  net.neoforged.neoforge.common.capabilities.CapabilityManager
- *  net.neoforged.neoforge.common.capabilities.CapabilityToken
- *  net.neoforged.neoforge.common.capabilities.ICapabilityProvider
- *  net.neoforged.neoforge.common.util.INBTSerializable
- *  net.neoforged.neoforge.common.util.LazyOptional
+ *  net.neoforged.neoforge.capabilities.Capability
+ *  net.neoforged.neoforge.capabilities.CapabilityManager
+ *  net.neoforged.neoforge.capabilities.CapabilityToken
+ *  net.neoforged.neoforge.capabilities.ICapabilityProvider
+ *  net.neoforged.neoforge.capabilities.INBTSerializable
+ *  net.neoforged.neoforge.capabilities.LazyOptional
  *  org.jetbrains.annotations.NotNull
  *  org.jetbrains.annotations.Nullable
  *  varmite.verity.gui.PlayerKarma
@@ -19,12 +19,12 @@ package varmite.verity.gui;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.capabilities.CapabilityManager;
-import net.neoforged.neoforge.common.capabilities.CapabilityToken;
-import net.neoforged.neoforge.common.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.common.util.INBTSerializable;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.Capability;
+import net.neoforged.neoforge.capabilities.CapabilityManager;
+import net.neoforged.neoforge.capabilities.CapabilityToken;
+import net.neoforged.neoforge.capabilities.ICapabilityProvider;
+import net.neoforged.neoforge.capabilities.INBTSerializable;
+import net.neoforged.neoforge.capabilities.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import varmite.verity.gui.PlayerKarma;

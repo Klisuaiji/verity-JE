@@ -52,12 +52,12 @@
  *  net.minecraft.world.phys.Vec3
  *  org.jetbrains.annotations.NotNull
  *  software.bernie.geckolib.animatable.GeoEntity
- *  software.bernie.geckolib.core.animatable.GeoAnimatable
- *  software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
- *  software.bernie.geckolib.core.animation.AnimatableManager$ControllerRegistrar
- *  software.bernie.geckolib.core.animation.AnimationController
- *  software.bernie.geckolib.core.animation.RawAnimation
- *  software.bernie.geckolib.core.object.PlayState
+ *  software.bernie.geckolib.animatable.GeoAnimatable
+ *  software.bernie.geckolib.animatable.instance.AnimatableInstanceCache
+ *  software.bernie.geckolib.animation.AnimatableManager$ControllerRegistrar
+ *  software.bernie.geckolib.animation.AnimationController
+ *  software.bernie.geckolib.animation.RawAnimation
+ *  software.bernie.geckolib.animation.PlayState
  *  software.bernie.geckolib.util.GeckoLibUtil
  *  varmite.verity.client.sound.ClientSoundHandler
  *  varmite.verity.entity.AI.DemonAttackGoal
@@ -122,12 +122,12 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import varmite.verity.client.sound.ClientSoundHandler;
 import varmite.verity.entity.AI.DemonAttackGoal;

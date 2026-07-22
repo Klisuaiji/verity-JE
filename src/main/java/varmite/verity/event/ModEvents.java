@@ -72,8 +72,8 @@
  *  net.minecraft.world.phys.BlockHitResult
  *  net.minecraft.world.phys.HitResult$Type
  *  net.minecraft.world.phys.Vec3
- *  net.neoforged.neoforge.common.capabilities.ICapabilityProvider
- *  net.neoforged.neoforge.common.capabilities.RegisterCapabilitiesEvent
+ *  net.neoforged.neoforge.capabilities.ICapabilityProvider
+ *  net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
  *  net.neoforged.neoforge.event.AttachCapabilitiesEvent
  *  net.neoforged.neoforge.event.RegisterCommandsEvent
  *  net.neoforged.neoforge.event.ServerChatEvent
@@ -195,8 +195,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.capabilities.ICapabilityProvider;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.ServerChatEvent;

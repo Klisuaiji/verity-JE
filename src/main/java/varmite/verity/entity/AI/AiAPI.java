@@ -39,11 +39,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.k2fsa.sherpa.onnx.OfflineModelConfig;
-import com.k2fsa.sherpa.onnx.OfflineRecognizer;
-import com.k2fsa.sherpa.onnx.OfflineRecognizerConfig;
-import com.k2fsa.sherpa.onnx.OfflineStream;
-import com.k2fsa.sherpa.onnx.OfflineWhisperModelConfig;
 import com.mojang.text2speech.Narrator;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -119,7 +114,7 @@ public class AiAPI {
     private static final int AUDIO_BUFFER_SIZE = 4096;
 
     public static volatile boolean cancelCurrentSpeech = false;
-    private static OfflineRecognizer sherpaRecognizer = null;
+    private static Object sherpaRecognizer = null;
 
     public static void apply3DEffect(SourceDataLine line, Player player, VerityEntity verity) {
         if (line == null || player == null || verity == null) {
@@ -368,15 +363,19 @@ public class AiAPI {
         CompletableFuture.runAsync(() -> {
             try {
                 Path modelPath = ModelExtractor.getOrExtractModel();
-                OfflineWhisperModelConfig whisperConfig = OfflineWhisperModelConfig.builder().setEncoder(modelPath.resolve("tiny.en-encoder.int8.onnx").toString()).setDecoder(modelPath.resolve("tiny.en-decoder.int8.onnx").toString()).build();
-                OfflineModelConfig modelConfig = OfflineModelConfig.builder().setWhisper(whisperConfig).setTokens(modelPath.resolve("tiny.en-tokens.txt").toString()).setNumThreads(2).setDebug(false).build();
-                OfflineRecognizerConfig config = OfflineRecognizerConfig.builder().setOfflineModelConfig(modelConfig).build();
-                sherpaRecognizer = new OfflineRecognizer(config);
-                LOGGER.info("[Verity] Offline Sherpa-ONNX Engine initialized!");
+                sherpaRecognizer = SherpaBridge.createRecognizer(
+                        modelPath.resolve("tiny.en-encoder.int8.onnx").toString(),
+                        modelPath.resolve("tiny.en-decoder.int8.onnx").toString(),
+                        modelPath.resolve("tiny.en-tokens.txt").toString(),
+                        2);
+                if (sherpaRecognizer != null) {
+                    LOGGER.info("[Verity] Offline Sherpa-ONNX Engine initialized!");
+                } else {
+                    LOGGER.error("[Verity] Failed to load Sherpa model. Check your model filenames and that sherpa-onnx is on the classpath.");
+                }
             }
             catch (Exception e) {
                 LOGGER.error("[Verity] Failed to load Sherpa model. Check your model filenames!", e);
-                e.printStackTrace();
             }
         });
     }
@@ -392,21 +391,16 @@ public class AiAPI {
                 return "";
             }
             try {
-                OfflineStream stream = sherpaRecognizer.createStream();
                 float[] floatAudio = new float[pcmData.length / 2];
                 for (int i = 0; i < pcmData.length; i += 2) {
                     short sample = (short)(pcmData[i + 1] << 8 | pcmData[i] & 0xFF);
                     floatAudio[i / 2] = (float)sample / 32768.0f;
                 }
-                stream.acceptWaveform(floatAudio, (int)format.getSampleRate());
-                sherpaRecognizer.decode(stream);
-                String result = sherpaRecognizer.getResult(stream).getText();
-                stream.release();
+                String result = SherpaBridge.recognize(sherpaRecognizer, floatAudio, (int)format.getSampleRate());
                 return result != null ? result.trim() : "";
             }
             catch (Exception e) {
                 LOGGER.error("[Verity STT] Failed to process speech locally with Sherpa.", e);
-                e.printStackTrace();
                 return "";
             }
         }

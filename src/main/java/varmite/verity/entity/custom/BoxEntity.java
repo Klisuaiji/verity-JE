@@ -27,12 +27,12 @@
  *  org.slf4j.Logger
  *  org.slf4j.LoggerFactory
  *  software.bernie.geckolib.animatable.GeoEntity
- *  software.bernie.geckolib.core.animatable.GeoAnimatable
- *  software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
- *  software.bernie.geckolib.core.animation.AnimatableManager$ControllerRegistrar
- *  software.bernie.geckolib.core.animation.AnimationController
- *  software.bernie.geckolib.core.animation.RawAnimation
- *  software.bernie.geckolib.core.object.PlayState
+ *  software.bernie.geckolib.animatable.GeoAnimatable
+ *  software.bernie.geckolib.animatable.instance.AnimatableInstanceCache
+ *  software.bernie.geckolib.animation.AnimatableManager$ControllerRegistrar
+ *  software.bernie.geckolib.animation.AnimationController
+ *  software.bernie.geckolib.animation.RawAnimation
+ *  software.bernie.geckolib.animation.PlayState
  *  software.bernie.geckolib.util.GeckoLibUtil
  *  varmite.verity.entity.custom.BoxEntity
  *  varmite.verity.sounds.ModSounds
@@ -66,12 +66,12 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import varmite.verity.sounds.ModSounds;
 import varmite.verity.triggers.ModTriggers;

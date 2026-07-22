@@ -3,7 +3,7 @@
  * 
  * Could not load the following classes:
  *  com.mojang.logging.LogUtils
- *  net.neoforged.neoforge.common.NeoForge
+ *  net.neoforged.neoforge.NeoForge
  *  net.neoforged.neoforge.event.server.ServerStartingEvent
  *  net.neoforged.bus.api.IEventBus
  *  net.neoforged.bus.api.SubscribeEvent

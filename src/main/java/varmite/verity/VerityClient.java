@@ -21,7 +21,7 @@
  *  net.neoforged.neoforge.common.ModConfigSpec$BooleanValue
  *  net.neoforged.neoforge.common.ModConfigSpec$ConfigValue
  *  net.neoforged.neoforge.common.ModConfigSpec$EnumValue
- *  net.neoforged.neoforge.common.NeoForge
+ *  net.neoforged.neoforge.NeoForge
  *  net.neoforged.bus.api.IEventBus
  *  net.neoforged.bus.api.SubscribeEvent
  *  net.neoforged.fml.ModLoadingContext
