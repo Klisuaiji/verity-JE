@@ -2,6 +2,7 @@
 
 [English README](README_EN.md)
 
+>注意：**这不是Verity™的官方仓库，官方仅发布在curseforge且为闭源模组**
 > 一个为 Minecraft 1.21.1（NeoForge）打造的 **AI 伙伴模组**——把名为 **Verity™** 的角色带进你的世界。
 
 ## 简介
