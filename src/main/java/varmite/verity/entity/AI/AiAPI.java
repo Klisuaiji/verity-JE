@@ -31,6 +31,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -46,22 +47,53 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import varmite.verity.VerityConfig;
 import varmite.verity.entity.custom.VerityEntity;
 import varmite.verity.event.WorldSpawnData;
 
 public class AiAPI {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AiAPI.class);
+
+    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(10))
+            .build();
+
+    private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(30);
+
+    /** Maximum distance (blocks) at which 3D audio can be heard. */
+    private static final float AUDIO_MAX_DISTANCE = 32.0f;
+
+    /** Volume below which audio is effectively silent (dB). */
+    private static final float AUDIO_SILENT_DB = -80.0f;
+
+    /** Volume threshold before applying logarithmic gain calculation. */
+    private static final float AUDIO_MIN_VOLUME_THRESHOLD = 0.001f;
+
+    /** Estimated milliseconds per word for native TTS timing. */
+    private static final long TTS_MS_PER_WORD = 400L;
+
+    /** Estimated milliseconds per punctuation mark for native TTS timing. */
+    private static final long TTS_MS_PER_PUNCTUATION = 300L;
+
+    /** Minimum duration (ms) for native TTS playback. */
+    private static final long TTS_MIN_DURATION_MS = 1500L;
+
+    /** Audio buffer size for streaming TTS playback. */
+    private static final int AUDIO_BUFFER_SIZE = 4096;
     public static void apply3DEffect(SourceDataLine line, Player player, VerityEntity verity) {
         if (line == null || player == null || verity == null) {
             return;
         }
         double distance = player.position().distanceTo(verity.position());
-        float maxDist = 32.0f;
-        float volumeMultiplier = 1.0f - (float)(distance / (double)maxDist);
+        float volumeMultiplier = 1.0f - (float)(distance / AUDIO_MAX_DISTANCE);
         volumeMultiplier = Math.max(0.0f, Math.min(1.0f, volumeMultiplier));
         if (line.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
             FloatControl volControl = (FloatControl)line.getControl(FloatControl.Type.MASTER_GAIN);
-            float dB = volumeMultiplier <= 0.001f ? -80.0f : (float)(Math.log10(volumeMultiplier) * 20.0);
+            float dB = volumeMultiplier <= AUDIO_MIN_VOLUME_THRESHOLD
+                    ? AUDIO_SILENT_DB
+                    : (float)(Math.log10(volumeMultiplier) * 20.0);
             volControl.setValue(dB);
         }
         if (line.isControlSupported(FloatControl.Type.PAN)) {
@@ -140,9 +172,14 @@ public class AiAPI {
             userMessage.addProperty("content", prompt);
             messages.add((JsonElement)userMessage);
             root.add("messages", (JsonElement)messages);
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://api.groq.com/openai/v1/chat/completions")).header("Authorization", "Bearer " + AiAPI.getApiKey()).header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(root.toString())).build();
-            HttpClient client = HttpClient.newHttpClient();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.groq.com/openai/v1/chat/completions"))
+                    .header("Authorization", "Bearer " + AiAPI.getApiKey())
+                    .header("Content-Type", "application/json")
+                    .timeout(REQUEST_TIMEOUT)
+                    .POST(HttpRequest.BodyPublishers.ofString(root.toString()))
+                    .build();
+            HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
             JsonObject responseJson = JsonParser.parseString((String)response.body()).getAsJsonObject();
             String jsonContent = responseJson.getAsJsonArray("choices").get(0).getAsJsonObject().getAsJsonObject("message").get("content").getAsString().trim();
             try {
@@ -153,7 +190,7 @@ public class AiAPI {
                 }
             }
             catch (Exception e) {
-                System.err.println("[Verity AI] Groq responded with invalid JSON format: " + jsonContent);
+                LOGGER.error("[Verity AI] Groq responded with invalid JSON format: {}", jsonContent, e);
             }
             if (worldData != null) {
                 worldData.addMessageToHistory("user", prompt);
@@ -162,7 +199,7 @@ public class AiAPI {
             return jsonContent;
         }
         catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("[Verity AI] Failed to contact Groq API", e);
             return "Error contacting Groq";
         }
     }
@@ -192,19 +229,23 @@ public class AiAPI {
             bodyStream.write(lineEnd.getBytes(StandardCharsets.UTF_8));
             bodyStream.write((twoHyphens + boundary + twoHyphens + lineEnd).getBytes(StandardCharsets.UTF_8));
             byte[] multipartBody = bodyStream.toByteArray();
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://api.groq.com/openai/v1/audio/transcriptions")).header("Authorization", "Bearer " + AiAPI.getApiKey()).header("Content-Type", "multipart/form-data; boundary=" + boundary).POST(HttpRequest.BodyPublishers.ofByteArray(multipartBody)).build();
-            HttpClient client = HttpClient.newHttpClient();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.groq.com/openai/v1/audio/transcriptions"))
+                    .header("Authorization", "Bearer " + AiAPI.getApiKey())
+                    .header("Content-Type", "multipart/form-data; boundary=" + boundary)
+                    .timeout(REQUEST_TIMEOUT)
+                    .POST(HttpRequest.BodyPublishers.ofByteArray(multipartBody))
+                    .build();
+            HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 JsonObject responseJson = JsonParser.parseString((String)response.body()).getAsJsonObject();
                 return responseJson.get("text").getAsString().trim();
             }
-            System.err.println("[Verity STT Error]: " + response.statusCode() + " - " + response.body());
+            LOGGER.error("[Verity STT] HTTP error: {} - {}", response.statusCode(), response.body());
             return "";
         }
         catch (Exception e) {
-            System.err.println("[Verity STT] Failed to process speech upload stream.");
-            e.printStackTrace();
+            LOGGER.error("[Verity STT] Failed to process speech upload stream", e);
             return "";
         }
     }
@@ -221,12 +262,11 @@ public class AiAPI {
                 osNarrator.say(text, true);
                 int wordCount = text.split("\\s+").length;
                 int punctuationCount = text.replaceAll("[^.,!?]", "").length();
-                long estimatedTimeMs = (long)wordCount * 400L + (long)punctuationCount * 300L;
-                Thread.sleep(Math.max(1500L, estimatedTimeMs));
+                long estimatedTimeMs = wordCount * TTS_MS_PER_WORD + punctuationCount * TTS_MS_PER_PUNCTUATION;
+                Thread.sleep(Math.max(TTS_MIN_DURATION_MS, estimatedTimeMs));
             }
             catch (Exception e) {
-                System.err.println("[Verity Native TTS] Failed to use OS Narrator.");
-                e.printStackTrace();
+                LOGGER.error("[Verity Native TTS] Failed to use OS Narrator", e);
             }
             finally {
                 Minecraft.getInstance().execute(() -> {
@@ -252,9 +292,14 @@ public class AiAPI {
                     json.addProperty("voice", "daniel");
                     json.addProperty("response_format", "wav");
                     json.addProperty("speed", (Number)1.2);
-                    HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://api.groq.com/openai/v1/audio/speech")).header("Authorization", "Bearer " + AiAPI.getApiKey()).header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(json.toString())).build();
-                    HttpClient client = HttpClient.newHttpClient();
-                    HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+                    HttpRequest request = HttpRequest.newBuilder()
+                            .uri(URI.create("https://api.groq.com/openai/v1/audio/speech"))
+                            .header("Authorization", "Bearer " + AiAPI.getApiKey())
+                            .header("Content-Type", "application/json")
+                            .timeout(REQUEST_TIMEOUT)
+                            .POST(HttpRequest.BodyPublishers.ofString(json.toString()))
+                            .build();
+                    HttpResponse<InputStream> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofInputStream());
                     if (response.statusCode() == 200) {
                         try (InputStream rawStream = response.body();
                              AudioInputStream audioStream = AudioSystem.getAudioInputStream(new BufferedInputStream(rawStream));){
@@ -267,7 +312,7 @@ public class AiAPI {
                                 if (verity != null) {
                                     verity.clientIsTalking = true;
                                 }
-                                byte[] buffer = new byte[4096];
+                                byte[] buffer = new byte[AUDIO_BUFFER_SIZE];
                                 while ((bytesRead = audioStream.read(buffer)) != -1) {
                                     AiAPI.apply3DEffect(line, player, verity);
                                     line.write(buffer, 0, bytesRead);
@@ -286,14 +331,13 @@ public class AiAPI {
                     if (errorBody.contains("rate_limit_exceeded")) {
                         player.displayClientMessage((Component)Component.literal((String)"You ran out of TTS tokens! Try switching to Native TTS.").withStyle(ChatFormatting.RED), true);
                     }
-                    System.out.println("[Verity TTS Error]: " + errorBody);
+                    LOGGER.error("[Verity TTS] HTTP error: {}", errorBody);
                 }
                 catch (Exception e) {
                     if (verity != null) {
                         verity.clientIsTalking = false;
                     }
-                    System.err.println("[Verity TTS] Failed to play voice. Is Groq unreachable?");
-                    e.printStackTrace();
+                    LOGGER.error("[Verity TTS] Failed to play voice. Is Groq unreachable?", e);
                 }
             }
         });

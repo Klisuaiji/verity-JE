@@ -257,53 +257,29 @@ public class ModEvents {
 
     @SubscribeEvent
     public static void entitySpawnEvent(EntityJoinLevelEvent event) {
-        Random rand = new Random();
-        boolean shouldKillEntity = rand.nextBoolean();
         if (event.getLevel().isClientSide()) {
             return;
         }
-        if (event.getEntity().getType() == ModEntities.VERITY_ENTITY.get()) {
+        Entity entity = event.getEntity();
+        if (entity.getType() == ModEntities.VERITY_ENTITY.get()) {
             hasSpawned = true;
-            verityEntity = (VerityEntity)event.getEntity();
-        } else {
-            Entity entity = event.getEntity();
-            if (entity instanceof Villager) {
-                Villager v = (Villager)entity;
-                v.discard();
-            } else {
-                entity = event.getEntity();
-                if (entity instanceof Cow) {
-                    Cow c = (Cow)entity;
-                    c.kill();
-                } else {
-                    entity = event.getEntity();
-                    if (entity instanceof Sheep) {
-                        Sheep s = (Sheep)entity;
-                        if (!shouldKillEntity) {
-                            return;
-                        }
-                        s.kill();
-                    } else {
-                        entity = event.getEntity();
-                        if (entity instanceof Pig) {
-                            Pig p = (Pig)entity;
-                            if (!shouldKillEntity) {
-                                return;
-                            }
-                            p.kill();
-                        } else {
-                            entity = event.getEntity();
-                            if (entity instanceof Chicken) {
-                                Chicken c = (Chicken)entity;
-                                if (!shouldKillEntity) {
-                                    return;
-                                }
-                                c.kill();
-                            }
-                        }
-                    }
-                }
-            }
+            verityEntity = (VerityEntity) entity;
+            return;
+        }
+        if (!VerityConfig.CLEAR_PEACEFUL_MOBS.get()) {
+            return;
+        }
+        Random rand = new Random();
+        if (entity instanceof Villager v) {
+            v.discard();
+        } else if (entity instanceof Cow c) {
+            c.kill();
+        } else if (entity instanceof Sheep s && rand.nextBoolean()) {
+            s.kill();
+        } else if (entity instanceof Pig p && rand.nextBoolean()) {
+            p.kill();
+        } else if (entity instanceof Chicken c && rand.nextBoolean()) {
+            c.kill();
         }
     }
 

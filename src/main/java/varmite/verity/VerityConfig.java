@@ -21,6 +21,7 @@ public class VerityConfig {
     public static final ModConfigSpec.ConfigValue<String> API_KEY;
     public static final ModConfigSpec.ConfigValue<String> AI_MODEL;
     public static final ModConfigSpec.BooleanValue USE_NATIVE_TTS;
+    public static final ModConfigSpec.BooleanValue CLEAR_PEACEFUL_MOBS;
     private static final List<String> MODEL_OPTIONS;
 
     static {
@@ -30,6 +31,7 @@ public class VerityConfig {
         PLAY_VIDEO = builder.comment("Play the Verity Edit on the startup of the client.").define("playVideo", true);
         REQUIRE_VERITY = builder.comment("Require 'Verity' in every sentence to speak to him.").define("requireVerity", false);
         USE_NATIVE_TTS = builder.comment("Use the OS's built-in narrator (Windows, macOS, Linux) instead of Groq cloud TTS.").define("useNativeTts", false);
+        CLEAR_PEACEFUL_MOBS = builder.comment("Clear peaceful mobs (Villager, Cow, Sheep, Pig, Chicken) from the world for a more isolated horror atmosphere.").define("clearPeacefulMobs", false);
         builder.push("AISettings");
         API_KEY = builder.comment("Put your Groq API Key here to give Verity a brain.").define("apiKey", "");
         AI_MODEL = builder.comment("Choose the AI intelligence level: Fast-lite, Fast, or Intelligent.").defineInList("aiModel", "Fast", MODEL_OPTIONS);

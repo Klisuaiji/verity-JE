@@ -4,6 +4,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.neoforged.fml.ModContainer;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
+import me.shedaniel.clothconfig2.api.ConfigCategory;
+import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 
 /**
  * In-game configuration screen for Verity, built on top of Cloth Config API.
@@ -25,19 +27,113 @@ public class ConfigurationScreen extends Screen {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
                 .setTitle(Component.translatable("verity.config.title"))
-                .setSavingRunnable(() -> {
-                    // TODO: persist configuration values here
-                });
+                .setSavingRunnable(this::saveConfig);
 
-        // TODO: register config categories and entries, e.g.
-        // ConfigCategory general = builder.getOrCreateCategory(Component.translatable("verity.config.general"));
-        // ConfigEntryBuilder entryBuilder = ConfigEntryBuilder.create();
-        // general.addEntry(entryBuilder.startBooleanToggle(
-        //         Component.translatable("verity.config.example"), true)
-        //         .setDefaultValue(true)
-        //         .setSaveConsumer(value -> { /* store value */ })
-        //         .build());
+        ConfigEntryBuilder entryBuilder = builder.entryBuilder();
+
+        // ---- General Settings ----
+        ConfigCategory general = builder.getOrCreateCategory(
+                Component.translatable("verity.config.general"));
+
+        general.addEntry(entryBuilder.startBooleanToggle(
+                        Component.translatable("verity.configuration.playVideo"),
+                        VerityConfig.PLAY_VIDEO.get())
+                .setDefaultValue(true)
+                .setTooltip(Component.translatable("verity.configuration.playVideo.tooltip"))
+                .setSaveConsumer(VerityConfig.PLAY_VIDEO::set)
+                .build());
+
+        general.addEntry(entryBuilder.startBooleanToggle(
+                        Component.translatable("verity.configuration.requireVerity"),
+                        VerityConfig.REQUIRE_VERITY.get())
+                .setDefaultValue(false)
+                .setTooltip(Component.translatable("verity.configuration.requireVerity.tooltip"))
+                .setSaveConsumer(VerityConfig.REQUIRE_VERITY::set)
+                .build());
+
+        general.addEntry(entryBuilder.startBooleanToggle(
+                        Component.translatable("verity.configuration.canCrash"),
+                        VerityConfig.CAN_CRASH.get())
+                .setDefaultValue(true)
+                .setTooltip(Component.translatable("verity.configuration.canCrash.tooltip"))
+                .setSaveConsumer(VerityConfig.CAN_CRASH::set)
+                .build());
+
+        general.addEntry(entryBuilder.startBooleanToggle(
+                        Component.translatable("verity.configuration.useNativeTts"),
+                        VerityConfig.USE_NATIVE_TTS.get())
+                .setDefaultValue(false)
+                .setTooltip(Component.translatable("verity.configuration.useNativeTts.tooltip"))
+                .setSaveConsumer(VerityConfig.USE_NATIVE_TTS::set)
+                .build());
+
+        general.addEntry(entryBuilder.startBooleanToggle(
+                        Component.translatable("verity.configuration.clearPeacefulMobs"),
+                        VerityConfig.CLEAR_PEACEFUL_MOBS.get())
+                .setDefaultValue(false)
+                .setTooltip(Component.translatable("verity.configuration.clearPeacefulMobs.tooltip"))
+                .setSaveConsumer(VerityConfig.CLEAR_PEACEFUL_MOBS::set)
+                .build());
+
+        // ---- AI Settings ----
+        ConfigCategory aiSettings = builder.getOrCreateCategory(
+                Component.translatable("verity.configuration.AISettings"));
+
+        aiSettings.addEntry(entryBuilder.startStrField(
+                        Component.translatable("verity.configuration.apiKey"),
+                        VerityConfig.API_KEY.get())
+                .setDefaultValue("")
+                .setTooltip(Component.translatable("verity.configuration.apiKey.tooltip"))
+                .setSaveConsumer(VerityConfig.API_KEY::set)
+                .build());
+
+        aiSettings.addEntry(entryBuilder.startEnumSelector(
+                        Component.translatable("verity.configuration.aiModel"),
+                        AiModel.class,
+                        AiModel.fromConfigValue(VerityConfig.AI_MODEL.get()))
+                .setDefaultValue(AiModel.FAST)
+                .setTooltip(Component.translatable("verity.configuration.aiModel.tooltip"))
+                .setSaveConsumer(model -> VerityConfig.AI_MODEL.set(model.getConfigValue()))
+                .build());
 
         minecraft.setScreen(builder.build());
+    }
+
+    private void saveConfig() {
+        VerityConfig.SPEC.save();
+    }
+
+    /**
+     * Enum mirroring the AI model options in {@link VerityConfig#MODEL_OPTIONS}.
+     * Each constant carries the config-file value so it can be round-tripped.
+     */
+    private enum AiModel {
+        FAST_LITE("Fast-lite"),
+        FAST("Fast"),
+        INTELLIGENT("Intelligent");
+
+        private final String configValue;
+
+        AiModel(String configValue) {
+            this.configValue = configValue;
+        }
+
+        public String getConfigValue() {
+            return configValue;
+        }
+
+        @Override
+        public String toString() {
+            return configValue;
+        }
+
+        public static AiModel fromConfigValue(String value) {
+            for (AiModel model : values()) {
+                if (model.configValue.equals(value)) {
+                    return model;
+                }
+            }
+            return FAST;
+        }
     }
 }
