@@ -1,0 +1,47 @@
+{
+  "item.verity.verity_item": "Verity™",
+  "item.verity.verity_disc.desc": "Фирменная песня, которую обожает Verity™.",
+  "item.verity.verity_disc": "Пластинка Verity™",
+  "item.verity.flashlight": "Фонарик",
+
+  "minecraft:key.categories.multiplayer": "Сетевая игра (в разработке)",
+
+  "creativetab.verity.verity_tab": "Verity™",
+
+  "key.verity.push_to_talk": "Говорить с Verity (нажми и говори)",
+  "category.verity.keys": "Мод Verity",
+  "key.verity.cycle_mic": "Сменить микрофон",
+
+  "entity.verity.box": "Коробка",
+  "entity.verity.verity": "Verity™",
+  "entity.verity.verity_demon": "§4§lVERITY",
+
+  "verity.configuration.AISettings": "Настройки ИИ",
+  "verity.config.title": "Настройки Verity",
+  "verity.config.general": "Основные",
+  "verity.configuration.apiKey": "API-ключ Groq",
+  "verity.configuration.apiKey.tooltip": "Ваш API-ключ Groq. Необходим для работы ИИ Verity.",
+  "verity.configuration.canCrash": "Разрешить кик",
+  "verity.configuration.canCrash.tooltip": "Позволяет Verity выкинуть вас с сервера при убийстве демоном.",
+  "verity.configuration.aiModel": "Уровень интеллекта",
+  "verity.configuration.aiModel.tooltip": "Fast-lite (быстрее, дешевле), Fast (сбалансированный), Intelligent (лучшее качество).",
+  "verity.configuration.requireVerity": "Требовать \"Verity\"",
+  "verity.configuration.requireVerity.tooltip": "Требовать слово \"Verity\" в каждом предложении, чтобы говорить с ним.",
+  "verity.configuration.playVideo": "Проигрывать вступление",
+  "verity.configuration.playVideo.tooltip": "Проигрывать вступительный ролик Verity при запуске клиента.",
+  "verity.configuration.useNativeTts": "Системный TTS",
+  "verity.configuration.useNativeTts.tooltip": "Использовать встроенный синтезатор речи ОС вместо облачного Groq TTS.",
+  "verity.configuration.clearPeacefulMobs": "Удалять мирных мобов",
+  "verity.configuration.clearPeacefulMobs.tooltip": "Удалять мирных мобов (Житель, Корова, Овца, Свинья, Курица) для более изолированной атмосферы хоррора.",
+
+  "sounds.verity.box_click": "Щелчок коробки",
+  "sounds.verity.box_open": "Открытие коробки",
+  "sounds.verity.box_verity_0": "Verity™ в коробке",
+  "sounds.verity.box_verity_1": "Verity™ в коробке",
+  "sounds.verity.box_verity_2": "Verity™ в коробке",
+  "sounds.verity.intro": "Вступление",
+  "sounds.verity.impact": "Удар Verity™",
+  "sounds.verity.intro_cinematic": "Вступительный ролик",
+  "sounds.verity.chase": "§l§4БЕГИ",
+  "sounds.verity.bone_break": "Хруст костей"
+}
