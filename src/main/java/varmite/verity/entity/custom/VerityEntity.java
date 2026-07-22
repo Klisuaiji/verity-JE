@@ -262,7 +262,7 @@ extends PathfinderMob {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.m_25352_(1, (Goal)new FollowPlacerGoal(this, this, 1.25, 8.0f, 3.0f));
-        this.goalSelector.m_25352_(2, (Goal)new /* Unavailable Anonymous Inner Class!! */);
+        this.goalSelector.m_25352_(2, (Goal)new Goal() { public boolean canUse() { return false; } });
         this.goalSelector.m_25352_(3, (Goal)new RandomLookAroundGoal((Mob)this));
     }
 

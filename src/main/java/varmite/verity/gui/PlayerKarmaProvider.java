@@ -32,7 +32,7 @@ import varmite.verity.gui.PlayerKarma;
 public class PlayerKarmaProvider
 implements ICapabilityProvider,
 INBTSerializable<CompoundTag> {
-    public static Capability<PlayerKarma> PLAYER_KARMA = CapabilityManager.get((CapabilityToken)new /* Unavailable Anonymous Inner Class!! */);
+    public static Capability<PlayerKarma> PLAYER_KARMA = CapabilityManager.get((CapabilityToken<PlayerKarma>)new CapabilityToken<PlayerKarma>() { public String getName() { return "verity:player_karma"; } });
     private PlayerKarma karma = null;
     private final LazyOptional<PlayerKarma> optional = LazyOptional.of(() -> this.createPlayerKarma());
 

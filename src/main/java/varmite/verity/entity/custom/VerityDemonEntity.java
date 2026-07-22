@@ -249,8 +249,8 @@ Enemy {
         this.goalSelector.m_25352_(6, (Goal)new WaterAvoidingRandomStrollGoal((PathfinderMob)this, 1.0));
         this.goalSelector.m_25352_(7, (Goal)new LookAtPlayerGoal((Mob)this, Player.class, 3.0f, 1.0f));
         this.targetSelector.m_25352_(0, (Goal)new HurtByTargetGoal((PathfinderMob)this, new Class[0]));
-        this.targetSelector.m_25352_(1, (Goal)new /* Unavailable Anonymous Inner Class!! */);
-        this.targetSelector.m_25352_(2, (Goal)new /* Unavailable Anonymous Inner Class!! */);
+        this.targetSelector.m_25352_(1, (Goal)new Goal() { public boolean canUse() { return false; } });
+        this.targetSelector.m_25352_(2, (Goal)new Goal() { public boolean canUse() { return false; } });
     }
 
     public void forceCrawl(int ticks) {

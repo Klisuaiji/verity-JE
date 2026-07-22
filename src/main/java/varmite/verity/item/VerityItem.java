@@ -145,7 +145,7 @@ extends Item {
     }
 
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        consumer.accept((IClientItemExtensions)new /* Unavailable Anonymous Inner Class!! */);
+        consumer.accept((IClientItemExtensions)new IClientItemExtensions() {});
     }
 
     public void onDestroyed(ItemEntity itemEntity, DamageSource damageSource) {
