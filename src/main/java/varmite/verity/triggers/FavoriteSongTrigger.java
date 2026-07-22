@@ -1,40 +1,39 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  com.google.gson.JsonObject
- *  net.minecraft.advancements.critereon.ContextAwarePredicate
- *  net.minecraft.advancements.critereon.DeserializationContext
- *  net.minecraft.advancements.critereon.SimpleCriterionTrigger
- *  net.minecraft.resources.ResourceLocation
- *  net.minecraft.server.level.ServerPlayer
- *  varmite.verity.triggers.FavoriteSongTrigger
- *  varmite.verity.triggers.FavoriteSongTrigger$TriggerInstance
- */
 package varmite.verity.triggers;
 
 import com.google.gson.JsonObject;
+import java.util.Optional;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
-import net.minecraft.advancements.critereon.DeserializationContext;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import varmite.verity.triggers.FavoriteSongTrigger;
 
-public class FavoriteSongTrigger
-extends SimpleCriterionTrigger<TriggerInstance> {
-    public static final ResourceLocation ID = new ResourceLocation("verity", "favoritesong");
+public class FavoriteSongTrigger extends SimpleCriterionTrigger<FavoriteSongTrigger.TriggerInstance> {
+    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath("verity", "favoritesong");
 
+    @Override
     public ResourceLocation getId() {
         return ID;
     }
 
-    protected TriggerInstance createInstance(JsonObject json, ContextAwarePredicate player, DeserializationContext context) {
-        return new TriggerInstance(player);
+    @Override
+    protected FavoriteSongTrigger.TriggerInstance createInstance(JsonObject json, ContextAwarePredicate player) {
+        return new FavoriteSongTrigger.TriggerInstance(player);
     }
 
     public void trigger(ServerPlayer player) {
-        this.addPlayerListener(player, instance -> true);
+        this.trigger(player, instance -> true);
+    }
+
+    public static class TriggerInstance implements SimpleCriterionTrigger.SimpleInstance {
+        private final ContextAwarePredicate player;
+
+        public TriggerInstance(ContextAwarePredicate player) {
+            this.player = player;
+        }
+
+        @Override
+        public Optional<ContextAwarePredicate> player() {
+            return Optional.of(this.player);
+        }
     }
 }
-

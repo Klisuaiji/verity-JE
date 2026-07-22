@@ -34,7 +34,7 @@ extends Screen {
     private boolean videoStarted = false;
 
     public IntroVideoScreen(Screen previousScreen) {
-        super((Component)Component.getContents((String)"Intro Video"));
+        super((Component)Component.literal("Intro Video"));
         this.previousScreen = previousScreen;
     }
 
@@ -84,7 +84,7 @@ extends Screen {
 
     private void skip() {
         this.minecraft.getSoundManager().prepare(ResourceLocation.fromNamespaceAndPath((String)"verity", (String)"intro_video_audio"), SoundSource.MASTER);
-        this.minecraft.setInitialScreen(this.previousScreen);
+        this.minecraft.setScreen(this.previousScreen);
     }
 }
 

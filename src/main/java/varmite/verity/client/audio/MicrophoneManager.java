@@ -62,7 +62,7 @@ public class MicrophoneManager {
 
     private static void sendClientMessage(String text) {
         if (Minecraft.getInstance().player != null) {
-            Minecraft.getInstance().player.hurt((Component)Component.getContents((String)text), false);
+            Minecraft.getInstance().player.hurt((Component)Component.literal(text), false);
         }
     }
 }

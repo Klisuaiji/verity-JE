@@ -26,13 +26,13 @@ import net.minecraft.server.packs.resources.Resource;
  * Exception performing whole class analysis ignored.
  */
 public class VerityPreviewTexture {
-    private static final ResourceLocation PREVIEW_ID = new ResourceLocation("verity", "dynamic/color_preview");
+    private static final ResourceLocation PREVIEW_ID = ResourceLocation.fromNamespaceAndPath("verity", "dynamic/color_preview");
     private static NativeImage baseImage;
     private static DynamicTexture texture;
     private static int lastHue;
 
     public static void init() {
-        try (InputStream stream = ((Resource)Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation("verity", "textures/entity/preview.png")).get()).open();){
+        try (InputStream stream = ((Resource)Minecraft.getInstance().getResourceManager().getResource(ResourceLocation.fromNamespaceAndPath("verity", "textures/entity/preview.png")).get()).open();){
             baseImage = NativeImage.read((InputStream)stream);
         }
         catch (IOException e) {

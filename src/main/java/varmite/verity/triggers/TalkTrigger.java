@@ -1,40 +1,39 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  com.google.gson.JsonObject
- *  net.minecraft.advancements.critereon.ContextAwarePredicate
- *  net.minecraft.advancements.critereon.DeserializationContext
- *  net.minecraft.advancements.critereon.SimpleCriterionTrigger
- *  net.minecraft.resources.ResourceLocation
- *  net.minecraft.server.level.ServerPlayer
- *  varmite.verity.triggers.TalkTrigger
- *  varmite.verity.triggers.TalkTrigger$TriggerInstance
- */
 package varmite.verity.triggers;
 
 import com.google.gson.JsonObject;
+import java.util.Optional;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
-import net.minecraft.advancements.critereon.DeserializationContext;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import varmite.verity.triggers.TalkTrigger;
 
-public class TalkTrigger
-extends SimpleCriterionTrigger<TriggerInstance> {
-    public static final ResourceLocation ID = new ResourceLocation("verity", "talk");
+public class TalkTrigger extends SimpleCriterionTrigger<TalkTrigger.TriggerInstance> {
+    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath("verity", "talk");
 
+    @Override
     public ResourceLocation getId() {
         return ID;
     }
 
-    protected TriggerInstance createInstance(JsonObject json, ContextAwarePredicate player, DeserializationContext context) {
-        return new TriggerInstance(player);
+    @Override
+    protected TalkTrigger.TriggerInstance createInstance(JsonObject json, ContextAwarePredicate player) {
+        return new TalkTrigger.TriggerInstance(player);
     }
 
     public void trigger(ServerPlayer player) {
-        this.addPlayerListener(player, instance -> true);
+        this.trigger(player, instance -> true);
+    }
+
+    public static class TriggerInstance implements SimpleCriterionTrigger.SimpleInstance {
+        private final ContextAwarePredicate player;
+
+        public TriggerInstance(ContextAwarePredicate player) {
+            this.player = player;
+        }
+
+        @Override
+        public Optional<ContextAwarePredicate> player() {
+            return Optional.of(this.player);
+        }
     }
 }
-

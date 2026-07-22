@@ -1,40 +1,39 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  com.google.gson.JsonObject
- *  net.minecraft.advancements.critereon.ContextAwarePredicate
- *  net.minecraft.advancements.critereon.DeserializationContext
- *  net.minecraft.advancements.critereon.SimpleCriterionTrigger
- *  net.minecraft.resources.ResourceLocation
- *  net.minecraft.server.level.ServerPlayer
- *  varmite.verity.triggers.VillageTrigger
- *  varmite.verity.triggers.VillageTrigger$TriggerInstance
- */
 package varmite.verity.triggers;
 
 import com.google.gson.JsonObject;
+import java.util.Optional;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
-import net.minecraft.advancements.critereon.DeserializationContext;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import varmite.verity.triggers.VillageTrigger;
 
-public class VillageTrigger
-extends SimpleCriterionTrigger<TriggerInstance> {
-    public static final ResourceLocation ID = new ResourceLocation("verity", "village");
+public class VillageTrigger extends SimpleCriterionTrigger<VillageTrigger.TriggerInstance> {
+    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath("verity", "village");
 
+    @Override
     public ResourceLocation getId() {
         return ID;
     }
 
-    protected TriggerInstance createInstance(JsonObject json, ContextAwarePredicate player, DeserializationContext context) {
-        return new TriggerInstance(player);
+    @Override
+    protected VillageTrigger.TriggerInstance createInstance(JsonObject json, ContextAwarePredicate player) {
+        return new VillageTrigger.TriggerInstance(player);
     }
 
     public void trigger(ServerPlayer player) {
-        this.addPlayerListener(player, instance -> true);
+        this.trigger(player, instance -> true);
+    }
+
+    public static class TriggerInstance implements SimpleCriterionTrigger.SimpleInstance {
+        private final ContextAwarePredicate player;
+
+        public TriggerInstance(ContextAwarePredicate player) {
+            this.player = player;
+        }
+
+        @Override
+        public Optional<ContextAwarePredicate> player() {
+            return Optional.of(this.player);
+        }
     }
 }
-

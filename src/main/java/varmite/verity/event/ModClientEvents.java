@@ -14,11 +14,11 @@
  *  net.minecraft.world.phys.Vec3
  *  net.neoforged.api.distmarker.Dist
  *  net.neoforged.neoforge.client.event.ScreenEvent$Opening
- *  net.neoforged.neoforge.event.TickEvent$ClientTickEvent
+ *  net.neoforged.neoforge.client.event.ClientTickEvent
  *  net.neoforged.neoforge.event.TickEvent$Phase
- *  net.neoforged.neoforge.event.TickEvent$RenderTickEvent
+ *  net.neoforged.neoforge.client.event.ClientTickEvent
  *  net.neoforged.bus.api.SubscribeEvent
- *  net.neoforged.fml.common.Mod$EventBusSubscriber
+ *  net.neoforged.fml.common.EventBusSubscriber
  *  varmite.verity.VerityConfig
  *  varmite.verity.client.DynamicLightManager
  *  varmite.verity.client.DynamicLightManager$Beam
@@ -27,6 +27,7 @@
  *  varmite.verity.item.ModItems
  */
 package varmite.verity.event;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -43,7 +44,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.ScreenEvent;
-import net.neoforged.neoforge.event.TickEvent;
+
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import varmite.verity.VerityConfig;
@@ -51,10 +52,11 @@ import varmite.verity.client.DynamicLightManager;
 import varmite.verity.client.IntroVideoScreen;
 import varmite.verity.item.ModItems;
 
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 /*
  * Exception performing whole class analysis ignored.
  */
-@Mod.EventBusSubscriber(modid="verity", value={Dist.CLIENT})
+@EventBusSubscriber(modid="verity", value={Dist.CLIENT})
 public class ModClientEvents {
     private static boolean hasPlayedIntro = false;
     private static Set<BlockPos> previousCenterBlocks = new HashSet();
@@ -73,10 +75,7 @@ public class ModClientEvents {
     }
 
     @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    public static void onClientTick(ClientTickEvent event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null && (Double)mc.options.gamma().get() > 0.0) {
             mc.options.gamma().set((Object)0.0);
@@ -85,10 +84,7 @@ public class ModClientEvents {
     }
 
     @SubscribeEvent
-    public static void onRenderTick(TickEvent.RenderTickEvent event) {
-        if (event.phase != TickEvent.Phase.START) {
-            return;
-        }
+    public static void onRenderTick(ClientTickEvent event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null || mc.levelRenderer == null) {
             return;

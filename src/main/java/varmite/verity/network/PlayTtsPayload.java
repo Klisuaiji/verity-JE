@@ -1,55 +1,34 @@
 /*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  net.minecraft.network.FriendlyByteBuf
- *  net.neoforged.api.distmarker.Dist
- *  net.neoforged.fml.DistExecutor
- *  net.neoforged.neoforge.network.NetworkEvent$Context
- *  varmite.verity.network.PlayTtsClientHandler
- *  varmite.verity.network.PlayTtsPayload
+ * Ported to NeoForge 1.21.1 — SimpleChannel message replaced by a CustomPacketPayload.
+ * Client handling is delegated to PlayTtsClientHandler (preserves the 5.7.3 client logic).
  */
 package varmite.verity.network;
 
-import java.util.function.Supplier;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.DistExecutor;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import varmite.verity.network.PlayTtsClientHandler;
 
-public class PlayTtsPayload {
-    private final int entityId;
-    private final String text;
+public record PlayTtsPayload(int entityId, String text) implements CustomPacketPayload {
+    public static final CustomPacketPayload.Type<PlayTtsPayload> TYPE =
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("verity", "play_tts"));
 
-    public PlayTtsPayload(int entityId, String text) {
-        this.entityId = entityId;
-        this.text = text;
+    public static final StreamCodec<FriendlyByteBuf, PlayTtsPayload> STREAM_CODEC =
+            StreamCodec.composite(
+                    ByteBufCodecs.INT, PlayTtsPayload::entityId,
+                    ByteBufCodecs.STRING_UTF8, PlayTtsPayload::text,
+                    PlayTtsPayload::new
+            );
+
+    @Override
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public int entityId() {
-        return this.entityId;
-    }
-
-    public String text() {
-        return this.text;
-    }
-
-    public static void encode(PlayTtsPayload payload, FriendlyByteBuf buf) {
-        buf.writeInt(payload.entityId);
-        buf.writeUtf(payload.text);
-    }
-
-    public static PlayTtsPayload decode(FriendlyByteBuf buf) {
-        int entityId = buf.readInt();
-        String text = buf.readUtf(Short.MAX_VALUE);
-        return new PlayTtsPayload(entityId, text);
-    }
-
-    public static void handle(PlayTtsPayload payload, Supplier<NetworkEvent.Context> ctxSupplier) {
-        NetworkEvent.Context ctx = ctxSupplier.get();
-        ctx.enqueueWork(() -> DistExecutor.unsafeRunWhenOn((Dist)Dist.CLIENT, () -> () -> PlayTtsClientHandler.handlePacket((PlayTtsPayload)payload)));
-        ctx.setPacketHandled(true);
+    public static void handleData(PlayTtsPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> PlayTtsClientHandler.handlePacket(payload));
     }
 }
-

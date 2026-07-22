@@ -1,64 +1,26 @@
 /*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  net.minecraft.core.Direction
- *  net.minecraft.nbt.CompoundTag
- *  net.neoforged.neoforge.capabilities.Capability
- *  net.neoforged.neoforge.capabilities.CapabilityManager
- *  net.neoforged.neoforge.capabilities.CapabilityToken
- *  net.neoforged.neoforge.capabilities.ICapabilityProvider
- *  net.neoforged.neoforge.capabilities.INBTSerializable
- *  net.neoforged.neoforge.capabilities.LazyOptional
- *  org.jetbrains.annotations.NotNull
- *  org.jetbrains.annotations.Nullable
- *  varmite.verity.gui.PlayerKarma
- *  varmite.verity.gui.PlayerKarmaProvider
+ * Ported to NeoForge 1.21.1 — capability system replaced by the Attachments API.
+ * The per-player karma is now an AttachmentType that auto-attaches to every IAttachmentHolder
+ * (players included) and is copied across death via copyOnDeath().
  */
 package varmite.verity.gui;
 
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.neoforged.neoforge.capabilities.Capability;
-import net.neoforged.neoforge.capabilities.CapabilityManager;
-import net.neoforged.neoforge.capabilities.CapabilityToken;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.capabilities.INBTSerializable;
-import net.neoforged.neoforge.capabilities.LazyOptional;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import varmite.verity.gui.PlayerKarma;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
-public class PlayerKarmaProvider
-implements ICapabilityProvider,
-INBTSerializable<CompoundTag> {
-    public static Capability<PlayerKarma> PLAYER_KARMA = CapabilityManager.get((CapabilityToken<PlayerKarma>)new CapabilityToken<PlayerKarma>() { public String getName() { return "verity:player_karma"; } });
-    private PlayerKarma karma = null;
-    private final LazyOptional<PlayerKarma> optional = LazyOptional.of(() -> this.createPlayerKarma());
+import java.util.function.Supplier;
 
-    private PlayerKarma createPlayerKarma() {
-        if (this.karma == null) {
-            this.karma = new PlayerKarma();
-        }
-        return this.karma;
-    }
+public class PlayerKarmaProvider {
+    public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
+            DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, "verity");
 
-    @NotNull
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == PLAYER_KARMA) {
-            return this.optional.cast();
-        }
-        return LazyOptional.empty();
-    }
+    public static final Supplier<AttachmentType<PlayerKarma>> PLAYER_KARMA =
+            ATTACHMENT_TYPES.register("player_karma",
+                    () -> AttachmentType.serializable(PlayerKarma::new).copyOnDeath().build());
 
-    public CompoundTag serializeNBT() {
-        CompoundTag nbt = new CompoundTag();
-        this.createPlayerKarma().saveNBTData(nbt);
-        return nbt;
-    }
-
-    public void deserializeNBT(CompoundTag nbt) {
-        this.createPlayerKarma().loadNBTData(nbt);
+    public static void register(IEventBus bus) {
+        ATTACHMENT_TYPES.register(bus);
     }
 }
-

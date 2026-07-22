@@ -4,13 +4,14 @@
  * Could not load the following classes:
  *  net.minecraft.client.Minecraft
  *  net.neoforged.bus.api.SubscribeEvent
- *  net.neoforged.fml.common.Mod$EventBusSubscriber
- *  net.neoforged.fml.common.Mod$EventBusSubscriber$Bus
+ *  net.neoforged.fml.common.EventBusSubscriber
+ *  net.neoforged.fml.common.EventBusSubscriber
  *  net.neoforged.fml.event.config.ModConfigEvent$Reloading
  *  varmite.verity.VerityConfig
  *  varmite.verity.event.ConfigEventHandler
  */
 package varmite.verity.event;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import net.minecraft.client.Minecraft;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -18,7 +19,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import varmite.verity.VerityConfig;
 
-@Mod.EventBusSubscriber(modid="verity", bus=Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.MOD)
 public class ConfigEventHandler {
     @SubscribeEvent
     public static void onConfigReload(ModConfigEvent.Reloading event) {

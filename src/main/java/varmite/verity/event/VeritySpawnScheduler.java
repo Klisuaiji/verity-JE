@@ -10,9 +10,9 @@
  *  net.minecraft.world.entity.EntityType
  *  net.minecraft.world.level.Level
  *  net.neoforged.neoforge.event.TickEvent$Phase
- *  net.neoforged.neoforge.event.TickEvent$ServerTickEvent
+ *  net.neoforged.neoforge.event.tick.ServerTickEvent
  *  net.neoforged.bus.api.SubscribeEvent
- *  net.neoforged.fml.common.Mod$EventBusSubscriber
+ *  net.neoforged.fml.common.EventBusSubscriber
  *  net.neoforged.neoforge.network.PacketDistributor
  *  varmite.verity.entity.ModEntities
  *  varmite.verity.event.VeritySpawnScheduler
@@ -21,6 +21,7 @@
  *  varmite.verity.network.PlayTtsPayload
  */
 package varmite.verity.event;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,19 +33,19 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.event.TickEvent;
+
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 import varmite.verity.entity.ModEntities;
 import varmite.verity.event.VeritySpawnScheduler;
-import varmite.verity.network.ModNetwork;
 import varmite.verity.network.PlayTtsPayload;
 
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 /*
  * Exception performing whole class analysis ignored.
  */
-@Mod.EventBusSubscriber(modid="verity")
+@EventBusSubscriber(modid="verity")
 public class VeritySpawnScheduler {
     private static final List<ScheduledSpawn> SCHEDULED_SPAWNS = new ArrayList();
 
@@ -57,10 +58,7 @@ public class VeritySpawnScheduler {
     }
 
     @SubscribeEvent
-    public static void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    public static void onServerTick(ServerTickEvent event) {
         long currentTick = event.getServer().getTickCount();
         Iterator iterator = SCHEDULED_SPAWNS.iterator();
         while (iterator.hasNext()) {
@@ -80,9 +78,22 @@ public class VeritySpawnScheduler {
         if ((verity = ((EntityType)ModEntities.VERITY_ENTITY.get()).create((Level)level)) != null) {
             verity.variantArea((double)chestPos.getX() + 0.5, (double)chestPos.getY() + 1.0, (double)chestPos.getZ() + 0.5, 0.0f, 0.0f);
             level.destroyBlock(verity);
-            ModNetwork.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> verity), (Object)new PlayTtsPayload(verity.getId(), "You can't trap me lil bro."));
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(verity, new PlayTtsPayload(verity.getId(), "You can't trap me lil bro."));
             level.createTick(null, verity.blockPosition(), SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, 1.0f, 1.0f);
         }
     }
-}
 
+
+    private static class ScheduledSpawn {
+        final ServerLevel level;
+        final BlockPos pos;
+        final long executeTick;
+
+        ScheduledSpawn(ServerLevel level, BlockPos pos, long executeTick) {
+            this.level = level;
+            this.pos = pos;
+            this.executeTick = executeTick;
+        }
+    }
+
+}

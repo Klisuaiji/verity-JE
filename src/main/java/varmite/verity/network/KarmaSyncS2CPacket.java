@@ -1,38 +1,33 @@
 /*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  net.minecraft.network.FriendlyByteBuf
- *  net.neoforged.neoforge.network.NetworkEvent$Context
- *  varmite.verity.network.ClientKarmaData
- *  varmite.verity.network.KarmaSyncS2CPacket
+ * Ported to NeoForge 1.21.1 — SimpleChannel message replaced by a CustomPacketPayload.
  */
 package varmite.verity.network;
 
-import java.util.function.Supplier;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import varmite.verity.network.ClientKarmaData;
 
-public class KarmaSyncS2CPacket {
-    private final int karma;
+public record KarmaSyncS2CPacket(int karma) implements CustomPacketPayload {
+    public static final CustomPacketPayload.Type<KarmaSyncS2CPacket> TYPE =
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("verity", "karma_sync"));
 
-    public KarmaSyncS2CPacket(int karma) {
-        this.karma = karma;
+    public static final StreamCodec<FriendlyByteBuf, KarmaSyncS2CPacket> STREAM_CODEC =
+            StreamCodec.composite(
+                    ByteBufCodecs.INT,
+                    KarmaSyncS2CPacket::karma,
+                    KarmaSyncS2CPacket::new
+            );
+
+    @Override
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public KarmaSyncS2CPacket(FriendlyByteBuf buf) {
-        this.karma = buf.readInt();
-    }
-
-    public void toBytes(FriendlyByteBuf buf) {
-        buf.writeInt(this.karma);
-    }
-
-    public boolean handle(Supplier<NetworkEvent.Context> supplier) {
-        NetworkEvent.Context context = supplier.get();
-        context.enqueueWork(() -> ClientKarmaData.set((int)this.karma));
-        return true;
+    public static void handleData(KarmaSyncS2CPacket payload, IPayloadContext context) {
+        context.enqueueWork(() -> ClientKarmaData.set(payload.karma()));
     }
 }
-

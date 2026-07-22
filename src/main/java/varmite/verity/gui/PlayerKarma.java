@@ -1,15 +1,12 @@
 /*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  net.minecraft.nbt.CompoundTag
- *  varmite.verity.gui.PlayerKarma
+ * Ported to NeoForge 1.21.1 — implements INBTSerializable so it can back an AttachmentType.
  */
 package varmite.verity.gui;
 
 import net.minecraft.nbt.CompoundTag;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
-public class PlayerKarma {
+public class PlayerKarma implements INBTSerializable<CompoundTag> {
     private int karma;
     private final int MIN_KARMA = 0;
     private final int MAX_KARMA = 20;
@@ -41,5 +38,16 @@ public class PlayerKarma {
     public void loadNBTData(CompoundTag nbt) {
         this.karma = nbt.getInt("player_karma");
     }
-}
 
+    @Override
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = new CompoundTag();
+        this.saveNBTData(nbt);
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag nbt) {
+        this.loadNBTData(nbt);
+    }
+}

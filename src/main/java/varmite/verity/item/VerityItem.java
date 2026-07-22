@@ -69,7 +69,6 @@ import varmite.verity.entity.custom.VerityEntity;
 import varmite.verity.event.ModEvents;
 import varmite.verity.event.WorldSpawnData;
 import varmite.verity.item.ModItems;
-import varmite.verity.network.ModNetwork;
 import varmite.verity.network.PlayTtsPayload;
 import varmite.verity.sounds.ModSounds;
 
@@ -104,7 +103,7 @@ extends Item {
         if (!((String)name).endsWith("\u2122")) {
             name = (String)name + "\u2122";
         }
-        return Component.getContents((String)name);
+        return Component.literal(name);
     }
 
     public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
@@ -162,14 +161,14 @@ extends Item {
                     serverLevel.destroyBlock((Entity)spawnedEntity);
                     spawnedEntity.setVariant("serious_1");
                     spawnedEntity.level().createTick(null, safePos, (SoundEvent)ModSounds.BONE_0.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
-                    ModNetwork.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> spawnedEntity), (Object)new PlayTtsPayload(spawnedEntity.getId(), "DO NOT DO THAT!"));
+                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(spawnedEntity, new PlayTtsPayload(spawnedEntity.getId(), "DO NOT DO THAT!"));
                     serverLevel.getServer().execute(() -> ModEvents.updateAndSyncKarma((ServerLevel)serverLevel, (float)-1.0f));
                     data = WorldSpawnData.get((ServerLevel)serverLevel);
                     serverLevel.createTick(null, spawnedEntity.blockPosition(), SoundEvents.LAVA_EXTINGUISH, SoundSource.PLAYERS, 1.0f, 0.8f);
                     if (((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
                         return;
                     }
-                    spawnedEntity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.getContents((String)"<%s> \u00a74DO NOT DO THAT.".formatted(VerityConfig.VERITY_CUSTOM_NAME.get())), false);
+                    spawnedEntity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal("<%s> \u00a74DO NOT DO THAT.".formatted(VerityConfig.VERITY_CUSTOM_NAME.get())), false);
                 }
             }
         } else if (damageSource.getFoodExhaustion(DamageTypeTags.IS_EXPLOSION)) {
@@ -182,8 +181,8 @@ extends Item {
                 CompoundTag tag = stack.getOrCreateTag();
                 tag.putString("VerityVariant", "serious_3");
                 p.getInventory().add(stack);
-                p.sendSystemMessage((Component)Component.getContents((String)"<Verity> Ayo chat why u let me explode"));
-                ModNetwork.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), (Object)new PlayTtsPayload(p.getId(), "Ayo chat why u let me explode"));
+                p.sendSystemMessage((Component)Component.literal("<Verity> Ayo chat why u let me explode"));
+                PacketDistributor.sendToPlayer(p, new PlayTtsPayload(p.getId(), "Ayo chat why u let me explode"));
                 serverLevel.getServer().execute(() -> ModEvents.updateAndSyncKarma((ServerLevel)serverLevel, (float)-1.0f));
                 data = WorldSpawnData.get((ServerLevel)serverLevel);
                 serverLevel.createTick(null, p.blockPosition(), SoundEvents.GHAST_SCREAM, SoundSource.PLAYERS, 1.0f, 1.3f);
@@ -196,8 +195,8 @@ extends Item {
                 CompoundTag tag = stack.getOrCreateTag();
                 tag.putString("VerityVariant", "serious_3");
                 p.getInventory().add(stack);
-                p.sendSystemMessage((Component)Component.getContents((String)"<Verity> DON'T DO THAT."));
-                ModNetwork.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), (Object)new PlayTtsPayload(p.getId(), "DO NOT DO THAT!"));
+                p.sendSystemMessage((Component)Component.literal("<Verity> DON'T DO THAT."));
+                PacketDistributor.sendToPlayer(p, new PlayTtsPayload(p.getId(), "DO NOT DO THAT!"));
                 serverLevel.getServer().execute(() -> ModEvents.updateAndSyncKarma((ServerLevel)serverLevel, (float)-1.0f));
                 data = WorldSpawnData.get((ServerLevel)serverLevel);
                 serverLevel.createTick(null, p.blockPosition(), (SoundEvent)ModSounds.BONE_0.get(), SoundSource.PLAYERS, 1.0f, 0.8f);

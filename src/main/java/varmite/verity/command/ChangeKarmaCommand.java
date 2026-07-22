@@ -35,7 +35,7 @@ public class ChangeKarmaCommand {
             ServerPlayer player = ((CommandSourceStack)context.getSource()).getPlayerOrException();
             ServerLevel serverLevel = player.serverLevel();
             serverLevel.getServer().execute(() -> ModEvents.setAndSyncKarma((ServerLevel)serverLevel, (float)IntegerArgumentType.getInteger((CommandContext)context, (String)"karma")));
-            ((CommandSourceStack)context.getSource()).sendSuccess(() -> Component.getContents((String)("Karma updated to " + IntegerArgumentType.getInteger((CommandContext)context, (String)"karma") + ".")), false);
+            ((CommandSourceStack)context.getSource()).sendSuccess(() -> Component.literal(("Karma updated to " + IntegerArgumentType.getInteger((CommandContext)context, (String)"karma") + ".")), false);
             return 1;
         })));
     }

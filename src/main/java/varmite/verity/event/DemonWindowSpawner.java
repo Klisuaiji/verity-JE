@@ -12,14 +12,15 @@
  *  net.minecraft.world.level.levelgen.Heightmap$Types
  *  net.minecraft.world.phys.Vec3
  *  net.neoforged.neoforge.event.TickEvent$Phase
- *  net.neoforged.neoforge.event.TickEvent$PlayerTickEvent
+ *  net.neoforged.neoforge.event.tick.PlayerTickEvent
  *  net.neoforged.bus.api.SubscribeEvent
- *  net.neoforged.fml.common.Mod$EventBusSubscriber
+ *  net.neoforged.fml.common.EventBusSubscriber
  *  varmite.verity.entity.ModEntities
  *  varmite.verity.entity.custom.VerityDemonEntity
  *  varmite.verity.event.DemonWindowSpawner
  */
 package varmite.verity.event;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -30,20 +31,18 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.TickEvent;
+
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import varmite.verity.entity.ModEntities;
 import varmite.verity.entity.custom.VerityDemonEntity;
 
-@Mod.EventBusSubscriber(modid="verity")
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+@EventBusSubscriber(modid="verity")
 public class DemonWindowSpawner {
     @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+    public static void onPlayerTick(PlayerTickEvent event) {
         boolean isIndoors;
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
         Player player = event.player;
         Level level = player.level();
         if (level.isClientSide()) {

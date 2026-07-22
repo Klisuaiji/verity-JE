@@ -134,7 +134,6 @@ import varmite.verity.entity.custom.VerityDemonEntity;
 import varmite.verity.entity.custom.VerityEntity;
 import varmite.verity.event.ModEvents;
 import varmite.verity.event.WorldSpawnData;
-import varmite.verity.network.ModNetwork;
 import varmite.verity.network.PlayTtsPayload;
 import varmite.verity.sounds.ModSounds;
 
@@ -238,7 +237,7 @@ extends PathfinderMob {
                         Random random1 = new Random();
                         int i = random1.nextInt(3);
                         this.setVariant("hurt");
-                        ModNetwork.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this), (Object)new PlayTtsPayload(this.getId(), "Ouch"));
+                        PacketDistributor.sendToPlayersTrackingEntityAndSelf(this, new PlayTtsPayload(this.getId(), "Ouch"));
                         if (i == 0) {
                             this.hurt((SoundEvent)ModSounds.IMPACT_0.get(), 1.0f, 1.0f);
                         } else if (i == 1) {
@@ -326,13 +325,13 @@ extends PathfinderMob {
                                 if (!this.isRemoved()) {
                                     this.setVariant(expression);
                                     System.out.println("[VERITY DEBUG] Sending TTS packet to client.");
-                                    ModNetwork.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this), (Object)new PlayTtsPayload(this.getId(), (String)reply));
+                                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(this, new PlayTtsPayload(this.getId(), (String)reply));
                                 }
                                 if (((String)reply).length() > 1500) {
                                     reply = ((String)reply).substring(0, 1500) + "...";
                                 }
                                 if (!((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
-                                    this.getServer().getPlayerList().broadcastSystemMessage((Component)Component.getContents((String)("<%s> ".formatted(VerityConfig.VERITY_CUSTOM_NAME.get()) + (String)reply)), false);
+                                    this.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal(("<%s> ".formatted(VerityConfig.VERITY_CUSTOM_NAME.get()) + (String)reply)), false);
                                 }
                             }
                         }
@@ -488,7 +487,7 @@ extends PathfinderMob {
             this.setApologyCount(0);
             this.clearPlayersWhoLooked();
             this.pleadingTimer = 6000;
-            player.sendSystemMessage((Component)Component.getContents((String)"\u00a74Verity's face goes blank... You must look at him to calm him down."));
+            player.sendSystemMessage((Component)Component.literal("\u00a74Verity's face goes blank... You must look at him to calm him down."));
             double dX = player.getX() - demonEntity.getX();
             double dZ = player.getZ() - demonEntity.getZ();
             double dY = player.getEyeY() - demonEntity.getEyeY();
@@ -610,7 +609,7 @@ extends PathfinderMob {
         ResourceLocation texture;
         String path = this.getTexturePath();
         if (path == null) {
-            texture = new ResourceLocation("verity", "textures/entity/happy.png");
+            texture = ResourceLocation.fromNamespaceAndPath("verity", "textures/entity/happy.png");
         } else {
             boolean visuallyTalking;
             boolean bl = visuallyTalking = this.isTalking() || this.clientIsTalking || this.clientIntroTicks > 0;

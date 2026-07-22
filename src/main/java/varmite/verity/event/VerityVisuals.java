@@ -10,10 +10,11 @@
  *  net.neoforged.neoforge.client.event.ViewportEvent$ComputeFogColor
  *  net.neoforged.neoforge.client.event.ViewportEvent$RenderFog
  *  net.neoforged.bus.api.SubscribeEvent
- *  net.neoforged.fml.common.Mod$EventBusSubscriber
+ *  net.neoforged.fml.common.EventBusSubscriber
  *  varmite.verity.event.VerityVisuals
  */
 package varmite.verity.event;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -24,7 +25,7 @@ import net.neoforged.neoforge.client.event.ViewportEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid="verity", value={Dist.CLIENT})
+@EventBusSubscriber(modid="verity", value={Dist.CLIENT})
 public class VerityVisuals {
     @SubscribeEvent
     public static void onComputeFogColor(ViewportEvent.ComputeFogColor event) {

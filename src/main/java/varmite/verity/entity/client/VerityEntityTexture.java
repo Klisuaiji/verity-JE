@@ -23,7 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 
 public class VerityEntityTexture {
-    private static final ResourceLocation ENTITY_ID = new ResourceLocation("verity", "dynamic/entity");
+    private static final ResourceLocation ENTITY_ID = ResourceLocation.fromNamespaceAndPath("verity", "dynamic/entity");
     private static NativeImage baseImage;
     private static DynamicTexture texture;
     private static int lastHue;

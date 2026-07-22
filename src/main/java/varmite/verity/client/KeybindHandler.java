@@ -4,10 +4,10 @@
  * Could not load the following classes:
  *  net.minecraft.client.Minecraft
  *  net.neoforged.api.distmarker.Dist
- *  net.neoforged.neoforge.event.TickEvent$ClientTickEvent
+ *  net.neoforged.neoforge.client.event.ClientTickEvent
  *  net.neoforged.neoforge.event.TickEvent$Phase
  *  net.neoforged.bus.api.SubscribeEvent
- *  net.neoforged.fml.common.Mod$EventBusSubscriber
+ *  net.neoforged.fml.common.EventBusSubscriber
  *  varmite.verity.client.KeybindHandler
  *  varmite.verity.client.KeybindRegistry
  *  varmite.verity.client.audio.MicrophoneManager
@@ -15,12 +15,13 @@
  *  varmite.verity.entity.AI.AiAPI
  */
 package varmite.verity.client;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.util.concurrent.CompletableFuture;
 import javax.sound.sampled.AudioFormat;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.event.TickEvent;
+
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import varmite.verity.client.KeybindRegistry;
@@ -28,7 +29,8 @@ import varmite.verity.client.audio.MicrophoneManager;
 import varmite.verity.client.audio.MicrophoneRecorder;
 import varmite.verity.entity.AI.AiAPI;
 
-@Mod.EventBusSubscriber(modid="verity", value={Dist.CLIENT})
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+@EventBusSubscriber(modid="verity", value={Dist.CLIENT})
 public class KeybindHandler {
     private static boolean isRecording = false;
     private static final MicrophoneRecorder RECORDER = new MicrophoneRecorder();
@@ -42,11 +44,8 @@ public class KeybindHandler {
     }
 
     @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event) {
+    public static void onClientTick(ClientTickEvent event) {
         boolean isKeyDown;
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
         if (KeybindRegistry.PUSH_TO_TALK == null || KeybindRegistry.CYCLE_MIC == null) {
             return;
         }

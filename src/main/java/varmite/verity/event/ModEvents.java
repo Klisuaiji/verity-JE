@@ -78,7 +78,7 @@
  *  net.neoforged.neoforge.event.RegisterCommandsEvent
  *  net.neoforged.neoforge.event.ServerChatEvent
  *  net.neoforged.neoforge.event.TickEvent$Phase
- *  net.neoforged.neoforge.event.TickEvent$ServerTickEvent
+ *  net.neoforged.neoforge.event.tick.ServerTickEvent
  *  net.neoforged.neoforge.event.entity.EntityJoinLevelEvent
  *  net.neoforged.neoforge.event.entity.item.ItemExpireEvent
  *  net.neoforged.neoforge.event.entity.living.LivingDamageEvent
@@ -93,10 +93,10 @@
  *  net.neoforged.neoforge.event.entity.player.PlayerSleepInBedEvent
  *  net.neoforged.bus.api.SubscribeEvent
  *  net.neoforged.fml.ModList
- *  net.neoforged.fml.common.Mod$EventBusSubscriber
- *  net.neoforged.forgespi.language.IModInfo
+ *  net.neoforged.fml.common.EventBusSubscriber
+ *  net.neoforged.neoforgespi.language.IModInfo
  *  net.neoforged.neoforge.network.PacketDistributor
- *  net.neoforged.neoforge.registries.ForgeRegistries
+ *  net.neoforged.neoforge.registries.NeoForgeRegistries
  *  varmite.verity.VerityConfig
  *  varmite.verity.command.ChangeKarmaCommand
  *  varmite.verity.command.RecoverVerityCommand
@@ -119,6 +119,7 @@
  *  varmite.verity.triggers.ModTriggers
  */
 package varmite.verity.event;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -195,12 +196,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.ServerChatEvent;
-import net.neoforged.neoforge.event.TickEvent;
+
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.item.ItemExpireEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
@@ -212,9 +210,9 @@ import net.neoforged.neoforge.event.entity.player.PlayerSleepInBedEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.forgespi.language.IModInfo;
+import net.neoforged.neoforgespi.language.IModInfo;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import varmite.verity.VerityConfig;
 import varmite.verity.command.ChangeKarmaCommand;
 import varmite.verity.command.RecoverVerityCommand;
@@ -226,19 +224,17 @@ import varmite.verity.entity.custom.VerityEntity;
 import varmite.verity.event.ModEvents;
 import varmite.verity.event.WorldSpawnData;
 import varmite.verity.gui.PlayerKarma;
-import varmite.verity.gui.PlayerKarmaProvider;
 import varmite.verity.item.ModItems;
 import varmite.verity.network.KarmaSyncS2CPacket;
-import varmite.verity.network.ModMessages;
-import varmite.verity.network.ModNetwork;
 import varmite.verity.network.PlayTtsPayload;
 import varmite.verity.sounds.ModSounds;
 import varmite.verity.triggers.ModTriggers;
 
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 /*
  * Exception performing whole class analysis ignored.
  */
-@Mod.EventBusSubscriber(modid="verity")
+@EventBusSubscriber(modid="verity")
 public class ModEvents {
     public static boolean hasSpawned = false;
     public static long timeWillSpawn;
@@ -259,7 +255,7 @@ public class ModEvents {
         data.verityKarma = Mth.sin((float)data.verityKarma, (float)0.0f, (float)20.0f);
         data.setDirty();
         for (ServerPlayer player : level.players()) {
-            ModMessages.sendToPlayer((Object)new KarmaSyncS2CPacket((int)data.verityKarma), (ServerPlayer)player);
+            PacketDistributor.sendToPlayer(player, new KarmaSyncS2CPacket((int)data.verityKarma));
         }
     }
 
@@ -269,29 +265,12 @@ public class ModEvents {
         data.verityKarma = Mth.sin((float)data.verityKarma, (float)0.0f, (float)20.0f);
         data.setDirty();
         for (ServerPlayer player : level.players()) {
-            ModMessages.sendToPlayer((Object)new KarmaSyncS2CPacket((int)data.verityKarma), (ServerPlayer)player);
+            PacketDistributor.sendToPlayer(player, new KarmaSyncS2CPacket((int)data.verityKarma));
         }
     }
 
     public static boolean canDropItem(Item item) {
         return item != Items.DIAMOND && item != Items.DIAMOND_AXE && item != Items.DIAMOND_PICKAXE && item != Items.DIAMOND_SWORD && item != Items.DIAMOND_SHOVEL && item != Items.DIAMOND_HOE && item != Items.DIAMOND_HELMET && item != Items.DIAMOND_CHESTPLATE && item != Items.DIAMOND_LEGGINGS && item != Items.DIAMOND_BOOTS && item != Items.DIAMOND_BLOCK && item != Items.DIAMOND_HORSE_ARMOR && item != Items.DIAMOND_ORE && item != Items.NETHERITE_INGOT && item != Items.NETHERITE_AXE && item != Items.NETHERITE_PICKAXE && item != Items.NETHERITE_SWORD && item != Items.NETHERITE_SHOVEL && item != Items.NETHERITE_HOE && item != Items.NETHERITE_HELMET && item != Items.NETHERITE_CHESTPLATE && item != Items.NETHERITE_LEGGINGS && item != Items.NETHERITE_BOOTS && item != Items.NETHERITE_BLOCK && item != Items.ANCIENT_DEBRIS && item != Items.NETHERITE_SCRAP && item != Items.ENDER_EYE && item != Items.END_PORTAL_FRAME && item != Items.BLAZE_ROD && item != Items.ELYTRA && item != Items.NETHER_STAR && item != Items.BEACON && item != Items.COMMAND_BLOCK && item != Items.CHAIN_COMMAND_BLOCK && item != Items.REPEATING_COMMAND_BLOCK && item != Items.COMMAND_BLOCK_MINECART && item != Items.BARRIER && item != Items.STRUCTURE_BLOCK && item != Items.STRUCTURE_VOID && item != Items.LIGHT;
-    }
-
-    @SubscribeEvent
-    public static void onAttachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof Player && !((Entity)event.getObject()).getCapability(PlayerKarmaProvider.PLAYER_KARMA).isPresent()) {
-            event.addCapability(new ResourceLocation("verity", "properties"), (ICapabilityProvider)new PlayerKarmaProvider());
-        }
-    }
-
-    @SubscribeEvent
-    public static void onPlayerCloned(PlayerEvent.Clone event) {
-        event.getOriginal().getCapability(PlayerKarmaProvider.PLAYER_KARMA).ifPresent(oldStore -> event.getEntity().getCapability(PlayerKarmaProvider.PLAYER_KARMA).ifPresent(newStore -> newStore.copyFrom(oldStore)));
-    }
-
-    @SubscribeEvent
-    public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
-        event.register(PlayerKarma.class);
     }
 
     @SubscribeEvent
@@ -310,7 +289,7 @@ public class ModEvents {
             isMonstrous = !nearbyDemons.isEmpty();
             ServerLevel level = player2.serverLevel();
             WorldSpawnData data = WorldSpawnData.get((ServerLevel)level);
-            ModMessages.sendToPlayer((Object)new KarmaSyncS2CPacket((int)data.verityKarma), (ServerPlayer)player2);
+            PacketDistributor.sendToPlayer(player2, new KarmaSyncS2CPacket((int)data.verityKarma));
         }
     }
 
@@ -333,7 +312,7 @@ public class ModEvents {
                 if (foundJson) {
                     data.chatHistory.clear();
                 }
-                ModMessages.sendToPlayer((Object)new KarmaSyncS2CPacket((int)data.verityKarma), (ServerPlayer)player2);
+                PacketDistributor.sendToPlayer(player2, new KarmaSyncS2CPacket((int)data.verityKarma));
             }, (int)20);
         }
     }
@@ -367,7 +346,7 @@ public class ModEvents {
                                 String string = expression = obj.has("variant") ? obj.get("variant").getAsString() : "serious_angry";
                                 if (!verity.isRemoved()) {
                                     verity.setVariant(expression);
-                                    ModNetwork.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> verity), (Object)new PlayTtsPayload(verity.getId(), (String)reply));
+                                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(verity, new PlayTtsPayload(verity.getId(), (String)reply));
                                 }
                                 if (((String)reply).length() > 1500) {
                                     reply = ((String)reply).substring(0, 1500) + "...";
@@ -375,7 +354,7 @@ public class ModEvents {
                                 if (((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
                                     return;
                                 }
-                                verity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.getContents((String)("<%s> ".formatted(VerityConfig.VERITY_CUSTOM_NAME.get()) + (String)reply)), false);
+                                verity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal(("<%s> ".formatted(VerityConfig.VERITY_CUSTOM_NAME.get()) + (String)reply)), false);
                             }
                         }
                         catch (Exception e) {
@@ -396,8 +375,8 @@ public class ModEvents {
         if (event.getEntity().getItem().is((Item)ModItems.VERITY_ITEM.get()) && (level = event.getEntity().level()) instanceof ServerLevel && (p = (serverLevel = (ServerLevel)level).getEntities((Entity)event.getEntity(), 256.0)) != null) {
             p.getInventory().add(new ItemStack((ItemLike)ModItems.VERITY_ITEM.get()));
             serverLevel.createTick(null, p.blockPosition(), SoundEvents.GHAST_HURT, SoundSource.PLAYERS, 1.0f, 1.0f);
-            p.sendSystemMessage((Component)Component.getContents((String)"<Verity> Ayo chat why u lettin me despawn like that"));
-            ModNetwork.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> p), (Object)new PlayTtsPayload(p.getId(), "Ayo chat why u lettin me despawn like that"));
+            p.sendSystemMessage((Component)Component.literal("<Verity> Ayo chat why u lettin me despawn like that"));
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(p, new PlayTtsPayload(p.getId(), "Ayo chat why u lettin me despawn like that"));
         }
     }
 
@@ -426,7 +405,7 @@ public class ModEvents {
                 newVerity.setOwnerUUID(player.getUUID());
                 player.level().destroyBlock((Entity)newVerity);
                 verityEntity = newVerity;
-                ModNetwork.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> verityEntity), (Object)new PlayTtsPayload(verityEntity.getId(), "AAAAAAAAHHH"));
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(verityEntity, new PlayTtsPayload(verityEntity.getId(), "AAAAAAAAHHH"));
                 player.level().createTick(null, player.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP, SoundSource.PLAYERS, 1.0f, 1.0f);
                 newVerity.setDeltaMovement(launchVelocity);
                 newVerity.hurtMarked = true;
@@ -465,7 +444,7 @@ public class ModEvents {
             }
             player = (ServerPlayer)p;
             if (event.getSource().getEntity() instanceof VerityDemonEntity && ((Boolean)VerityConfig.CAN_CRASH.get()).booleanValue()) {
-                player.connection.disconnect((Component)Component.getContents((String)("Farewell, " + p.getName().getString())).withStyle(new ChatFormatting[]{ChatFormatting.DARK_RED, ChatFormatting.BOLD}));
+                player.connection.disconnect((Component)Component.literal(("Farewell, " + p.getName().getString())).withStyle(new ChatFormatting[]{ChatFormatting.DARK_RED, ChatFormatting.BOLD}));
             }
         } else {
             VerityDemonEntity demon;
@@ -479,11 +458,11 @@ public class ModEvents {
                 verityEntity.setVariant("happy");
                 level.sendParticles((ParticleOptions)ParticleTypes.TOTEM_OF_UNDYING, demon.getX(), demon.getY() + 1.0, demon.getZ(), 100, 0.5, 1.0, 0.5, 0.2);
                 level.createTick(null, demon.blockPosition(), SoundEvents.TOTEM_USE, SoundSource.NEUTRAL, 1.0f, 1.0f);
-                ModNetwork.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> verityEntity), (Object)new PlayTtsPayload(verityEntity.getId(), "The darkness... it's gone. Thank you."));
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(verityEntity, new PlayTtsPayload(verityEntity.getId(), "The darkness... it's gone. Thank you."));
                 if (((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
                     return;
                 }
-                level.getServer().getPlayerList().broadcastSystemMessage((Component)Component.getContents((String)("<" + (String)VerityConfig.VERITY_CUSTOM_NAME.get() + "> The darkness... it's gone. Thank you.")), false);
+                level.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal(("<" + (String)VerityConfig.VERITY_CUSTOM_NAME.get() + "> The darkness... it's gone. Thank you.")), false);
             }
         }
     }
@@ -511,12 +490,9 @@ public class ModEvents {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     @SubscribeEvent
-    public static void onServerTick(TickEvent.ServerTickEvent event) {
+    public static void onServerTick(ServerTickEvent event) {
         Player nearestPlayer;
         ServerLevel level;
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
         List list = PENDING_TASKS;
         synchronized (list) {
             if (!PENDING_TASKS.isEmpty()) {
@@ -543,11 +519,11 @@ public class ModEvents {
                     ModEvents.updateAndSyncKarma((ServerLevel)level, (float)-1.0f);
                     if (!verityEntity.isRemoved()) {
                         verityEntity.setVariant("serious_1");
-                        ModNetwork.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> verityEntity), (Object)new PlayTtsPayload(verityEntity.getId(), "I'm alone... where did you go?"));
+                        PacketDistributor.sendToPlayersTrackingEntityAndSelf(verityEntity, new PlayTtsPayload(verityEntity.getId(), "I'm alone... where did you go?"));
                         if (((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
                             return;
                         }
-                        verityEntity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.getContents((String)"<%s> I'm alone... where did you go?".formatted(VerityConfig.VERITY_CUSTOM_NAME.get())), false);
+                        verityEntity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal("<%s> I'm alone... where did you go?".formatted(VerityConfig.VERITY_CUSTOM_NAME.get())), false);
                     }
                 } else {
                     lonelinessTimer = 3000;
@@ -582,7 +558,7 @@ public class ModEvents {
                                             String string = expression = obj.has("variant") ? obj.get("variant").getAsString() : "default";
                                             if (!verityEntity.isRemoved()) {
                                                 verityEntity.setVariant(expression);
-                                                ModNetwork.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> verityEntity), (Object)new PlayTtsPayload(verityEntity.getId(), reply));
+                                                PacketDistributor.sendToPlayersTrackingEntityAndSelf(verityEntity, new PlayTtsPayload(verityEntity.getId(), reply));
                                             }
                                             ModEvents.send((ServerPlayer)serverPlayer, (String)reply);
                                         }
@@ -612,7 +588,7 @@ public class ModEvents {
             List nearbyDemons = p.level().getEntities(VerityDemonEntity.class, searchBox);
             if (!nearbyDemons.isEmpty()) {
                 event.setResult(Player.BedSleepingProblem.OTHER_PROBLEM);
-                p.hurt((Component)Component.getContents((String)"You cannot rest now, Verity is nearby..."), true);
+                p.hurt((Component)Component.literal("You cannot rest now, Verity is nearby..."), true);
             }
         }
     }
@@ -686,7 +662,7 @@ public class ModEvents {
             }
             if (((Boolean)vEntity.getEntityData().get(VerityEntity.IS_TALKING)).booleanValue()) {
                 if (!event.getLevel().isClientSide()) {
-                    player.sendSystemMessage((Component)Component.getContents((String)"\u00a7cYou can't do this while he's talking."));
+                    player.sendSystemMessage((Component)Component.literal("\u00a7cYou can't do this while he's talking."));
                     player.level().createTick(null, player.blockPosition(), SoundEvents.VILLAGER_NO, SoundSource.PLAYERS, 1.0f, 0.9f);
                 }
                 event.setCanceled(true);
@@ -698,7 +674,7 @@ public class ModEvents {
             if (!event.getLevel().isClientSide()) {
                 MinecraftServer server = vEntity.getServer();
                 if (server != null) {
-                    ResourceLocation soundToStop = new ResourceLocation("verity", "verity_disc");
+                    ResourceLocation soundToStop = ResourceLocation.fromNamespaceAndPath("verity", "verity_disc");
                     ClientboundStopSoundPacket stopSoundPacket = new ClientboundStopSoundPacket(soundToStop, SoundSource.VOICE);
                     server.getPlayerList().broadcastAll((Packet)stopSoundPacket);
                 }
@@ -711,7 +687,7 @@ public class ModEvents {
                 if (!((String)name).endsWith("\u2122")) {
                     name = (String)name + "\u2122";
                 }
-                stack.setHoverName((Component)Component.getContents((String)name));
+                stack.setHoverName((Component)Component.literal(name));
                 vEntity.discard();
                 hasSpawned = false;
                 vEntity.level().createTick(null, vEntity.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1.0f, 1.0f);
@@ -787,10 +763,10 @@ public class ModEvents {
         if (!data.hasSpawnedEntity) {
             isMonstrous = false;
             data.verityKarma = 10.0f;
-            player.sendSystemMessage((Component)Component.getContents((String)"Need help setting up this mod? Watch these tutorials."));
-            MutableComponent message = Component.getContents((String)"\nGroq Setup Tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://youtu.be/_i4O7pyMlks")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.getContents((String)" (Easy)").withStyle(ChatFormatting.AQUA));
+            player.sendSystemMessage((Component)Component.literal("Need help setting up this mod? Watch these tutorials."));
+            MutableComponent message = Component.literal("\nGroq Setup Tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://youtu.be/_i4O7pyMlks")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.literal(" (Easy)").withStyle(ChatFormatting.AQUA));
             player.sendSystemMessage((Component)message);
-            MutableComponent ollamaMessage = Component.getContents((String)"\nOllama Setup Tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/watch?v=515I23cVBIM&t=24s")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.getContents((String)" (No limits and local)").withStyle(ChatFormatting.AQUA));
+            MutableComponent ollamaMessage = Component.literal("\nOllama Setup Tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/watch?v=515I23cVBIM&t=24s")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.literal(" (No limits and local)").withStyle(ChatFormatting.AQUA));
             player.sendSystemMessage((Component)ollamaMessage);
             BlockPos safeSpawnPos = ModEvents.findNearestLand((ServerLevel)level2, (BlockPos)player.blockPosition());
             ((EntityType)ModEntities.BOX_ENTITY.get()).spawn(level2, (ItemStack)null, null, safeSpawnPos, MobSpawnType.MOB_SUMMONED, true, true);
@@ -816,7 +792,7 @@ public class ModEvents {
             if (!((String)name).endsWith("\u2122")) {
                 name = (String)name + "\u2122";
             }
-            stack2.setHoverName((Component)Component.getContents((String)name));
+            stack2.setHoverName((Component)Component.literal(name));
             player.getInventory().add(stack2);
             hasSpawned = false;
             verityEntity.discard();
@@ -878,7 +854,7 @@ public class ModEvents {
                     spawnedVerity.setVariant(variantToSpawn);
                     spawnedVerity.getPersistentData().putBoolean("WasThrown", false);
                     if (stack.hasTag() && stack.getTag().contains("VerityName")) {
-                        spawnedVerity.addAdditionalSaveData((Component)Component.getContents((String)stack.getTag().getString("VerityName")));
+                        spawnedVerity.addAdditionalSaveData((Component)Component.literal(stack.getTag().getString("VerityName")));
                         spawnedVerity.setCustomNameVisible(true);
                     }
                 }
@@ -948,9 +924,9 @@ public class ModEvents {
                     player.getServer().execute(() -> {
                         if (verityEntity != null && !verityEntity.isRemoved()) {
                             verityEntity.setVariant(expression);
-                            ModNetwork.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> verityEntity), (Object)new PlayTtsPayload(verityEntity.getId(), reply));
+                            PacketDistributor.sendToPlayersTrackingEntityAndSelf(verityEntity, new PlayTtsPayload(verityEntity.getId(), reply));
                         } else {
-                            ModNetwork.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), (Object)new PlayTtsPayload(player.getId(), reply));
+                            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new PlayTtsPayload(player.getId(), reply));
                         }
                         ModEvents.send((ServerPlayer)player, (String)reply);
                     });
@@ -1010,7 +986,7 @@ public class ModEvents {
                             }
                             case "get_nearest_nether_fortress": {
                                 BlockPos pos = player.blockPosition();
-                                ResourceKey fortressKey = ResourceKey.codec((ResourceKey)Registries.STRUCTURE, (ResourceLocation)new ResourceLocation("minecraft", "fortress"));
+                                ResourceKey fortressKey = ResourceKey.codec((ResourceKey)Registries.STRUCTURE, (ResourceLocation)ResourceLocation.fromNamespaceAndPath("minecraft", "fortress"));
                                 Registry registry = serverLevel.registryAccess().registryOrThrow(Registries.STRUCTURE);
                                 Optional holderOptional = registry.getKey(fortressKey);
                                 if (holderOptional.isEmpty()) {
@@ -1057,12 +1033,12 @@ public class ModEvents {
                                 if (karma >= 7.0f) {
                                     ResourceLocation loc;
                                     Item foundItem = null;
-                                    if (rawItemId.contains(":") && (loc = ResourceLocation.tryParse((String)rawItemId)) != null && ForgeRegistries.ITEMS.containsKey(loc)) {
-                                        foundItem = (Item)ForgeRegistries.ITEMS.getValue(loc);
+                                    if (rawItemId.contains(":") && (loc = ResourceLocation.tryParse((String)rawItemId)) != null && NeoForgeRegistries.ITEMS.containsKey(loc)) {
+                                        foundItem = (Item)NeoForgeRegistries.ITEMS.getValue(loc);
                                     }
                                     if (foundItem == null || foundItem == Items.AIR) {
                                         String searchTarget = rawItemId.contains(":") ? rawItemId.split(":")[1] : rawItemId;
-                                        for (Map.Entry entry : ForgeRegistries.ITEMS.getEntries()) {
+                                        for (Map.Entry entry : NeoForgeRegistries.ITEMS.getEntries()) {
                                             if (!((ResourceKey)entry.getKey()).codec().getPath().equals(searchTarget)) continue;
                                             foundItem = (Item)entry.getValue();
                                             break;
@@ -1097,7 +1073,7 @@ public class ModEvents {
                             }
                             case "stop_favourite_song": {
                                 MinecraftServer server = player.getServer();
-                                ResourceLocation soundToStop = new ResourceLocation("verity", "verity_disc");
+                                ResourceLocation soundToStop = ResourceLocation.fromNamespaceAndPath("verity", "verity_disc");
                                 ClientboundStopSoundPacket stopSoundPacket = new ClientboundStopSoundPacket(soundToStop, SoundSource.VOICE);
                                 server.getPlayerList().broadcastAll((Packet)stopSoundPacket);
                                 data = "Stopped the favourite song.";
@@ -1211,9 +1187,9 @@ public class ModEvents {
                                 if (finalObj.has("variant")) {
                                     verityEntity.setVariant(finalObj.get("variant").getAsString());
                                 }
-                                ModNetwork.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> verityEntity), (Object)new PlayTtsPayload(verityEntity.getId(), reply));
+                                PacketDistributor.sendToPlayersTrackingEntityAndSelf(verityEntity, new PlayTtsPayload(verityEntity.getId(), reply));
                             } else {
-                                ModNetwork.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), (Object)new PlayTtsPayload(player.getId(), reply));
+                                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new PlayTtsPayload(player.getId(), reply));
                             }
                             ModEvents.send((ServerPlayer)player, (String)reply);
                         }
@@ -1282,7 +1258,7 @@ public class ModEvents {
         if (((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
             return;
         }
-        player.getServer().getPlayerList().broadcastSystemMessage((Component)Component.getContents((String)("<" + (String)VerityConfig.VERITY_CUSTOM_NAME.get() + "> " + (String)msg)), false);
+        player.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal(("<" + (String)VerityConfig.VERITY_CUSTOM_NAME.get() + "> " + (String)msg)), false);
     }
 
     private static String extractJson(String raw) {
@@ -1306,5 +1282,16 @@ public class ModEvents {
         PENDING_TASKS = Collections.synchronizedList(new ArrayList());
         ACTIVE_TASKS = new ArrayList();
     }
-}
 
+
+    private static class ScheduledTask {
+        final Runnable task;
+        int ticksRemaining;
+
+        ScheduledTask(Runnable task, int ticksRemaining) {
+            this.task = task;
+            this.ticksRemaining = ticksRemaining;
+        }
+    }
+
+}

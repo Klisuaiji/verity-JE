@@ -30,7 +30,7 @@
 package varmite.verity;
 
 import com.mojang.logging.LogUtils;
-import net.neoforged.neoforge.NeoForge;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -46,10 +46,9 @@ import varmite.verity.block.ModBlocks;
 import varmite.verity.entity.ModEntities;
 import varmite.verity.event.ModBusCommonSetup;
 import varmite.verity.event.ModEvents;
+import varmite.verity.gui.PlayerKarmaProvider;
 import varmite.verity.item.ModCreativeModeTabs;
 import varmite.verity.item.ModItems;
-import varmite.verity.network.ModMessages;
-import varmite.verity.network.ModNetwork;
 import varmite.verity.sounds.ModSounds;
 import varmite.verity.triggers.ModTriggers;
 
@@ -62,7 +61,7 @@ public class Verity {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, (IConfigSpec)VerityConfig.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, (IConfigSpec)VerityConfig.SPEC);
-        ModNetwork.register();
+        PlayerKarmaProvider.register((IEventBus)modEventBus);
         modEventBus.addListener(arg_0 -> this.commonSetup(arg_0));
         ModCreativeModeTabs.register((IEventBus)modEventBus);
         ModEntities.register((IEventBus)modEventBus);
@@ -75,7 +74,6 @@ public class Verity {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> ModMessages.register());
     }
 
     @SubscribeEvent

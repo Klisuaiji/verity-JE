@@ -63,7 +63,7 @@ extends Screen {
                 widget.setY(widget.getY() + 24);
             }
         }
-        this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.getContents((String)"Mod by Varmite").withStyle(ChatFormatting.BOLD), button -> Util.getPlatform().openUri("https://www.youtube.com/@varmite")).pos(varmiteX, varmiteY, varmiteWidth, 20).pos());
+        this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.literal("Mod by Varmite").withStyle(ChatFormatting.BOLD), button -> Util.getPlatform().openUri("https://www.youtube.com/@varmite")).pos(varmiteX, varmiteY, varmiteWidth, 20).pos());
     }
 }
 

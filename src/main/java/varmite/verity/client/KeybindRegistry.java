@@ -9,11 +9,12 @@
  *  net.neoforged.neoforge.client.settings.IKeyConflictContext
  *  net.neoforged.neoforge.client.settings.KeyConflictContext
  *  net.neoforged.bus.api.SubscribeEvent
- *  net.neoforged.fml.common.Mod$EventBusSubscriber
- *  net.neoforged.fml.common.Mod$EventBusSubscriber$Bus
+ *  net.neoforged.fml.common.EventBusSubscriber
+ *  net.neoforged.fml.common.EventBusSubscriber
  *  varmite.verity.client.KeybindRegistry
  */
 package varmite.verity.client;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
@@ -24,7 +25,7 @@ import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid="verity", bus=Mod.EventBusSubscriber.Bus.MOD, value={Dist.CLIENT})
+@EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.MOD, value={Dist.CLIENT})
 public class KeybindRegistry {
     public static final KeyMapping PUSH_TO_TALK = new KeyMapping("key.verity.push_to_talk", (IKeyConflictContext)KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, 86, "category.verity.keys");
     public static final KeyMapping CYCLE_MIC = new KeyMapping("key.verity.cycle_mic", (IKeyConflictContext)KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, 77, "category.verity.keys");

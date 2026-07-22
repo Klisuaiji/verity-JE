@@ -21,15 +21,16 @@
  *  net.minecraft.world.phys.HitResult$Type
  *  net.minecraft.world.phys.Vec3
  *  net.neoforged.neoforge.event.TickEvent$Phase
- *  net.neoforged.neoforge.event.TickEvent$ServerTickEvent
+ *  net.neoforged.neoforge.event.tick.ServerTickEvent
  *  net.neoforged.neoforge.event.entity.player.PlayerEvent$PlayerLoggedOutEvent
  *  net.neoforged.bus.api.SubscribeEvent
- *  net.neoforged.fml.common.Mod$EventBusSubscriber
+ *  net.neoforged.fml.common.EventBusSubscriber
  *  varmite.verity.block.ModBlocks
  *  varmite.verity.event.FlashlightServerLogic
  *  varmite.verity.item.ModItems
  */
 package varmite.verity.event;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,25 +53,23 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.TickEvent;
+
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import varmite.verity.block.ModBlocks;
 import varmite.verity.item.ModItems;
 
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 /*
  * Exception performing whole class analysis ignored.
  */
-@Mod.EventBusSubscriber(modid="verity")
+@EventBusSubscriber(modid="verity")
 public class FlashlightServerLogic {
     private static final Map<UUID, List<BlockPos>> activeLights = new HashMap();
 
     @SubscribeEvent
-    public static void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    public static void onServerTick(ServerTickEvent event) {
         if (event.getServer() == null) {
             return;
         }

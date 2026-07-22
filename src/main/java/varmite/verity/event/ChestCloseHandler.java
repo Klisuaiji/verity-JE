@@ -16,12 +16,13 @@
  *  net.minecraft.world.level.block.entity.BlockEntity
  *  net.neoforged.neoforge.event.entity.player.PlayerContainerEvent$Close
  *  net.neoforged.bus.api.SubscribeEvent
- *  net.neoforged.fml.common.Mod$EventBusSubscriber
+ *  net.neoforged.fml.common.EventBusSubscriber
  *  varmite.verity.event.ChestCloseHandler
  *  varmite.verity.event.VeritySpawnScheduler
  *  varmite.verity.item.ModItems
  */
 package varmite.verity.event;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
@@ -41,7 +42,7 @@ import net.neoforged.fml.common.Mod;
 import varmite.verity.event.VeritySpawnScheduler;
 import varmite.verity.item.ModItems;
 
-@Mod.EventBusSubscriber(modid="verity")
+@EventBusSubscriber(modid="verity")
 public class ChestCloseHandler {
     @SubscribeEvent
     public static void onChestClose(PlayerContainerEvent.Close event) {
