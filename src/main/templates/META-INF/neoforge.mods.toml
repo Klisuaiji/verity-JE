@@ -1,0 +1,45 @@
+modLoader="javafml"
+
+logoFile = "icon.png"
+logoBlur = false
+
+loaderVersion="${loader_version_range}"
+
+license="${mod_license}"
+
+[[mods]]
+
+modId="${mod_id}"
+
+version="${mod_version}"
+
+displayName="${mod_name}"
+
+authors = "§eVarmite, §aThatMob"
+displayURL="https://www.youtube.com/@varmite"
+
+description='''
+Hello I'm Verity your personal helper friend! Ask me anything, I know everything.
+'''
+
+[[dependencies.${mod_id}]]
+
+    modId="neoforge"
+
+    type="required"
+
+    versionRange="[21.1.234,)"
+
+    ordering="NONE"
+
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[mixins]]
+config = "mixins.verity.json"

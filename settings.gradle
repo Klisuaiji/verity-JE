@@ -1,0 +1,14 @@
+pluginManagement {
+    repositories {
+        // Plugin Portal first: it carries the full plugin-marker (jar + pom) for
+        // net.neoforged.moddev, so Gradle's marker probe succeeds here.
+        gradlePluginPortal()
+        // NeoForge's own Maven is a fallback for the implementation artifact
+        // (net.neoforged:moddev-gradle), which 404s on Maven Central in this environment.
+        maven { url "https://maven.neoforged.net/releases/" }
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}

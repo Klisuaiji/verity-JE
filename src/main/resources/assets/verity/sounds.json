@@ -1,0 +1,95 @@
+{
+  "box_open": {
+    "subtitle": "sounds.verity.box_open",
+    "sounds": [
+      "verity:box_open"
+    ]
+  },
+  "box_verity_0": {
+    "subtitle": "sounds.verity.box_verity_0",
+    "sounds": [
+      "verity:box_verity_0"
+    ]
+  },
+  "box_verity_1": {
+    "subtitle": "sounds.verity.box_verity_1",
+    "sounds": [
+      "verity:box_verity_1"
+    ]
+  },
+  "box_verity_2": {
+    "subtitle": "sounds.verity.box_verity_2",
+    "sounds": [
+      "verity:box_verity_2"
+    ]
+  },
+  "box_click": {
+    "subtitle": "sounds.verity.box_click",
+    "sounds": [
+      "verity:box_click"
+    ]
+  },
+  "intro": {
+    "subtitle": "sounds.verity.intro",
+    "sounds": [
+      "verity:intro"
+    ]
+  },
+  "impact_0": {
+    "subtitle": "sounds.verity.impact",
+    "sounds": [
+      "verity:impact_0"
+    ]
+  },
+  "impact_1": {
+    "subtitle": "sounds.verity.impact",
+    "sounds": [
+      "verity:impact_1"
+    ]
+  },
+  "impact_2": {
+    "subtitle": "sounds.verity.impact",
+    "sounds": [
+      "verity:impact_2"
+    ]
+  },
+  "verity_disc": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "verity:verity_disc",
+        "stream": true
+      }
+    ]
+  },
+  "intro_video_audio": {
+    "subtitle": "sounds.verity.intro_cinematic",
+    "sounds": [
+      "verity:intro_video_audio"
+    ]
+  },
+  "chase": {
+    "subtitle": "sounds.verity.chase",
+    "sounds": [
+      "verity:chase"
+    ]
+  },
+  "bone_snap": {
+    "category": "hostile",
+    "sounds": [
+      "verity:bone_snap"
+    ]
+  },
+  "bone_break": {
+    "category": "hostile",
+    "sounds": [
+      "verity:bone_break"
+    ]
+  },
+  "jumpscare": {
+    "category": "hostile",
+    "sounds": [
+      "verity:jumpscare"
+    ]
+  }
+}

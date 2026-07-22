@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "varmite.verity.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
+  "client": [
+    "TitleScreenMixin",
+    "LightTextureMixin",
+    "MixinLevelRenderer",
+    "MixinEntityRenderer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
