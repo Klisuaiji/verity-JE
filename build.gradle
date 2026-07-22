@@ -19,7 +19,13 @@ sourceSets.main.resources {
 }
 
 repositories {
-    // Add here additional repositories if required by some of the dependencies below.
+    // GeckoLib 4.x is hosted on Cloudsmith (not Maven Central).
+    // Provides software.bernie.geckolib (GeoModel, GeoEntityRenderer, GeoAnimatable, ...).
+    maven {
+        name = 'GeckoLib'
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content { includeGroup("software.bernie.geckolib") }
+    }
 }
 
 base {
@@ -88,6 +94,9 @@ dependencies {
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
     // compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
     // localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
+
+    // GeckoLib 4.x — 3D animation library used for the Verity / Box / Demon entities.
+    implementation "software.bernie.geckolib:geckolib-neoforge-1.21.1:4.8.3"
 
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html

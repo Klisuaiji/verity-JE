@@ -41,5 +41,12 @@ Hello I'm Verity your personal helper friend! Ask me anything, I know everything
     ordering="NONE"
     side="BOTH"
 
+[[dependencies.${mod_id}]]
+    modId="geckolib"
+    type="required"
+    versionRange="[4.7,)"
+    ordering="AFTER"
+    side="BOTH"
+
 [[mixins]]
 config = "mixins.verity.json"
