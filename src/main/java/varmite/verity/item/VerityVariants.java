@@ -2,49 +2,51 @@
  * Decompiled with CFR 0.152.
  * 
  * Could not load the following classes:
- *  net.minecraft.core.component.DataComponents
+ *  net.minecraft.nbt.CompoundTag
  *  net.minecraft.resources.ResourceLocation
  *  net.minecraft.world.item.ItemStack
- *  net.minecraft.world.item.component.CustomData
+ *  varmite.verity.item.VerityVariants
  */
 package varmite.verity.item;
 
-import java.util.Set;
-import net.minecraft.core.component.DataComponents;
+import java.util.List;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 
+/*
+ * Exception performing whole class analysis ignored.
+ */
 public final class VerityVariants {
-    private static final Set<String> VALID_VARIANTS = Set.of("crazy_talking_0", "default", "default_sleep_0", "default_talking_1", "hurt_0", "neutral_0", "noface", "serious_1", "serious_2", "serious_3", "serious_angry", "smile2", "smile4", "smiling_evil_0", "smiling_evil_1", "talking_0");
+    private static final List<String> VALID_VARIANTS = List.of("crazy_talking", "happy", "happy_sleep", "happy_talking", "hurt", "neutral", "noface", "serious_1", "serious_2", "serious_3", "serious_talking", "evil", "evil_talking", "smiling_evil", "crazy", "neutral_talking");
 
     private VerityVariants() {
     }
 
     public static String fromStack(ItemStack stack) {
-        CustomData customData = (CustomData)stack.getOrDefault(DataComponents.CUSTOM_DATA, (Object)CustomData.EMPTY);
-        if (customData.contains("VerityVariant")) {
-            return VerityVariants.sanitize(customData.copyTag().getString("VerityVariant"));
+        CompoundTag tag;
+        if (stack.m_41782_() && (tag = stack.m_41783_()).m_128441_("VerityVariant")) {
+            return VerityVariants.sanitize((String)tag.m_128461_("VerityVariant"));
         }
-        return "default";
+        return "happy";
     }
 
     public static ResourceLocation entityTexture(String variant) {
-        String safeVariant = VerityVariants.sanitize(variant);
+        String safeVariant = VerityVariants.sanitize((String)variant);
         if (!VALID_VARIANTS.contains(safeVariant)) {
-            safeVariant = "default";
+            safeVariant = "happy";
         }
         return ResourceLocation.fromNamespaceAndPath((String)"verity", (String)("textures/entity/" + safeVariant + ".png"));
     }
 
     private static String sanitize(String variant) {
-        if (variant == null || variant.isBlank()) {
-            return "default";
+        if (variant != null && !variant.isBlank()) {
+            if (variant.endsWith(".png")) {
+                variant = variant.substring(0, variant.length() - 4);
+            }
+            return variant;
         }
-        if (variant.endsWith(".png")) {
-            variant = variant.substring(0, variant.length() - 4);
-        }
-        return variant;
+        return "happy";
     }
 }
 

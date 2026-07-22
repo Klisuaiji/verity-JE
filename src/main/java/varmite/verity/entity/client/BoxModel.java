@@ -4,6 +4,8 @@
  * Could not load the following classes:
  *  net.minecraft.resources.ResourceLocation
  *  software.bernie.geckolib.model.GeoModel
+ *  varmite.verity.entity.client.BoxModel
+ *  varmite.verity.entity.custom.BoxEntity
  */
 package varmite.verity.entity.client;
 

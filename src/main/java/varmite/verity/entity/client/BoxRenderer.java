@@ -5,6 +5,9 @@
  *  net.minecraft.client.renderer.entity.EntityRendererProvider$Context
  *  software.bernie.geckolib.model.GeoModel
  *  software.bernie.geckolib.renderer.GeoEntityRenderer
+ *  varmite.verity.entity.client.BoxModel
+ *  varmite.verity.entity.client.BoxRenderer
+ *  varmite.verity.entity.custom.BoxEntity
  */
 package varmite.verity.entity.client;
 

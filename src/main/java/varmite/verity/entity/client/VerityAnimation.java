@@ -1,8 +1,14 @@
 /*
  * Decompiled with CFR 0.152.
+ * 
+ * Could not load the following classes:
+ *  varmite.verity.entity.client.VerityAnimation
  */
 package varmite.verity.entity.client;
 
+/*
+ * Exception performing whole class analysis ignored.
+ */
 public class VerityAnimation {
     public static float getYOffset(float tick) {
         if (tick < 0.0f || tick > 50.0f) {
@@ -47,7 +53,7 @@ public class VerityAnimation {
     }
 
     public static float getScaleXZ(float tick) {
-        float scaleY = VerityAnimation.getScaleY(tick);
+        float scaleY = VerityAnimation.getScaleY((float)tick);
         return 1.0f + (1.0f - scaleY) * 0.75f;
     }
 }

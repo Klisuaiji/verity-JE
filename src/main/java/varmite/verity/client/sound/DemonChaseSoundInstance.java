@@ -3,12 +3,17 @@
  * 
  * Could not load the following classes:
  *  net.minecraft.client.resources.sounds.AbstractTickableSoundInstance
+ *  net.minecraft.sounds.SoundEvent
  *  net.minecraft.sounds.SoundSource
  *  net.minecraft.util.RandomSource
+ *  varmite.verity.client.sound.DemonChaseSoundInstance
+ *  varmite.verity.entity.custom.VerityDemonEntity
+ *  varmite.verity.sounds.ModSounds
  */
 package varmite.verity.client.sound;
 
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import varmite.verity.entity.custom.VerityDemonEntity;
@@ -19,7 +24,7 @@ extends AbstractTickableSoundInstance {
     private final VerityDemonEntity demon;
 
     public DemonChaseSoundInstance(VerityDemonEntity demon) {
-        super(ModSounds.CHASE.get(), SoundSource.HOSTILE, RandomSource.create());
+        super((SoundEvent)ModSounds.CHASE.get(), SoundSource.HOSTILE, RandomSource.create());
         this.demon = demon;
         this.looping = true;
         this.delay = 0;

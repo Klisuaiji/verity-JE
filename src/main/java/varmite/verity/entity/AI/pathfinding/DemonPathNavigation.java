@@ -6,6 +6,8 @@
  *  net.minecraft.world.entity.ai.navigation.GroundPathNavigation
  *  net.minecraft.world.level.Level
  *  net.minecraft.world.level.pathfinder.PathFinder
+ *  varmite.verity.entity.AI.pathfinding.DemonNodeEvaluator
+ *  varmite.verity.entity.AI.pathfinding.DemonPathNavigation
  */
 package varmite.verity.entity.AI.pathfinding;
 
@@ -23,8 +25,8 @@ extends GroundPathNavigation {
 
     protected PathFinder createPathFinder(int maxVisitedNodes) {
         this.nodeEvaluator = new DemonNodeEvaluator();
-        this.nodeEvaluator.setCanPassDoors(true);
-        this.nodeEvaluator.setCanOpenDoors(true);
+        this.nodeEvaluator.prepare(true);
+        this.nodeEvaluator.done(true);
         return new PathFinder(this.nodeEvaluator, maxVisitedNodes * 2);
     }
 }

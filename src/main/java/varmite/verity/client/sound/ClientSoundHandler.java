@@ -4,6 +4,9 @@
  * Could not load the following classes:
  *  net.minecraft.client.Minecraft
  *  net.minecraft.client.resources.sounds.SoundInstance
+ *  varmite.verity.client.sound.ClientSoundHandler
+ *  varmite.verity.client.sound.DemonChaseSoundInstance
+ *  varmite.verity.entity.custom.VerityDemonEntity
  */
 package varmite.verity.client.sound;
 
@@ -14,7 +17,7 @@ import varmite.verity.entity.custom.VerityDemonEntity;
 
 public class ClientSoundHandler {
     public static void playDemonChaseSound(VerityDemonEntity demon) {
-        Minecraft.getInstance().getSoundManager().play((SoundInstance)new DemonChaseSoundInstance(demon));
+        Minecraft.getInstance().getSoundManager().prepare((SoundInstance)new DemonChaseSoundInstance(demon));
     }
 }
 

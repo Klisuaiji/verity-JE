@@ -3,6 +3,7 @@
  * 
  * Could not load the following classes:
  *  net.minecraft.core.BlockPos
+ *  net.minecraft.sounds.SoundEvent
  *  net.minecraft.sounds.SoundSource
  *  net.minecraft.world.entity.LivingEntity
  *  net.minecraft.world.entity.ai.goal.Goal
@@ -11,11 +12,15 @@
  *  net.minecraft.world.level.block.Blocks
  *  net.minecraft.world.level.block.state.BlockState
  *  net.minecraft.world.phys.Vec3
+ *  varmite.verity.entity.AI.DemonGlassBreakAndLeapGoal
+ *  varmite.verity.entity.custom.VerityDemonEntity
+ *  varmite.verity.sounds.ModSounds
  */
 package varmite.verity.entity.AI;
 
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -35,7 +40,7 @@ extends Goal {
 
     public DemonGlassBreakAndLeapGoal(VerityDemonEntity demon) {
         this.demon = demon;
-        this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        this.canBeReplacedBy(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
     }
 
     public boolean canUse() {
@@ -57,15 +62,15 @@ extends Goal {
     public void start() {
         if (this.targetedGlass != null) {
             this.shatterGlassArea(this.targetedGlass);
-            this.demon.triggerLeap();
-            this.demon.level().playSound(null, this.demon.blockPosition(), ModSounds.JUMPSCARE.get(), SoundSource.HOSTILE, 2.0f, 1.0f);
-            double heightDiff = (double)this.targetedGlass.getY() - this.demon.getY();
+            this.demon.triggerAttack();
+            this.demon.level().createTick(null, this.demon.blockPosition(), (SoundEvent)ModSounds.JUMPSCARE.get(), SoundSource.HOSTILE, 2.0f, 1.0f);
+            double heightDiff = (double)this.targetedGlass.m_123342_() - this.demon.getY();
             double yBoost = 0.5;
             if (heightDiff > 0.0) {
                 yBoost += heightDiff * 0.25;
             }
-            Vec3 jumpDir = this.target.position().subtract(this.demon.position()).normalize();
-            this.demon.setDeltaMovement(jumpDir.x * 1.8, yBoost, jumpDir.z * 1.8);
+            Vec3 jumpDir = this.target.position().m_82546_(this.demon.position()).m_82541_();
+            this.demon.m_20334_(jumpDir.x * 1.8, yBoost, jumpDir.z * 1.8);
             this.demon.forceCrawl(30);
             this.leapCooldown = 100;
         }
@@ -85,11 +90,11 @@ extends Goal {
     }
 
     private BlockPos findGlassInWay() {
-        Vec3 dir = this.target.position().subtract(this.demon.position()).normalize();
+        Vec3 dir = this.target.position().m_82546_(this.demon.position()).m_82541_();
         BlockPos feet = this.demon.blockPosition();
         for (int i = 1; i <= 4; ++i) {
             for (int yOffset = 0; yOffset <= 3; ++yOffset) {
-                BlockPos scanPos = BlockPos.containing((double)(this.demon.getX() + dir.x * (double)i), (double)(feet.getY() + yOffset), (double)(this.demon.getZ() + dir.z * (double)i));
+                BlockPos scanPos = BlockPos.offset((double)(this.demon.getX() + dir.x * (double)i), (double)(feet.m_123342_() + yOffset), (double)(this.demon.getZ() + dir.z * (double)i));
                 if (!this.isGlass(scanPos)) continue;
                 return scanPos;
             }
@@ -99,8 +104,8 @@ extends Goal {
 
     private boolean isGlass(BlockPos pos) {
         BlockState state = this.demon.level().getBlockState(pos);
-        String blockName = state.getBlock().getDescriptionId().toLowerCase();
-        return state.is(Blocks.GLASS) || state.is(Blocks.GLASS_PANE) || blockName.contains("glass") || blockName.contains("pane");
+        String blockName = state.m_60734_().getDescriptionId().toLowerCase();
+        return state.m_60713_(Blocks.GLASS) || state.m_60713_(Blocks.GLASS_PANE) || blockName.contains("glass") || blockName.contains("pane");
     }
 }
 

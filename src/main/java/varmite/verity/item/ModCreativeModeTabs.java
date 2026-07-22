@@ -10,6 +10,8 @@
  *  net.minecraft.world.level.ItemLike
  *  net.neoforged.bus.api.IEventBus
  *  net.neoforged.neoforge.registries.DeferredRegister
+ *  varmite.verity.item.ModCreativeModeTabs
+ *  varmite.verity.item.ModItems
  */
 package varmite.verity.item;
 
@@ -26,9 +28,11 @@ import varmite.verity.item.ModItems;
 
 public class ModCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create((ResourceKey)Registries.CREATIVE_MODE_TAB, (String)"verity");
-    public static final Supplier<CreativeModeTab> VERITY_TAB = CREATIVE_MODE_TABS.register("verity_tab", () -> CreativeModeTab.builder().title((Component)Component.translatable((String)"creativetab.verity.verity_tab")).icon(() -> new ItemStack((ItemLike)ModItems.VERITY_ITEM.get())).displayItems((parameters, output) -> {
+    public static final Supplier<CreativeModeTab> VERITY_TAB = CREATIVE_MODE_TABS.register("verity_tab", () -> CreativeModeTab.builder().title((Component)Component.getSiblings((String)"creativetab.verity.verity_tab")).title(() -> new ItemStack((ItemLike)ModItems.VERITY_ITEM.get())).title((parameters, output) -> {
         output.accept((ItemLike)ModItems.VERITY_ITEM.get());
         output.accept((ItemLike)ModItems.VERITY_DISC.get());
+        output.accept((ItemLike)ModItems.VERITY_EDIT_DISC.get());
+        output.accept((ItemLike)ModItems.FLASHLIGHT.get());
     }).build());
 
     public static void register(IEventBus eventBus) {

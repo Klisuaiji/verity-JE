@@ -2,36 +2,21 @@
  * Decompiled with CFR 0.152.
  * 
  * Could not load the following classes:
- *  net.minecraft.world.phys.Vec3
+ *  varmite.verity.client.DynamicLightManager
+ *  varmite.verity.client.DynamicLightManager$Beam
  */
 package varmite.verity.client;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
-import net.minecraft.world.phys.Vec3;
+import java.util.concurrent.atomic.AtomicReference;
+import varmite.verity.client.DynamicLightManager;
 
 public class DynamicLightManager {
-    private static volatile List<Beam> currentFrameBeams = Collections.emptyList();
-
-    public static List<Beam> getCurrentFrameBeams() {
-        return currentFrameBeams;
-    }
+    private static final AtomicReference<List<Beam>> CURRENT = new AtomicReference(Collections.emptyList());
 
     public static void updateBeams(List<Beam> newBeams) {
-        currentFrameBeams = List.copyOf(newBeams);
-    }
-
-    public static class Beam {
-        public final Vec3 start;
-        public final Vec3 end;
-        public final UUID owner;
-
-        public Beam(Vec3 start, Vec3 end, UUID owner) {
-            this.start = start;
-            this.end = end;
-            this.owner = owner;
-        }
+        CURRENT.set(newBeams == null ? Collections.emptyList() : List.copyOf(newBeams));
     }
 }
 

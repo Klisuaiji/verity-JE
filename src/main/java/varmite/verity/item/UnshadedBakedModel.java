@@ -9,6 +9,7 @@
  *  net.minecraft.world.level.block.state.BlockState
  *  net.neoforged.neoforge.client.model.BakedModelWrapper
  *  org.jetbrains.annotations.Nullable
+ *  varmite.verity.item.UnshadedBakedModel
  */
 package varmite.verity.item;
 
@@ -28,19 +29,15 @@ extends BakedModelWrapper<BakedModel> {
         super(originalModel);
     }
 
-    public boolean isCustomRenderer() {
-        return true;
-    }
-
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
-        List<BakedQuad> originalQuads = super.getQuads(state, side, rand);
+    public List<BakedQuad> m_213637_(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
+        List originalQuads = super.m_213637_(state, side, rand);
         ArrayList<BakedQuad> glowingQuads = new ArrayList<BakedQuad>();
         for (BakedQuad quad : originalQuads) {
             int[] vertexData = (int[])quad.getVertices().clone();
             for (int i = 0; i < 4; ++i) {
                 int packedUpNormal;
                 vertexData[i * 8 + 3] = -1;
-                vertexData[i * 8 + 6] = 0xF000F0;
+                vertexData[i * 6 + 6] = 0xF000F0;
                 vertexData[i * 8 + 7] = packedUpNormal = 32512;
             }
             glowingQuads.add(new BakedQuad(vertexData, quad.getTintIndex(), quad.getDirection(), quad.getSprite(), false));

@@ -4,6 +4,8 @@
  * Could not load the following classes:
  *  net.minecraft.world.entity.Mob
  *  net.minecraft.world.entity.ai.goal.BreakDoorGoal
+ *  varmite.verity.entity.AI.DemonBreakDoorGoal
+ *  varmite.verity.entity.custom.VerityDemonEntity
  */
 package varmite.verity.entity.AI;
 

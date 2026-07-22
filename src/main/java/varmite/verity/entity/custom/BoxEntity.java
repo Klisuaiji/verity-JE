@@ -7,7 +7,8 @@
  *  net.minecraft.network.syncher.EntityDataSerializer
  *  net.minecraft.network.syncher.EntityDataSerializers
  *  net.minecraft.network.syncher.SynchedEntityData
- *  net.minecraft.network.syncher.SynchedEntityData$Builder
+ *  net.minecraft.server.MinecraftServer
+ *  net.minecraft.server.level.ServerPlayer
  *  net.minecraft.sounds.SoundEvent
  *  net.minecraft.sounds.SoundSource
  *  net.minecraft.world.damagesource.DamageSource
@@ -25,14 +26,17 @@
  *  org.jetbrains.annotations.NotNull
  *  org.slf4j.Logger
  *  org.slf4j.LoggerFactory
- *  software.bernie.geckolib.animatable.GeoAnimatable
  *  software.bernie.geckolib.animatable.GeoEntity
- *  software.bernie.geckolib.animatable.instance.AnimatableInstanceCache
- *  software.bernie.geckolib.animation.AnimatableManager$ControllerRegistrar
- *  software.bernie.geckolib.animation.AnimationController
- *  software.bernie.geckolib.animation.PlayState
- *  software.bernie.geckolib.animation.RawAnimation
+ *  software.bernie.geckolib.core.animatable.GeoAnimatable
+ *  software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
+ *  software.bernie.geckolib.core.animation.AnimatableManager$ControllerRegistrar
+ *  software.bernie.geckolib.core.animation.AnimationController
+ *  software.bernie.geckolib.core.animation.RawAnimation
+ *  software.bernie.geckolib.core.object.PlayState
  *  software.bernie.geckolib.util.GeckoLibUtil
+ *  varmite.verity.entity.custom.BoxEntity
+ *  varmite.verity.sounds.ModSounds
+ *  varmite.verity.triggers.ModTriggers
  */
 package varmite.verity.entity.custom;
 
@@ -42,6 +46,8 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -59,15 +65,16 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import varmite.verity.sounds.ModSounds;
+import varmite.verity.triggers.ModTriggers;
 
 public class BoxEntity
 extends LivingEntity
@@ -90,23 +97,23 @@ implements GeoEntity {
         super(entityType, level);
     }
 
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(HAS_CLICKED, false);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.defineId(HAS_CLICKED, (Object)false);
     }
 
-    public void tick() {
+    public void m_8119_() {
         if (!this.level().isClientSide) {
             if (this.soundEffectTimer < 60) {
                 ++this.soundEffectTimer;
             } else if (!this.isOpened) {
                 this.soundEffectTimer = 0;
                 if (this.randInt == 0) {
-                    this.playSound(ModSounds.BOX_VERITY_0.get(), 4.0f, 1.0f);
+                    this.hurt((SoundEvent)ModSounds.BOX_VERITY_0.get(), 4.0f, 1.0f);
                 } else if (this.randInt == 1) {
-                    this.playSound(ModSounds.BOX_VERITY_1.get(), 4.0f, 1.0f);
+                    this.hurt((SoundEvent)ModSounds.BOX_VERITY_1.get(), 4.0f, 1.0f);
                 } else {
-                    this.playSound(ModSounds.BOX_VERITY_2.get(), 4.0f, 1.0f);
+                    this.hurt((SoundEvent)ModSounds.BOX_VERITY_2.get(), 4.0f, 1.0f);
                 }
                 ++this.randInt;
                 if (this.randInt > 2) {
@@ -114,14 +121,14 @@ implements GeoEntity {
                 }
             }
         }
-        super.tick();
+        super.m_8119_();
     }
 
     public boolean hasCustomName() {
         return false;
     }
 
-    public boolean shouldShowName() {
+    public boolean m_6052_() {
         return false;
     }
 
@@ -147,36 +154,40 @@ implements GeoEntity {
 
     public void triggerOpen() {
         this.triggerAnim("action_controller", "open");
+        MinecraftServer server = this.getServer();
+        for (ServerPlayer player : server.m_6846_().m_11314_()) {
+            ModTriggers.UNBOX_VERITY_TRIGGER.trigger(player);
+        }
         this.isOpened = true;
     }
 
-    public boolean isInvulnerableTo(DamageSource source) {
-        return !source.is(DamageTypes.FELL_OUT_OF_WORLD) && !source.is(DamageTypes.GENERIC_KILL);
+    public boolean m_6673_(DamageSource source) {
+        return !source.getFoodExhaustion(DamageTypes.FELL_OUT_OF_WORLD) && !source.getFoodExhaustion(DamageTypes.GENERIC_KILL);
     }
 
-    public Iterable<ItemStack> getArmorSlots() {
+    public Iterable<ItemStack> m_6168_() {
         return Collections.singleton(ItemStack.EMPTY);
     }
 
-    public ItemStack getItemBySlot(EquipmentSlot slot) {
+    public ItemStack m_6844_(EquipmentSlot slot) {
         return ItemStack.EMPTY;
     }
 
-    public void setItemSlot(EquipmentSlot slot, ItemStack stack) {
+    public void m_8061_(EquipmentSlot slot, ItemStack stack) {
     }
 
-    public HumanoidArm getMainArm() {
+    public HumanoidArm m_5737_() {
         return HumanoidArm.RIGHT;
     }
 
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController((GeoAnimatable)this, "idle_controller", 5, state -> {
+        controllers.add(new AnimationController[]{new AnimationController((GeoAnimatable)this, "idle_controller", 5, state -> {
             state.getController().setAnimation(RawAnimation.begin().thenLoop("hover"));
             return PlayState.CONTINUE;
-        }));
+        })});
         AnimationController actionController = new AnimationController((GeoAnimatable)this, "action_controller", 0, state -> PlayState.STOP);
         actionController.triggerableAnim("open", RawAnimation.begin().thenPlayAndHold("open"));
-        controllers.add(actionController);
+        controllers.add(new AnimationController[]{actionController});
     }
 
     public AnimatableInstanceCache getAnimatableInstanceCache() {

@@ -109,6 +109,19 @@ dependencies {
     // Cloth Config API — configuration screen library used by VerityClient.
     implementation "maven.modrinth:cloth-config:15.0.140+neoforge"
 
+    // YACL — configuration screen library used by 5.7.3 (YetAnotherConfigLib).
+    implementation "maven.modrinth:1eAoo2KR:3.7.0+1.21.1-neoforge"
+
+    // Offline speech engine (sherpa-onnx) is OPTIONAL. Drop a sherpa-onnx jar (core + JNI,
+    // e.g. sherpa-onnx-all.jar) into ./libs to enable local STT/TTS. If absent, the build
+    // still compiles and the mod degrades gracefully to cloud / native-OS voice.
+    // NOTE: AiAPI / VerityLocalTTS must be refactored to load sherpa via reflection so they
+    // do not require this jar at compile time (see task "voice optional degrade").
+    def sherpaJar = file('libs/sherpa-onnx-all.jar')
+    if (sherpaJar.exists()) {
+        implementation files(sherpaJar)
+    }
+
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html

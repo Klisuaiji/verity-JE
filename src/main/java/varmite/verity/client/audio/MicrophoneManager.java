@@ -6,6 +6,7 @@
  *  net.minecraft.network.chat.Component
  *  net.neoforged.api.distmarker.Dist
  *  net.neoforged.api.distmarker.OnlyIn
+ *  varmite.verity.client.audio.MicrophoneManager
  */
 package varmite.verity.client.audio;
 
@@ -21,9 +22,12 @@ import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+/*
+ * Exception performing whole class analysis ignored.
+ */
 @OnlyIn(value=Dist.CLIENT)
 public class MicrophoneManager {
-    private static final List<Mixer.Info> AVAILABLE_MICS = new ArrayList<Mixer.Info>();
+    private static final List<Mixer.Info> AVAILABLE_MICS = new ArrayList();
     private static int currentIndex = -1;
 
     public static void scanForMicrophones(AudioFormat format) {
@@ -43,22 +47,22 @@ public class MicrophoneManager {
         if (AVAILABLE_MICS.isEmpty() || currentIndex < 0 || currentIndex >= AVAILABLE_MICS.size()) {
             return null;
         }
-        return AVAILABLE_MICS.get(currentIndex);
+        return (Mixer.Info)AVAILABLE_MICS.get(currentIndex);
     }
 
     public static void cycleMicrophone() {
         if (AVAILABLE_MICS.isEmpty()) {
-            MicrophoneManager.sendClientMessage("No compatible microphones found on this system.");
+            MicrophoneManager.sendClientMessage((String)"No compatible microphones found on this system.");
             return;
         }
         currentIndex = (currentIndex + 1) % AVAILABLE_MICS.size();
-        Mixer.Info selected = AVAILABLE_MICS.get(currentIndex);
-        MicrophoneManager.sendClientMessage("Microphone switched to: " + selected.getName());
+        Mixer.Info selected = (Mixer.Info)AVAILABLE_MICS.get(currentIndex);
+        MicrophoneManager.sendClientMessage((String)("Microphone switched to: " + selected.getName()));
     }
 
     private static void sendClientMessage(String text) {
         if (Minecraft.getInstance().player != null) {
-            Minecraft.getInstance().player.displayClientMessage((Component)Component.literal((String)text), false);
+            Minecraft.getInstance().player.hurt((Component)Component.getContents((String)text), false);
         }
     }
 }
