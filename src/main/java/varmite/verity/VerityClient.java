@@ -26,7 +26,7 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 @EventBusSubscriber(modid="verity", value={Dist.CLIENT})
 public class VerityClient {
     public VerityClient(ModContainer container) {
-        container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        container.registerExtensionPoint(IConfigScreenFactory.class, (IConfigScreenFactory)ConfigurationScreen::new);
     }
 
     @SubscribeEvent

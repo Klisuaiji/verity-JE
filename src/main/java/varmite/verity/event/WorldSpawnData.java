@@ -44,7 +44,7 @@ extends SavedData {
     }
 
     public static WorldSpawnData get(ServerLevel level) {
-        return (WorldSpawnData)level.getDataStorage().computeIfAbsent(new SavedData.Factory<>(WorldSpawnData::load, WorldSpawnData::new), "verity_world_data");
+        return (WorldSpawnData)level.getDataStorage().computeIfAbsent(new SavedData.Factory(WorldSpawnData::load, WorldSpawnData::new, null), "verity_world_data");
     }
 
     public static WorldSpawnData load(CompoundTag tag, HolderLookup.Provider registries) {
