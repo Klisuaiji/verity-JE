@@ -71,7 +71,7 @@ public class MixinLevelRenderer {
             int blockLight = originalLight & 0xFFFF;
             int skyLight = originalLight >> 16 & 0xFFFF;
             int newBlockLight = Math.max(blockLight, highestExtraLight * 16);
-            cir.setReturnValue((Object)(newBlockLight | skyLight << 16));
+            cir.setReturnValue(newBlockLight | skyLight << 16);
         }
     }
 }

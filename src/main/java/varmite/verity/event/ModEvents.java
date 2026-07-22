@@ -357,7 +357,7 @@ public class ModEvents {
                 if (!event.getLevel().isClientSide()) {
                     bEntity.triggerOpen();
                     player.swing(hand, true);
-                    bEntity.getEntityData().set(BoxEntity.HAS_CLICKED, (Object)true);
+                    bEntity.getEntityData().set(BoxEntity.HAS_CLICKED, true);
                     player.level().playSound(null, bEntity.blockPosition(), ModSounds.BOX_CLICK.get(), SoundSource.BLOCKS, 0.7f, 1.0f);
                     ModEvents.schedule(() -> {
                         Level level = event.getLevel();
@@ -468,7 +468,7 @@ public class ModEvents {
             event.setCancellationResult(InteractionResult.sidedSuccess((boolean)event.getLevel().isClientSide()));
             if (!event.getLevel().isClientSide()) {
                 String variantToSpawn = "default";
-                CustomData customData = (CustomData)stack.getOrDefault(DataComponents.CUSTOM_DATA, (Object)CustomData.EMPTY);
+                CustomData customData = (CustomData)stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
                 if (customData.contains("VerityVariant")) {
                     variantToSpawn = customData.copyTag().getString("VerityVariant");
                 }
@@ -563,7 +563,7 @@ public class ModEvents {
                         switch (action) {
                             case "get_biome": {
                                 Holder<Biome> biome = player.level().getBiome(player.blockPosition());
-                                data = player.level().registryAccess().registryOrThrow(Registries.BIOME).getKey((Object)((Biome)biome.value())).getPath().replace("_", " ");
+                                data = player.level().registryAccess().registryOrThrow(Registries.BIOME).getKey((Biome)biome.value()).getPath().replace("_", " ");
                                 break;
                             }
                             case "get_coords": {

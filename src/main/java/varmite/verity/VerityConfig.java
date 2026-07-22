@@ -31,8 +31,8 @@ public class VerityConfig {
         REQUIRE_VERITY = builder.comment("Require 'Verity' in every sentence to speak to him.").define("requireVerity", false);
         USE_NATIVE_TTS = builder.comment("Use the OS's built-in narrator (Windows, macOS, Linux) instead of Groq cloud TTS.").define("useNativeTts", false);
         builder.push("AISettings");
-        API_KEY = builder.comment("Put your Groq API Key here to give Verity a brain.").define("apiKey", (Object)"");
-        AI_MODEL = builder.comment("Choose the AI intelligence level: Fast-lite, Fast, or Intelligent.").defineInList("aiModel", (Object)"Fast", MODEL_OPTIONS);
+        API_KEY = builder.comment("Put your Groq API Key here to give Verity a brain.").define("apiKey", "");
+        AI_MODEL = builder.comment("Choose the AI intelligence level: Fast-lite, Fast, or Intelligent.").defineInList("aiModel", "Fast", MODEL_OPTIONS);
         builder.pop();
         SPEC = builder.build();
     }

@@ -29,7 +29,7 @@ extends SavedData {
         CompoundTag messageTag = new CompoundTag();
         messageTag.putString("role", role);
         messageTag.putString("content", content);
-        this.chatHistory.add((Object)messageTag);
+        this.chatHistory.add(messageTag);
         while (this.chatHistory.size() > 10) {
             this.chatHistory.remove(0);
         }
@@ -44,7 +44,7 @@ extends SavedData {
     }
 
     public static WorldSpawnData get(ServerLevel level) {
-        return (WorldSpawnData)level.getDataStorage().computeIfAbsent(new SavedData.Factory(WorldSpawnData::new, WorldSpawnData::load, null), "verity_world_data");
+        return (WorldSpawnData)level.getDataStorage().computeIfAbsent(new SavedData.Factory<>(WorldSpawnData::load, WorldSpawnData::new), "verity_world_data");
     }
 
     public static WorldSpawnData load(CompoundTag tag, HolderLookup.Provider registries) {

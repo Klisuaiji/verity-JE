@@ -16,7 +16,6 @@ package varmite.verity;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.IExtensionPoint;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
@@ -27,7 +26,7 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 @EventBusSubscriber(modid="verity", value={Dist.CLIENT})
 public class VerityClient {
     public VerityClient(ModContainer container) {
-        container.registerExtensionPoint(IConfigScreenFactory.class, (IExtensionPoint)((IConfigScreenFactory)ConfigurationScreen::new));
+        container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
 
     @SubscribeEvent

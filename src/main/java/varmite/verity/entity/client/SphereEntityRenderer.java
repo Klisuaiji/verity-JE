@@ -47,7 +47,7 @@ extends EntityRenderer<VerityEntity> {
         if (entity.tickCount < 3 && entity.clientAnimationTicks < 0 && startTick > 0) {
             return;
         }
-        super.render((Entity)entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         LocalPlayer player = Minecraft.getInstance().player;
         float stretchY = 1.0f;
         float stretchXZ = 1.0f;

@@ -60,7 +60,7 @@ public abstract class MixinEntityRenderer<T extends Entity> {
             highestExtraLight = extraLight;
         }
         if (highestExtraLight > (Integer)cir.getReturnValue()) {
-            cir.setReturnValue((Object)highestExtraLight);
+            cir.setReturnValue(highestExtraLight);
         }
     }
 }

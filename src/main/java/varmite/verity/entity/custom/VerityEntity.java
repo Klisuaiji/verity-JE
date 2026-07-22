@@ -121,17 +121,17 @@ extends PathfinderMob {
 
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(TEXTURE_PATH, (Object)"verity:textures/entity/default.png");
-        builder.define(IS_TALKING, (Object)false);
-        builder.define(TALK_FRAME, (Object)0);
-        builder.define(BOUNCE_START_TICK, (Object)-1000);
+        builder.define(TEXTURE_PATH, "verity:textures/entity/default.png");
+        builder.define(IS_TALKING, false);
+        builder.define(TALK_FRAME, 0);
+        builder.define(BOUNCE_START_TICK, -1000);
     }
 
     public void triggerBoxDrop() {
         if (!this.level().isClientSide) {
             this.setVariant("hurt_0");
             this.animationTicks = 0;
-            this.entityData.set(BOUNCE_START_TICK, (Object)1);
+            this.entityData.set(BOUNCE_START_TICK, 1);
         }
     }
 
@@ -166,7 +166,7 @@ extends PathfinderMob {
             }
         } else {
             if ((Integer)this.entityData.get(BOUNCE_START_TICK) > 0 && this.tickCount > 100) {
-                this.entityData.set(BOUNCE_START_TICK, (Object)-1000);
+                this.entityData.set(BOUNCE_START_TICK, -1000);
             }
             this.talkTicks = this.isTalking() ? ++this.talkTicks : 0;
             long currentDay = this.level().getDayTime() / 24000L;
@@ -238,8 +238,8 @@ extends PathfinderMob {
 
     public void startTalking(int durationTicks) {
         if (!this.level().isClientSide) {
-            this.entityData.set(IS_TALKING, (Object)true);
-            this.entityData.set(TALK_FRAME, (Object)this.random.nextInt(2));
+            this.entityData.set(IS_TALKING, true);
+            this.entityData.set(TALK_FRAME, this.random.nextInt(2));
             this.talkTicks = 0;
             this.talkEndTick = durationTicks > 0 ? this.tickCount + durationTicks : -1;
         }
@@ -247,7 +247,7 @@ extends PathfinderMob {
 
     public void stopTalking() {
         if (!this.level().isClientSide) {
-            this.entityData.set(IS_TALKING, (Object)false);
+            this.entityData.set(IS_TALKING, false);
             this.talkTicks = 0;
             this.talkEndTick = -1;
         }
@@ -307,7 +307,7 @@ extends PathfinderMob {
             long currentDay = this.level().getDayTime() / 24000L;
             variant = currentDay >= 3L ? "smile4" : VARIANT_DEFAULT;
         }
-        this.entityData.set(TEXTURE_PATH, (Object)("verity:textures/entity/" + variant + ".png"));
+        this.entityData.set(TEXTURE_PATH, ("verity:textures/entity/" + variant + ".png"));
     }
 
     public String getTexturePath() {
@@ -315,7 +315,7 @@ extends PathfinderMob {
     }
 
     public void setTexturePath(String path) {
-        this.entityData.set(TEXTURE_PATH, (Object)path);
+        this.entityData.set(TEXTURE_PATH, path);
     }
 
     public void addAdditionalSaveData(CompoundTag tag) {

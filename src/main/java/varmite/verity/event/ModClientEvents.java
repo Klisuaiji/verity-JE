@@ -90,7 +90,7 @@ public class ModClientEvents {
             return;
         }
         if ((Double)mc.options.gamma().get() > 0.0) {
-            mc.options.gamma().set((Object)0.0);
+            mc.options.gamma().set(0.0);
             mc.options.save();
         }
     }
@@ -111,7 +111,7 @@ public class ModClientEvents {
             boolean isOn;
             ItemStack mainHand = player.getMainHandItem();
             ItemStack offHand = player.getOffhandItem();
-            Object object = mainHand.is((Item)ModItems.FLASHLIGHT.get()) ? mainHand : (offHand.is((Item)ModItems.FLASHLIGHT.get()) ? offHand : ItemStack.EMPTY);
+            ItemStack object = mainHand.is((Item)ModItems.FLASHLIGHT.get()) ? mainHand : (offHand.is((Item)ModItems.FLASHLIGHT.get()) ? offHand : ItemStack.EMPTY);
             if (object.isEmpty() || !object.has(DataComponents.CUSTOM_DATA) || !(isOn = ((CustomData)object.get(DataComponents.CUSTOM_DATA)).copyTag().getBoolean("FlashlightOn"))) continue;
             Vec3 start = player.getEyePosition(partialTick);
             Vec3 forward = player.getViewVector(partialTick);

@@ -92,7 +92,7 @@ implements GeoEntity {
 
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(HAS_CLICKED, (Object)false);
+        builder.define(HAS_CLICKED, false);
     }
 
     public void tick() {

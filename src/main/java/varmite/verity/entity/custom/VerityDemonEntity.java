@@ -145,10 +145,10 @@ Enemy {
 
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DEMON_STATE, (Object)0);
-        builder.define(IS_CLIMBING, (Object)false);
-        builder.define(IS_CRAWLING, (Object)false);
-        builder.define(HUNT_PHASE, (Object)0);
+        builder.define(DEMON_STATE, 0);
+        builder.define(IS_CLIMBING, false);
+        builder.define(IS_CRAWLING, false);
+        builder.define(HUNT_PHASE, 0);
     }
 
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
@@ -159,7 +159,7 @@ Enemy {
     }
 
     public void setHuntPhase(int phase) {
-        this.entityData.set(HUNT_PHASE, (Object)phase);
+        this.entityData.set(HUNT_PHASE, phase);
     }
 
     public int getHuntPhase() {
@@ -167,7 +167,7 @@ Enemy {
     }
 
     public void setDemonState(int state) {
-        this.entityData.set(DEMON_STATE, (Object)state);
+        this.entityData.set(DEMON_STATE, state);
     }
 
     public int getDemonState() {
@@ -277,10 +277,10 @@ Enemy {
         }
         if (this.climbTimer > 0) {
             --this.climbTimer;
-            this.entityData.set(IS_CLIMBING, (Object)true);
+            this.entityData.set(IS_CLIMBING, true);
             this.setDeltaMovement(this.getDeltaMovement().x, 0.3, this.getDeltaMovement().z);
         } else {
-            this.entityData.set(IS_CLIMBING, (Object)false);
+            this.entityData.set(IS_CLIMBING, false);
         }
         boolean needsToCrouch = false;
         Predicate<BlockState> isHardCeiling = state -> {
@@ -312,7 +312,7 @@ Enemy {
             --this.crawlTimer;
         }
         boolean isCrawling = this.crawlTimer > 0;
-        this.entityData.set(IS_CRAWLING, (Object)isCrawling);
+        this.entityData.set(IS_CRAWLING, isCrawling);
         if (wasCrawling != isCrawling) {
             this.refreshDimensions();
         }

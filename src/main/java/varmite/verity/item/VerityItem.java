@@ -78,45 +78,47 @@ extends Item {
     }
 
     public void onDestroyed(ItemEntity itemEntity, DamageSource damageSource) {
-        Level nearestPlayer2;
         if (damageSource.is(DamageTypeTags.IS_FIRE)) {
             Level level = itemEntity.level();
             if (level instanceof ServerLevel) {
                 ServerLevel serverLevel = (ServerLevel)level;
                 BlockPos itemPos = itemEntity.blockPosition();
                 BlockPos safePos = this.findClosestSafeSpawnLocation(serverLevel, itemPos);
-                VerityEntity spawnedEntity = (VerityEntity)ModEntities.VERITY_ENTITY.get().create((Level)serverLevel);
+                VerityEntity spawnedEntity = (VerityEntity)ModEntities.VERITY_ENTITY.get().create(serverLevel);
                 if (spawnedEntity != null) {
-                    spawnedEntity.moveTo((double)safePos.getX() + 0.5, safePos.getY(), (double)safePos.getZ() + 0.5, 0.0f, 0.0f);
-                    serverLevel.addFreshEntity((Entity)spawnedEntity);
+                    spawnedEntity.moveTo(safePos.getX() + 0.5, safePos.getY(), safePos.getZ() + 0.5, 0.0f, 0.0f);
+                    serverLevel.addFreshEntity(spawnedEntity);
                     spawnedEntity.setVariant("serious_1");
                     spawnedEntity.level().playSound(null, safePos, ModSounds.BONE_0.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
-                    spawnedEntity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal((String)"<Verity> \u00a74DO NOT DO THAT."), false);
-                    PacketDistributor.sendToPlayersTrackingEntityAndSelf((Entity)spawnedEntity, (CustomPacketPayload)new PlayTtsPayload(spawnedEntity.getId(), "DO NOT DO THAT!"), (CustomPacketPayload[])new CustomPacketPayload[0]);
+                    spawnedEntity.getServer().getPlayerList().broadcastSystemMessage(Component.literal("<Verity> \u00a74DO NOT DO THAT."), false);
+                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(spawnedEntity, new PlayTtsPayload(spawnedEntity.getId(), "DO NOT DO THAT!"));
                 }
             }
         } else if (damageSource.is(DamageTypeTags.IS_EXPLOSION)) {
-            ServerLevel serverLevel;
-            Player nearestPlayer2;
             Level itemPos = itemEntity.level();
-            if (itemPos instanceof ServerLevel && (nearestPlayer2 = (serverLevel = (ServerLevel)itemPos).getNearestPlayer((Entity)itemEntity, 256.0)) instanceof ServerPlayer) {
-                ServerPlayer p = (ServerPlayer)nearestPlayer2;
-                ItemStack stack = new ItemStack((ItemLike)ModItems.VERITY_ITEM.get());
-                CustomData.update((DataComponentType)DataComponents.CUSTOM_DATA, (ItemStack)stack, tag -> tag.putString("VerityVariant", "serious_3"));
-                p.getInventory().add(stack);
-                p.sendSystemMessage((Component)Component.literal((String)"<Verity> Ayo chat why u let me explode"));
-                PacketDistributor.sendToPlayer((ServerPlayer)p, (CustomPacketPayload)new PlayTtsPayload(p.getId(), "Ayo chat why u let me explode"), (CustomPacketPayload[])new CustomPacketPayload[0]);
-                serverLevel.playSound(null, p.blockPosition(), SoundEvents.GHAST_SCREAM, SoundSource.PLAYERS, 1.0f, 1.3f);
+            if (itemPos instanceof ServerLevel) {
+                ServerLevel serverLevel = (ServerLevel)itemPos;
+                Player nearestPlayer = serverLevel.getNearestPlayer(itemEntity, 256.0);
+                if (nearestPlayer instanceof ServerPlayer) {
+                    ServerPlayer p = (ServerPlayer)nearestPlayer;
+                    ItemStack stack = new ItemStack(ModItems.VERITY_ITEM.get());
+                    CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putString("VerityVariant", "serious_3"));
+                    p.getInventory().add(stack);
+                    p.sendSystemMessage(Component.literal("<Verity> Ayo chat why u let me explode"));
+                    PacketDistributor.sendToPlayer(p, new PlayTtsPayload(p.getId(), "Ayo chat why u let me explode"));
+                    serverLevel.playSound(null, p.blockPosition(), SoundEvents.GHAST_SCREAM, SoundSource.PLAYERS, 1.0f, 1.3f);
+                }
             }
-        } else if (damageSource.is(DamageTypes.CACTUS) && (nearestPlayer2 = itemEntity.level()) instanceof ServerLevel) {
-            ServerLevel serverLevel = (ServerLevel)nearestPlayer2;
-            if ((nearestPlayer2 = serverLevel.getNearestPlayer((Entity)itemEntity, 256.0)) instanceof ServerPlayer) {
-                ServerPlayer p = (ServerPlayer)nearestPlayer2;
-                ItemStack stack = new ItemStack((ItemLike)ModItems.VERITY_ITEM.get());
-                CustomData.update((DataComponentType)DataComponents.CUSTOM_DATA, (ItemStack)stack, tag -> tag.putString("VerityVariant", "serious_3"));
+        } else if (damageSource.is(DamageTypes.CACTUS) && itemEntity.level() instanceof ServerLevel) {
+            ServerLevel serverLevel = (ServerLevel)itemEntity.level();
+            Player nearestPlayer = serverLevel.getNearestPlayer(itemEntity, 256.0);
+            if (nearestPlayer instanceof ServerPlayer) {
+                ServerPlayer p = (ServerPlayer)nearestPlayer;
+                ItemStack stack = new ItemStack(ModItems.VERITY_ITEM.get());
+                CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putString("VerityVariant", "serious_3"));
                 p.getInventory().add(stack);
-                p.sendSystemMessage((Component)Component.literal((String)"<Verity> DON'T DO THAT."));
-                PacketDistributor.sendToPlayer((ServerPlayer)p, (CustomPacketPayload)new PlayTtsPayload(p.getId(), "DO NOT DO THAT!"), (CustomPacketPayload[])new CustomPacketPayload[0]);
+                p.sendSystemMessage(Component.literal("<Verity> DON'T DO THAT."));
+                PacketDistributor.sendToPlayer(p, new PlayTtsPayload(p.getId(), "DO NOT DO THAT!"));
                 serverLevel.playSound(null, p.blockPosition(), ModSounds.BONE_0.get(), SoundSource.PLAYERS, 1.0f, 0.8f);
             } else {
                 System.out.println("[VERITY DEBUG] Cactus destruction fired, but couldn't find a valid ServerPlayer nearby.");

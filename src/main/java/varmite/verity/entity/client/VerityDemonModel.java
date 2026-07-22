@@ -37,7 +37,7 @@ extends GeoModel<VerityDemonEntity> {
 
     public void setCustomAnimations(VerityDemonEntity animatable, long instanceId, AnimationState<VerityDemonEntity> animationState) {
         EntityModelData entityData;
-        super.setCustomAnimations((GeoAnimatable)animatable, instanceId, animationState);
+        super.setCustomAnimations(animatable, instanceId, animationState);
         GeoBone head = this.getAnimationProcessor().getBone("head");
         if (head != null && (entityData = (EntityModelData)animationState.getData(DataTickets.ENTITY_MODEL_DATA)) != null) {
             head.setRotX(entityData.headPitch() * ((float)Math.PI / 180));
