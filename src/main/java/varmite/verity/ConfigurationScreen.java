@@ -1,22 +1,21 @@
 package varmite.verity;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.neoforged.fml.ModContainer;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 
 /**
  * In-game configuration screen for Verity, built on top of Cloth Config API.
  *
  * <p>Registered via {@link net.neoforged.neoforge.client.gui.IConfigScreenFactory},
- * which expects a {@code (Minecraft, Screen) -> Screen} factory. This class satisfies
- * that contract through its {@code (Minecraft, Screen)} constructor, since it is a
- * {@link Screen} subclass.</p>
+ * whose {@code createScreen(ModContainer, Screen)} maps to this class's
+ * {@code (ModContainer, Screen)} constructor (constructor reference).</p>
  */
 public class ConfigurationScreen extends Screen {
     private final Screen parent;
 
-    public ConfigurationScreen(Minecraft minecraft, Screen parent) {
+    public ConfigurationScreen(ModContainer container, Screen parent) {
         super(Component.translatable("verity.config.title"));
         this.parent = parent;
     }
