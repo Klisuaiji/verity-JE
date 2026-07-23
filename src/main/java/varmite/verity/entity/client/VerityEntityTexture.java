@@ -16,13 +16,17 @@ import com.mojang.blaze3d.platform.NativeImage;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VerityEntityTexture {
+    private static final Logger LOGGER = LoggerFactory.getLogger(VerityEntityTexture.class);
     private static final ResourceLocation ENTITY_ID = ResourceLocation.fromNamespaceAndPath("verity", "dynamic/entity");
     private static NativeImage baseImage;
     private static DynamicTexture texture;
@@ -39,7 +43,12 @@ public class VerityEntityTexture {
             return;
         }
         currentTexture = textureLocation;
-        try (InputStream stream = ((Resource)Minecraft.getInstance().getResourceManager().getResource(textureLocation).orElseThrow()).open();){
+        Optional<Resource> resourceOpt = Minecraft.getInstance().getResourceManager().getResource(textureLocation);
+        if (resourceOpt.isEmpty()) {
+            LOGGER.warn("Verity entity texture {} not found; keeping previous texture", (Object)textureLocation);
+            return;
+        }
+        try (InputStream stream = resourceOpt.get().open()) {
             baseImage = NativeImage.read((InputStream)stream);
         }
         catch (IOException e) {

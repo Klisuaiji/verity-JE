@@ -16,31 +16,56 @@ import com.mojang.blaze3d.platform.NativeImage;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /*
  * Exception performing whole class analysis ignored.
  */
 public class VerityPreviewTexture {
+    private static final Logger LOGGER = LoggerFactory.getLogger(VerityPreviewTexture.class);
     private static final ResourceLocation PREVIEW_ID = ResourceLocation.fromNamespaceAndPath("verity", "dynamic/color_preview");
+    private static final ResourceLocation BASE_TEXTURE = ResourceLocation.fromNamespaceAndPath("verity", "textures/entity/preview.png");
     private static NativeImage baseImage;
     private static DynamicTexture texture;
     private static int lastHue;
 
     public static void init() {
-        try (InputStream stream = ((Resource)Minecraft.getInstance().getResourceManager().getResource(ResourceLocation.fromNamespaceAndPath("verity", "textures/entity/preview.png")).get()).open();){
-            baseImage = NativeImage.read((InputStream)stream);
-        }
-        catch (IOException e) {
-            throw new RuntimeException("Failed to load Verity preview texture", e);
+        Optional<Resource> resourceOpt = Minecraft.getInstance().getResourceManager().getResource(BASE_TEXTURE);
+        if (resourceOpt.isPresent()) {
+            try (InputStream stream = resourceOpt.get().open()) {
+                baseImage = NativeImage.read((InputStream)stream);
+            }
+            catch (IOException e) {
+                throw new RuntimeException("Failed to load Verity preview texture", e);
+            }
+        } else {
+            LOGGER.warn("Verity preview texture {} not found; generating a fallback color-preview image", (Object)BASE_TEXTURE);
+            baseImage = createFallbackBaseImage(64, 64);
         }
         texture = new DynamicTexture(baseImage.getWidth(), baseImage.getHeight(), true);
         Minecraft.getInstance().getTextureManager().register(PREVIEW_ID, texture);
-        VerityPreviewTexture.applyHue((int)0);
+        VerityPreviewTexture.applyHue(0);
+    }
+
+    private static NativeImage createFallbackBaseImage(int width, int height) {
+        NativeImage image = new NativeImage(width, height, true);
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                int rgb = Color.HSBtoRGB(0.58f, 0.6f, 0.9f);
+                int r = rgb >> 16 & 0xFF;
+                int g = rgb >> 8 & 0xFF;
+                int b = rgb & 0xFF;
+                image.setPixelRGBA(x, y, 0xFF << 24 | b << 16 | g << 8 | r);
+            }
+        }
+        return image;
     }
 
     public static void applyHue(int hue) {
