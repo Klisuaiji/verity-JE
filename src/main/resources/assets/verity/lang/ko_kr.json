@@ -1,0 +1,47 @@
+{
+  "item.verity.verity_item": "Verity™",
+  "item.verity.verity_disc.desc": "Verity™가 가장 좋아하는 곡.",
+  "item.verity.verity_disc": "Verity™의 음반",
+  "item.verity.flashlight": "손전등",
+
+  "minecraft:key.categories.multiplayer": "멀티플레이 (제작 중)",
+
+  "creativetab.verity.verity_tab": "Verity™",
+
+  "key.verity.push_to_talk": "Verity와 대화하기 (누르고 말하기)",
+  "category.verity.keys": "Verity 모드",
+  "key.verity.cycle_mic": "선택한 마이크 전환",
+
+  "entity.verity.box": "상자",
+  "entity.verity.verity": "Verity™",
+  "entity.verity.verity_demon": "§4§lVERITY",
+
+  "verity.configuration.AISettings": "AI 설정",
+  "verity.config.title": "Verity 설정",
+  "verity.config.general": "일반",
+  "verity.configuration.apiKey": "Groq API 키",
+  "verity.configuration.apiKey.tooltip": "사용자의 Groq API 키. Verity의 AI 두뇌가 작동하는 데 필요합니다.",
+  "verity.configuration.canCrash": "크래시 허용",
+  "verity.configuration.canCrash.tooltip": "Verity가 악마에게 죽었을 때 서버에서 당신을 내쫓도록 허용합니다.",
+  "verity.configuration.aiModel": "지능 수준",
+  "verity.configuration.aiModel.tooltip": "고속 라이트(가장 빠름·가장 저렴), 고속(균형), 지능형(최고 품질).",
+  "verity.configuration.requireVerity": "「Verity」 필요",
+  "verity.configuration.requireVerity.tooltip": "대화하려면 모든 문장에 'Verity'라는 단어가 포함되어야 합니다.",
+  "verity.configuration.playVideo": "인트로 영상 재생",
+  "verity.configuration.playVideo.tooltip": "클라이언트 시작 시 Verity 인트로 영상을 재생합니다.",
+  "verity.configuration.useNativeTts": "네이티브 TTS 사용",
+  "verity.configuration.useNativeTts.tooltip": "Groq 클라우드 TTS 대신 OS 내장 낭독기를 사용합니다.",
+  "verity.configuration.clearPeacefulMobs": "평화로운 몹 제거",
+  "verity.configuration.clearPeacefulMobs.tooltip": "더 고립된 공포 분위기를 위해 평화로운 몹(마을 주민, 소, 양, 돼지, 닭)을 제거합니다.",
+
+  "sounds.verity.box_click": "상자 클릭",
+  "sounds.verity.box_open": "상자 열기",
+  "sounds.verity.box_verity_0": "상자 속 Verity™",
+  "sounds.verity.box_verity_1": "상자 속 Verity™",
+  "sounds.verity.box_verity_2": "상자 속 Verity™",
+  "sounds.verity.intro": "인트로",
+  "sounds.verity.impact": "Verity™ 임팩트",
+  "sounds.verity.intro_cinematic": "인트로 시네마틱",
+  "sounds.verity.chase": "§l§4RUN",
+  "sounds.verity.bone_break": "뼈 부러짐"
+}

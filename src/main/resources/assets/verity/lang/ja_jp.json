@@ -1,0 +1,47 @@
+{
+  "item.verity.verity_item": "Verity™",
+  "item.verity.verity_disc.desc": "Verity™が愛する代表曲。",
+  "item.verity.verity_disc": "Verity™のレコード",
+  "item.verity.flashlight": "懐中電灯",
+
+  "minecraft:key.categories.multiplayer": "マルチプレイ（制作中）",
+
+  "creativetab.verity.verity_tab": "Verity™",
+
+  "key.verity.push_to_talk": "Verityに話しかける（押して話す）",
+  "category.verity.keys": "Verity モッド",
+  "key.verity.cycle_mic": "選択中のマイクを切り替え",
+
+  "entity.verity.box": "箱",
+  "entity.verity.verity": "Verity™",
+  "entity.verity.verity_demon": "§4§lVERITY",
+
+  "verity.configuration.AISettings": "AI設定",
+  "verity.config.title": "Verity 設定",
+  "verity.config.general": "一般",
+  "verity.configuration.apiKey": "Groq APIキー",
+  "verity.configuration.apiKey.tooltip": "あなたのGroq APIキー。VerityのAI頭脳が機能するために必要です。",
+  "verity.configuration.canCrash": "クラッシュを許可",
+  "verity.configuration.canCrash.tooltip": "Verityが悪魔に倒されたとき、サーバーからあなたをキックすることを許可します。",
+  "verity.configuration.aiModel": "知能レベル",
+  "verity.configuration.aiModel.tooltip": "高速軽量（最速・最安）、高速（バランス）、高智能（最高品質）。",
+  "verity.configuration.requireVerity": "「Verity」が必要",
+  "verity.configuration.requireVerity.tooltip": "会話するには、すべての文章に「Verity」という単語を含める必要があります。",
+  "verity.configuration.playVideo": "イントロ動画を再生",
+  "verity.configuration.playVideo.tooltip": "クライアント起動時にVerityのイントロ動画を再生します。",
+  "verity.configuration.useNativeTts": "ネイティブTTSを使用",
+  "verity.configuration.useNativeTts.tooltip": "GroqクラウドTTSの代わりに、OS内蔵のナレーターを使用します。",
+  "verity.configuration.clearPeacefulMobs": "平和なモブを消去",
+  "verity.configuration.clearPeacefulMobs.tooltip": "より孤立したホラーな雰囲気を演出するため、平和なモブ（村人、牛、羊、豚、ニワトリ）を削除します。",
+
+  "sounds.verity.box_click": "箱のクリック",
+  "sounds.verity.box_open": "箱を開ける",
+  "sounds.verity.box_verity_0": "箱の中のVerity™",
+  "sounds.verity.box_verity_1": "箱の中のVerity™",
+  "sounds.verity.box_verity_2": "箱の中のVerity™",
+  "sounds.verity.intro": "イントロダクション",
+  "sounds.verity.impact": "Verity™インパクト",
+  "sounds.verity.intro_cinematic": "イントロシネマティック",
+  "sounds.verity.chase": "§l§4RUN",
+  "sounds.verity.bone_break": "骨が折れる音"
+}
