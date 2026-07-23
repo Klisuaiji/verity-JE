@@ -49,9 +49,9 @@ Hello I'm Verity your personal helper friend! Ask me anything, I know everything
     side="BOTH"
 
 [[dependencies.${mod_id}]]
-    modId="yacl"
+    modId="yet_another_config_lib_v3"
     type="required"
-    versionRange="[3.0,)"
+    versionRange="[3.7,)"
     ordering="AFTER"
     side="CLIENT"
 
