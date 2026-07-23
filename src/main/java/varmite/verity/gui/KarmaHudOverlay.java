@@ -38,14 +38,14 @@ public class KarmaHudOverlay {
             int faceY = startY;
             int barBottomY = startY + faceSize + gap + texWidth;
             ResourceLocation face = karma < 7 ? FACE_ANGRY : (karma < 14 ? FACE_NEUTRAL : FACE_HAPPY);
-            guiGraphics.blit(face, faceX, faceY, 0, 0.0f, 0.0f, faceSize, faceSize, faceSize, faceSize);
+            guiGraphics.blit(face, faceX, faceY, 0.0f, 0.0f, faceSize, faceSize, faceSize, faceSize);
             int fillWidth = (int) ((float) karma / (float) maxKarma * (float) texWidth);
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate((double) drawX, (double) barBottomY, 0.0);
             guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(-90.0f));
-            guiGraphics.blit(EMPTY_BAR, 0, 0, 0, 0.0f, 0.0f, texWidth, texHeight, texWidth, texHeight);
+            guiGraphics.blit(EMPTY_BAR, 0, 0, 0.0f, 0.0f, texWidth, texHeight, texWidth, texHeight);
             if (fillWidth > 0) {
-                guiGraphics.blit(FULL_BAR, 0, 0, 0, 0.0f, 0.0f, fillWidth, texHeight, texWidth, texHeight);
+                guiGraphics.blit(FULL_BAR, 0, 0, 0.0f, 0.0f, fillWidth, texHeight, texWidth, texHeight);
             }
             guiGraphics.pose().popPose();
         }

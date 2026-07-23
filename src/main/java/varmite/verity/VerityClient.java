@@ -4,26 +4,8 @@ import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModLoadingContext;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 
-@EventBusSubscriber(modid = "verity", bus = EventBusSubscriber.Bus.MOD, value = {Dist.CLIENT})
 public class VerityClient {
-
-    @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
-        // Note: registerRenderers (EntityRenderersEvent.RegisterRenderers) and
-        // onModifyBakingResult (ModelEvent.ModifyBakingResult) are IModBusEvents and are
-        // already auto-subscribed on the MOD bus via ModBusClientSetup's @EventBusSubscriber.
-        // Re-registering them on the GAME bus throws "IModBusEvent events are not allowed on
-        // the common NeoForge bus". Do NOT addListener them here.
-        ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class,
-                () -> (minecraft, previousScreen) -> VerityClient.createYACLScreen(previousScreen));
-    }
 
     public static Screen createYACLScreen(Screen previousScreen) {
         // ===== General Category =====

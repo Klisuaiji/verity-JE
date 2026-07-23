@@ -27,7 +27,7 @@ import net.minecraft.sounds.SoundSource;
 
 public class IntroVideoScreen
 extends Screen {
-    private static final int TOTAL_FRAMES = 248;
+    private static final int TOTAL_FRAMES = 532;
     private static final int FPS = 24;
     private final Screen previousScreen;
     private long startTime = 0L;
@@ -56,7 +56,7 @@ extends Screen {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         long elapsedMillis = System.currentTimeMillis() - this.startTime;
         int currentFrame = (int)(elapsedMillis * 24L / 1000L) + 1;
-        if (currentFrame > 248) {
+        if (currentFrame > TOTAL_FRAMES) {
             this.skip();
             return;
         }

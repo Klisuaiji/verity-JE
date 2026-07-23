@@ -31,6 +31,7 @@ package varmite.verity;
 
 import com.mojang.logging.LogUtils;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -58,6 +59,11 @@ public class Verity {
     public Verity(IEventBus modEventBus, ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.CLIENT, VerityConfig.SPEC);
         modContainer.registerConfig(ModConfig.Type.COMMON, VerityConfig.SPEC);
+        // Register the in-game config screen factory via the ModContainer (NeoForge 1.21.1+ API).
+        // ModLoadingContext.get() is only valid inside @Mod constructors; using
+        // modContainer.registerExtensionPoint is the correct approach.
+        modContainer.registerExtensionPoint(IConfigScreenFactory.class,
+                (container, previousScreen) -> VerityClient.createYACLScreen(previousScreen));
         PlayerKarmaProvider.register(modEventBus);
         modEventBus.addListener(this::commonSetup);
         ModCreativeModeTabs.register(modEventBus);
