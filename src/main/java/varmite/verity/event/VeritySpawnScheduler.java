@@ -46,7 +46,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 /*
  * Exception performing whole class analysis ignored.
  */
-@EventBusSubscriber(modid="verity")
+@EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.GAME)
 public class VeritySpawnScheduler {
     private static final List<ScheduledSpawn> SCHEDULED_SPAWNS = new ArrayList();
 
@@ -59,7 +59,7 @@ public class VeritySpawnScheduler {
     }
 
     @SubscribeEvent
-    public static void onServerTick(ServerTickEvent event) {
+    public static void onServerTick(ServerTickEvent.Pre event) {
         long currentTick = event.getServer().getTickCount();
         Iterator iterator = SCHEDULED_SPAWNS.iterator();
         while (iterator.hasNext()) {

@@ -65,7 +65,7 @@ public class Verity {
         ModItems.register(modEventBus);
         ModSounds.register(modEventBus);
         ModBlocks.register(modEventBus);
-        ModTriggers.UNBOX_VERITY_TRIGGER.toString();
+        ModTriggers.register(modEventBus);
         NeoForge.EVENT_BUS.register(ModEvents.class);
         modEventBus.addListener(ModBusCommonSetup::registerAttributes);
     }

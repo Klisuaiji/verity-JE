@@ -59,7 +59,7 @@ import net.neoforged.neoforge.client.event.RenderFrameEvent;
 /*
  * Exception performing whole class analysis ignored.
  */
-@EventBusSubscriber(modid="verity", value={Dist.CLIENT})
+@EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.GAME, value={Dist.CLIENT})
 public class ModClientEvents {
     private static boolean hasPlayedIntro = false;
     private static Set<BlockPos> previousCenterBlocks = new HashSet();
@@ -78,7 +78,7 @@ public class ModClientEvents {
     }
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent event) {
+    public static void onClientTick(ClientTickEvent.Pre event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null && (Double)mc.options.gamma().get() > 0.0) {
             mc.options.gamma().set(0.0);

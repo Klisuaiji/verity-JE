@@ -42,7 +42,7 @@ import net.neoforged.fml.common.Mod;
 import varmite.verity.event.VeritySpawnScheduler;
 import varmite.verity.item.ModItems;
 
-@EventBusSubscriber(modid="verity")
+@EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.GAME)
 public class ChestCloseHandler {
     @SubscribeEvent
     public static void onChestClose(PlayerContainerEvent.Close event) {

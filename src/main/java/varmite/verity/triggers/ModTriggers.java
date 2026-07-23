@@ -1,40 +1,34 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  net.minecraft.advancements.CriteriaTriggers
- *  net.minecraft.advancements.CriterionTrigger
- *  varmite.verity.triggers.BadKarmaTrigger
- *  varmite.verity.triggers.FavoriteSongTrigger
- *  varmite.verity.triggers.GoodKarmaTrigger
- *  varmite.verity.triggers.KarmaChangeTrigger
- *  varmite.verity.triggers.ModTriggers
- *  varmite.verity.triggers.OpenBoxTrigger
- *  varmite.verity.triggers.PlaySoundTrigger
- *  varmite.verity.triggers.TalkTrigger
- *  varmite.verity.triggers.VillageTrigger
- */
 package varmite.verity.triggers;
 
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.CriterionTrigger;
-import varmite.verity.triggers.BadKarmaTrigger;
-import varmite.verity.triggers.FavoriteSongTrigger;
-import varmite.verity.triggers.GoodKarmaTrigger;
-import varmite.verity.triggers.KarmaChangeTrigger;
-import varmite.verity.triggers.OpenBoxTrigger;
-import varmite.verity.triggers.PlaySoundTrigger;
-import varmite.verity.triggers.TalkTrigger;
-import varmite.verity.triggers.VillageTrigger;
+import net.minecraft.core.registries.Registries;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import varmite.verity.Verity;
 
 public class ModTriggers {
-    public static final OpenBoxTrigger UNBOX_VERITY_TRIGGER = CriteriaTriggers.register(OpenBoxTrigger.ID.toString(), new OpenBoxTrigger());
-    public static final TalkTrigger TALK_TRIGGER = CriteriaTriggers.register(TalkTrigger.ID.toString(), new TalkTrigger());
-    public static final VillageTrigger VILLAGE_TRIGGER = CriteriaTriggers.register(VillageTrigger.ID.toString(), new VillageTrigger());
-    public static final KarmaChangeTrigger KARMA_CHANGE_TRIGGER = CriteriaTriggers.register(KarmaChangeTrigger.ID.toString(), new KarmaChangeTrigger());
-    public static final GoodKarmaTrigger GOOD_KARMA_TRIGGER = CriteriaTriggers.register(GoodKarmaTrigger.ID.toString(), new GoodKarmaTrigger());
-    public static final BadKarmaTrigger BAD_KARMA_TRIGGER = CriteriaTriggers.register(BadKarmaTrigger.ID.toString(), new BadKarmaTrigger());
-    public static final FavoriteSongTrigger FAVORITE_SONG_TRIGGER = CriteriaTriggers.register(FavoriteSongTrigger.ID.toString(), new FavoriteSongTrigger());
-    public static final PlaySoundTrigger PLAY_SOUND_TRIGGER = CriteriaTriggers.register(PlaySoundTrigger.ID.toString(), new PlaySoundTrigger());
-}
+    public static final DeferredRegister<CriterionTrigger<?>> TRIGGERS =
+            DeferredRegister.create(Registries.TRIGGER_TYPE, Verity.MOD_ID);
 
+    public static final DeferredHolder<CriterionTrigger<?>, OpenBoxTrigger> UNBOX_VERITY_TRIGGER =
+            TRIGGERS.register("openbox", OpenBoxTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, TalkTrigger> TALK_TRIGGER =
+            TRIGGERS.register("talk", TalkTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, VillageTrigger> VILLAGE_TRIGGER =
+            TRIGGERS.register("village", VillageTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, KarmaChangeTrigger> KARMA_CHANGE_TRIGGER =
+            TRIGGERS.register("karmachange", KarmaChangeTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, GoodKarmaTrigger> GOOD_KARMA_TRIGGER =
+            TRIGGERS.register("goodkarma", GoodKarmaTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, BadKarmaTrigger> BAD_KARMA_TRIGGER =
+            TRIGGERS.register("badkarma", BadKarmaTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, FavoriteSongTrigger> FAVORITE_SONG_TRIGGER =
+            TRIGGERS.register("favoritesong", FavoriteSongTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, PlaySoundTrigger> PLAY_SOUND_TRIGGER =
+            TRIGGERS.register("playsound", PlaySoundTrigger::new);
+
+    public static void register(IEventBus modEventBus) {
+        TRIGGERS.register(modEventBus);
+    }
+}

@@ -30,7 +30,7 @@ import varmite.verity.client.audio.MicrophoneRecorder;
 import varmite.verity.entity.AI.AiAPI;
 
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-@EventBusSubscriber(modid="verity", value={Dist.CLIENT})
+@EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.GAME, value={Dist.CLIENT})
 public class KeybindHandler {
     private static boolean isRecording = false;
     private static final MicrophoneRecorder RECORDER = new MicrophoneRecorder();
@@ -44,7 +44,7 @@ public class KeybindHandler {
     }
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent event) {
+    public static void onClientTick(ClientTickEvent.Pre event) {
         boolean isKeyDown;
         if (KeybindRegistry.PUSH_TO_TALK == null || KeybindRegistry.CYCLE_MIC == null) {
             return;

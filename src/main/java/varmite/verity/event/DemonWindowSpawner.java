@@ -38,10 +38,10 @@ import varmite.verity.entity.ModEntities;
 import varmite.verity.entity.custom.VerityDemonEntity;
 
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-@EventBusSubscriber(modid="verity")
+@EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.GAME)
 public class DemonWindowSpawner {
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent event) {
+    public static void onPlayerTick(PlayerTickEvent.Pre event) {
         boolean isIndoors;
         Player player = event.getEntity();
         Level level = player.level();

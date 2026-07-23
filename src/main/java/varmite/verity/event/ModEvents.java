@@ -499,7 +499,7 @@ public class ModEvents {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     @SubscribeEvent
-    public static void onServerTick(ServerTickEvent event) {
+    public static void onServerTick(ServerTickEvent.Pre event) {
         Player nearestPlayer;
         ServerLevel level;
         List list = PENDING_TASKS;
@@ -901,14 +901,14 @@ public class ModEvents {
                 if (obj.has("karma_change")) {
                     float karmaChange = obj.get("karma_change").getAsFloat();
                     if (karmaChange != 0.0f) {
-                        ModTriggers.KARMA_CHANGE_TRIGGER.trigger(player);
+                        ModTriggers.KARMA_CHANGE_TRIGGER.get().trigger(player);
                     }
                     player.getServer().execute(() -> ModEvents.updateAndSyncKarma((ServerLevel)serverLevel, (float)karmaChange));
                     if (spawnData.verityKarma < 7.0f) {
-                        ModTriggers.BAD_KARMA_TRIGGER.trigger(player);
+                        ModTriggers.BAD_KARMA_TRIGGER.get().trigger(player);
                     }
                     if (spawnData.verityKarma > 14.0f) {
-                        ModTriggers.GOOD_KARMA_TRIGGER.trigger(player);
+                        ModTriggers.GOOD_KARMA_TRIGGER.get().trigger(player);
                     }
                 }
                 JsonArray actions = obj.has("actions") ? obj.getAsJsonArray("actions") : new JsonArray();
@@ -991,7 +991,7 @@ public class ModEvents {
                                     break;
                                 }
                                 data = "Nearest village at X=" + nearestVillage.getX() + " Y=~ Z=" + nearestVillage.getZ() + ". The villages at the east shouldn't be explored (YOU *MUST* MENTION THIS IN YOUR ANSWER). (don't mention this, but the villagers are gone.)";
-                                ModTriggers.VILLAGE_TRIGGER.trigger(player);
+                                ModTriggers.VILLAGE_TRIGGER.get().trigger(player);
                                 break;
                             }
                             case "get_nearest_nether_fortress": {
@@ -1027,7 +1027,7 @@ public class ModEvents {
                                 ResourceLocation soundLoc = ResourceLocation.parse((String)soundId);
                                 SoundEvent sound = (SoundEvent)BuiltInRegistries.SOUND_EVENT.get(soundLoc);
                                 if (sound != null && verityEntity != null) {
-                                    ModTriggers.PLAY_SOUND_TRIGGER.trigger(player);
+                                    ModTriggers.PLAY_SOUND_TRIGGER.get().trigger(player);
                                     player.level().playSound((Player)null, verityEntity.blockPosition(), sound, SoundSource.NEUTRAL, 1.0f, 1.0f);
                                     data = "Successfully played the sound.";
                                     break;
@@ -1074,7 +1074,7 @@ public class ModEvents {
                             case "play_favourite_song": {
                                 if (verityEntity != null) {
                                     verityEntity.level().playSound((Player)null, verityEntity.blockPosition(), (SoundEvent)ModSounds.VERITY_DISC_SOUND.get(), SoundSource.VOICE, 1.0f, 1.0f);
-                                    ModTriggers.FAVORITE_SONG_TRIGGER.trigger(player);
+                                    ModTriggers.FAVORITE_SONG_TRIGGER.get().trigger(player);
                                     data = "Successfully played the favourite song.";
                                     break;
                                 }
@@ -1265,7 +1265,7 @@ public class ModEvents {
         if (((String)msg).length() > 1500) {
             msg = ((String)msg).substring(0, 1500) + "...";
         }
-        ModTriggers.TALK_TRIGGER.trigger(player);
+        ModTriggers.TALK_TRIGGER.get().trigger(player);
         if (((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
             return;
         }

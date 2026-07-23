@@ -65,7 +65,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 /*
  * Exception performing whole class analysis ignored.
  */
-@EventBusSubscriber(modid="verity")
+@EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.GAME)
 public class FlashlightServerLogic {
     private static final Map<UUID, List<BlockPos>> activeLights = new HashMap();
 
@@ -75,7 +75,7 @@ public class FlashlightServerLogic {
     }
 
     @SubscribeEvent
-    public static void onServerTick(ServerTickEvent event) {
+    public static void onServerTick(ServerTickEvent.Pre event) {
         if (event.getServer() == null) {
             return;
         }

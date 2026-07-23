@@ -156,7 +156,7 @@ implements GeoEntity {
         this.triggerAnim("action_controller", "open");
         MinecraftServer server = this.getServer();
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            ModTriggers.UNBOX_VERITY_TRIGGER.trigger(player);
+            ModTriggers.UNBOX_VERITY_TRIGGER.get().trigger(player);
         }
         this.isOpened = true;
     }
