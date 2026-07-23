@@ -87,7 +87,7 @@ public class ModClientEvents {
     }
 
     @SubscribeEvent
-    public static void onRenderFrame(RenderFrameEvent event) {
+    public static void onRenderFrame(RenderFrameEvent.Pre event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null || mc.levelRenderer == null) {
             return;
