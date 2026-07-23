@@ -49,13 +49,6 @@ Hello I'm Verity your personal helper friend! Ask me anything, I know everything
     side="BOTH"
 
 [[dependencies.${mod_id}]]
-    modId="cloth_config"
-    type="required"
-    versionRange="[15.0,)"
-    ordering="AFTER"
-    side="BOTH"
-
-[[dependencies.${mod_id}]]
     modId="yacl"
     type="required"
     versionRange="[3.0,)"

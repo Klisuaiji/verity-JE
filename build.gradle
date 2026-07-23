@@ -27,8 +27,7 @@ repositories {
         content { includeGroup("software.bernie.geckolib") }
     }
 
-    // Cloth Config API (config screen library) is served from the Modrinth Maven.
-    // Provides me.shedaniel.clothconfig2 (ConfigBuilder, ConfigCategory, ConfigEntryBuilder, ...).
+    // Modrinth Maven — hosts YACL (YetAnotherConfigLib) and other mod dependencies.
     maven {
         name = 'Modrinth'
         url = 'https://api.modrinth.com/maven'
@@ -106,10 +105,7 @@ dependencies {
     // GeckoLib 4.x — 3D animation library used for the Verity / Box / Demon entities.
     implementation "software.bernie.geckolib:geckolib-neoforge-1.21.1:4.8.3"
 
-    // Cloth Config API — configuration screen library used by VerityClient.
-    implementation "maven.modrinth:cloth-config:15.0.140+neoforge"
-
-    // YACL — configuration screen library used by 5.7.3 (YetAnotherConfigLib).
+    // YACL — YetAnotherConfigLib (3.7+), configuration screen library used by VerityClient.
     implementation "maven.modrinth:1eAoo2KR:3.7.0+1.21.1-neoforge"
 
     // Offline speech engine (sherpa-onnx) is OPTIONAL. Drop a sherpa-onnx jar (core + JNI,

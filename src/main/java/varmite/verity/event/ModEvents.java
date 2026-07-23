@@ -1169,7 +1169,7 @@ public class ModEvents {
                             }
                             case "get_players_mods": {
                                 List<String> modIds = ModList.get().getMods().stream().map(IModInfo::getModId).toList();
-                                data = String.join((CharSequence)", ", modIds) + "Ignore forge, geckolib, and cloth config.";
+                                data = String.join((CharSequence)", ", modIds) + "Ignore forge and geckolib.";
                                 break;
                             }
                             case "transform_back": {
