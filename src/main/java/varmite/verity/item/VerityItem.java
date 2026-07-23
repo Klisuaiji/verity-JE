@@ -149,7 +149,7 @@ extends Item {
 
     public void onDestroyed(ItemEntity itemEntity, DamageSource damageSource) {
         Level nearestPlayer2;
-        if (damageSource.getFoodExhaustion(DamageTypeTags.IS_FIRE)) {
+        if (damageSource.is(DamageTypeTags.IS_FIRE)) {
             Level level = itemEntity.level();
             if (level instanceof ServerLevel) {
                 ServerLevel serverLevel = (ServerLevel)level;
@@ -171,7 +171,7 @@ extends Item {
                     spawnedEntity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal("<%s> \u00a74DO NOT DO THAT.".formatted(VerityConfig.VERITY_CUSTOM_NAME.get())), false);
                 }
             }
-        } else if (damageSource.getFoodExhaustion(DamageTypeTags.IS_EXPLOSION)) {
+        } else if (damageSource.is(DamageTypeTags.IS_EXPLOSION)) {
             ServerLevel serverLevel;
             Player nearestPlayer2;
             Level itemPos = itemEntity.level();
@@ -187,7 +187,7 @@ extends Item {
                 data = WorldSpawnData.get((ServerLevel)serverLevel);
                 serverLevel.createTick(null, p.blockPosition(), SoundEvents.GHAST_SCREAM, SoundSource.PLAYERS, 1.0f, 1.3f);
             }
-        } else if (damageSource.getFoodExhaustion(DamageTypes.CACTUS) && (nearestPlayer2 = itemEntity.level()) instanceof ServerLevel) {
+        } else if (damageSource.is(DamageTypes.CACTUS) && (nearestPlayer2 = itemEntity.level()) instanceof ServerLevel) {
             ServerLevel serverLevel = (ServerLevel)nearestPlayer2;
             if ((nearestPlayer2 = serverLevel.getEntities((Entity)itemEntity, 256.0)) instanceof ServerPlayer) {
                 ServerPlayer p = (ServerPlayer)nearestPlayer2;

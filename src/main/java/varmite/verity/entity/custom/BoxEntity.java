@@ -97,9 +97,9 @@ implements GeoEntity {
         super(entityType, level);
     }
 
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.defineId(HAS_CLICKED, (Object)false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(HAS_CLICKED, false);
     }
 
     public void tick() {
@@ -109,11 +109,11 @@ implements GeoEntity {
             } else if (!this.isOpened) {
                 this.soundEffectTimer = 0;
                 if (this.randInt == 0) {
-                    this.hurt((SoundEvent)ModSounds.BOX_VERITY_0.get(), 4.0f, 1.0f);
+                    this.playSound((SoundEvent)ModSounds.BOX_VERITY_0.get(), 4.0f, 1.0f);
                 } else if (this.randInt == 1) {
-                    this.hurt((SoundEvent)ModSounds.BOX_VERITY_1.get(), 4.0f, 1.0f);
+                    this.playSound((SoundEvent)ModSounds.BOX_VERITY_1.get(), 4.0f, 1.0f);
                 } else {
-                    this.hurt((SoundEvent)ModSounds.BOX_VERITY_2.get(), 4.0f, 1.0f);
+                    this.playSound((SoundEvent)ModSounds.BOX_VERITY_2.get(), 4.0f, 1.0f);
                 }
                 ++this.randInt;
                 if (this.randInt > 2) {
@@ -162,7 +162,7 @@ implements GeoEntity {
     }
 
     public boolean isInvulnerableTo(DamageSource source) {
-        return !source.getFoodExhaustion(DamageTypes.FELL_OUT_OF_WORLD) && !source.getFoodExhaustion(DamageTypes.GENERIC_KILL);
+        return !source.is(DamageTypes.FELL_OUT_OF_WORLD) && !source.is(DamageTypes.GENERIC_KILL);
     }
 
     public Iterable<ItemStack> getArmorSlots() {

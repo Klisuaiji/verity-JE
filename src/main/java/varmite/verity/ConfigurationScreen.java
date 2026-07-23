@@ -90,10 +90,10 @@ public class ConfigurationScreen extends Screen {
         aiSettings.addEntry(entryBuilder.startEnumSelector(
                         Component.translatable("verity.configuration.aiModel"),
                         AiModel.class,
-                        AiModel.fromConfigValue(VerityConfig.AI_MODEL.get()))
+                        VerityConfig.AI_MODEL.get())
                 .setDefaultValue(AiModel.FAST)
                 .setTooltip(Component.translatable("verity.configuration.aiModel.tooltip"))
-                .setSaveConsumer(model -> VerityConfig.AI_MODEL.set(model.getConfigValue()))
+                .setSaveConsumer(model -> VerityConfig.AI_MODEL.set(model))
                 .build());
 
         minecraft.setScreen(builder.build());
@@ -101,39 +101,5 @@ public class ConfigurationScreen extends Screen {
 
     private void saveConfig() {
         VerityConfig.SPEC.save();
-    }
-
-    /**
-     * Enum mirroring the AI model options in {@link VerityConfig#MODEL_OPTIONS}.
-     * Each constant carries the config-file value so it can be round-tripped.
-     */
-    private enum AiModel {
-        FAST_LITE("Fast-lite"),
-        FAST("Fast"),
-        INTELLIGENT("Intelligent");
-
-        private final String configValue;
-
-        AiModel(String configValue) {
-            this.configValue = configValue;
-        }
-
-        public String getConfigValue() {
-            return configValue;
-        }
-
-        @Override
-        public String toString() {
-            return configValue;
-        }
-
-        public static AiModel fromConfigValue(String value) {
-            for (AiModel model : values()) {
-                if (model.configValue.equals(value)) {
-                    return model;
-                }
-            }
-            return FAST;
-        }
     }
 }

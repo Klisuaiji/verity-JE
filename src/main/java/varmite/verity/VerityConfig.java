@@ -25,6 +25,7 @@ public class VerityConfig {
     public static final ModConfigSpec.BooleanValue TRUE_DARKNESS;
     public static final ModConfigSpec.BooleanValue KILL_VILLAGERS;
     public static final ModConfigSpec.BooleanValue SHOW_VERITYS_KARMA;
+    public static final ModConfigSpec.BooleanValue CLEAR_PEACEFUL_MOBS;
     public static final ModConfigSpec.BooleanValue USE_OLLAMA;
     public static final ModConfigSpec.BooleanValue USE_KOKORO;
     public static final ModConfigSpec.BooleanValue THINKING_MODE;
@@ -61,6 +62,7 @@ public class VerityConfig {
         USE_NATIVE_TTS = builder.comment("Use the OS's built-in narrator (Windows, macOS, Linux) instead of Groq cloud TTS.").define("useNativeTts", false);
         TRUE_DARKNESS = builder.comment("The extreme darkness toggle").define("trueDarkness", true);
         KILL_VILLAGERS = builder.comment("Toggles if Verity should kill villagers.").define("killVillagers", true);
+        CLEAR_PEACEFUL_MOBS = builder.comment("Toggles if Verity should clear peaceful mobs when turning hostile.").define("clearPeacefulMobs", false);
         SHOW_VERITYS_KARMA = builder.comment("Toggles the Karma bar above your hotbar.").define("showKarma", true);
         builder.push("AISettings");
         VOICE = builder.comment("Choose the voice Verity has").define("voice", (Object)"Daniel");

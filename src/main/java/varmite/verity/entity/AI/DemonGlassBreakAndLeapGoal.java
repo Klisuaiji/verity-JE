@@ -40,7 +40,7 @@ extends Goal {
 
     public DemonGlassBreakAndLeapGoal(VerityDemonEntity demon) {
         this.demon = demon;
-        this.canBeReplacedBy(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
     }
 
     public boolean canUse() {
@@ -63,7 +63,7 @@ extends Goal {
         if (this.targetedGlass != null) {
             this.shatterGlassArea(this.targetedGlass);
             this.demon.triggerAttack();
-            this.demon.level().createTick(null, this.demon.blockPosition(), (SoundEvent)ModSounds.JUMPSCARE.get(), SoundSource.HOSTILE, 2.0f, 1.0f);
+            this.demon.playSound((SoundEvent)ModSounds.JUMPSCARE.get(), 2.0f, 1.0f);
             double heightDiff = (double)this.targetedGlass.getY() - this.demon.getY();
             double yBoost = 0.5;
             if (heightDiff > 0.0) {
@@ -94,7 +94,7 @@ extends Goal {
         BlockPos feet = this.demon.blockPosition();
         for (int i = 1; i <= 4; ++i) {
             for (int yOffset = 0; yOffset <= 3; ++yOffset) {
-                BlockPos scanPos = BlockPos.offset((double)(this.demon.getX() + dir.x * (double)i), (double)(feet.getY() + yOffset), (double)(this.demon.getZ() + dir.z * (double)i));
+                BlockPos scanPos = BlockPos.containing(this.demon.getX() + dir.x * (double)i, (double)(feet.getY() + yOffset), this.demon.getZ() + dir.z * (double)i);
                 if (!this.isGlass(scanPos)) continue;
                 return scanPos;
             }

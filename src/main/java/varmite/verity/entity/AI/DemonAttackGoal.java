@@ -52,7 +52,8 @@ extends MeleeAttackGoal {
     }
 
     protected void checkAndPerformAttack(LivingEntity target, double distance) {
-        if (distance <= this.getAttackReachSqr(target) && this.attackCooldown <= 0) {
+        double reachSqr = (double)(this.demon.getBbWidth() * this.demon.getBbWidth() * 2.0f) + (double)(target.getBbWidth() * target.getBbWidth());
+        if (distance <= reachSqr && this.attackCooldown <= 0) {
             this.resetAttackCooldown();
             if (this.demon.getRandom().nextFloat() < 0.5f) {
                 this.demon.startGrabbing(target);
@@ -64,7 +65,7 @@ extends MeleeAttackGoal {
     }
 
     protected void resetAttackCooldown() {
-        this.attackCooldown = this.canBeReplacedBy(20);
+        this.attackCooldown = 20;
     }
 }
 

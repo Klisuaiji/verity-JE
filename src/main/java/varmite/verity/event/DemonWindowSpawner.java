@@ -43,7 +43,7 @@ public class DemonWindowSpawner {
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent event) {
         boolean isIndoors;
-        Player player = event.player;
+        Player player = event.getEntity();
         Level level = player.level();
         if (level.isClientSide()) {
             return;
@@ -71,7 +71,7 @@ public class DemonWindowSpawner {
                         Vec3 directionToWindow = new Vec3((double)checkPos.getX() - player.getX(), 0.0, (double)checkPos.getZ() - player.getZ()).normalize();
                         BlockPos spawnPos = checkPos.offset((int)Math.round(directionToWindow.x * 1.5), 0, (int)Math.round(directionToWindow.z * 1.5));
                         if (level.getBlockState(spawnPos).blocksMotion() || !level.getBlockState(spawnPos.below()).blocksMotion() || (demon = (VerityDemonEntity)((EntityType)ModEntities.VERITY_DEMON_ENTITY.get()).create(level)) == null) continue;
-                        demon.variantArea((double)spawnPos.getX() + 0.5, (double)spawnPos.getY(), (double)spawnPos.getZ() + 0.5, 0.0f, 0.0f);
+                        demon.moveTo(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5, 0.0f, 0.0f);
                         demon.getLookControl().setLookAt((Entity)player, 180.0f, 180.0f);
                         demon.setDemonState(0);
                         demon.setHuntPhase(0);
@@ -79,8 +79,8 @@ public class DemonWindowSpawner {
                             ServerLevel serverLevel = (ServerLevel)level;
                             serverLevel.setDayTime(18000L);
                         }
-                        level.destroyBlock((Entity)demon);
-                        player.isColliding("verity_window_scare_done");
+                        level.destroyBlock(demon.blockPosition(), false);
+                        player.addTag("verity_window_scare_done");
                         return;
                     }
                 }
@@ -89,7 +89,7 @@ public class DemonWindowSpawner {
             VerityDemonEntity demon;
             BlockPos targetPos;
             Vec3 lookVec = player.getLookAngle();
-            BlockPos safeSpawnPos = targetPos = BlockPos.offset((double)(player.getX() - lookVec.x * 24.0), (double)player.getY(), (double)(player.getZ() - lookVec.z * 24.0));
+            BlockPos safeSpawnPos = targetPos = BlockPos.containing(player.getX() - lookVec.x * 24.0, player.getY(), player.getZ() - lookVec.z * 24.0);
             boolean foundGround = false;
             for (int yOffset = 5; yOffset >= -15; --yOffset) {
                 BlockPos checkPos = targetPos.offset(0, yOffset, 0);
@@ -99,18 +99,18 @@ public class DemonWindowSpawner {
                 break;
             }
             if (!foundGround) {
-                safeSpawnPos = level.isStateAtPosition(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, targetPos);
+                safeSpawnPos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, targetPos);
             }
             if ((demon = (VerityDemonEntity)((EntityType)ModEntities.VERITY_DEMON_ENTITY.get()).create(level)) != null) {
-                demon.variantArea((double)safeSpawnPos.getX() + 0.5, (double)safeSpawnPos.getY(), (double)safeSpawnPos.getZ() + 0.5, 0.0f, 0.0f);
+                demon.moveTo(safeSpawnPos.getX() + 0.5, safeSpawnPos.getY(), safeSpawnPos.getZ() + 0.5, 0.0f, 0.0f);
                 demon.setDemonState(0);
                 demon.setHuntPhase(1);
                 if (level instanceof ServerLevel) {
                     ServerLevel serverLevel = (ServerLevel)level;
                     serverLevel.setDayTime(18000L);
                 }
-                level.destroyBlock((Entity)demon);
-                player.isColliding("verity_window_scare_done");
+                level.destroyBlock(demon.blockPosition(), false);
+                player.addTag("verity_window_scare_done");
             }
         }
     }

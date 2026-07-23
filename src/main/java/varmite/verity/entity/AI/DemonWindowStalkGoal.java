@@ -36,6 +36,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import varmite.verity.entity.custom.VerityDemonEntity;
 
@@ -49,8 +50,8 @@ extends Goal {
     public DemonWindowStalkGoal(VerityDemonEntity demon) {
         this.demon = demon;
         this.stareTicks = 0;
-        this.canBeReplacedBy(EnumSet.of(Goal.Flag.LOOK, Goal.Flag.MOVE));
-        this.targetingConditions = TargetingConditions.forNonCombat().forCombat(128.0).ignoreLineOfSight();
+        this.setFlags(EnumSet.of(Goal.Flag.LOOK, Goal.Flag.MOVE));
+        this.targetingConditions = TargetingConditions.forCombat().range(128.0).ignoreLineOfSight();
     }
 
     public boolean canContinueToUse() {
@@ -64,7 +65,11 @@ extends Goal {
         if (this.demon.getDemonState() != 0 || this.demon.getHuntPhase() != 0) {
             return false;
         }
-        this.targetPlayer = this.demon.level().getEntities(this.targetingConditions, (LivingEntity)this.demon, this.demon.getX(), this.demon.getEyeY(), this.demon.getZ());
+        double cx = this.demon.getX();
+        double cy = this.demon.getEyeY();
+        double cz = this.demon.getZ();
+        AABB aabb = new AABB(cx - 128.0, cy - 128.0, cz - 128.0, cx + 128.0, cy + 128.0, cz + 128.0);
+        this.targetPlayer = this.demon.level().getNearestEntity(Player.class, this.targetingConditions, (LivingEntity)this.demon, cx, cy, cz, aabb);
         if (this.targetPlayer != null && (this.targetPlayer.isCreative() || this.targetPlayer.isSpectator())) {
             return false;
         }
@@ -102,7 +107,7 @@ extends Goal {
         if (level instanceof ServerLevel) {
             ServerLevel serverLevel = (ServerLevel)level;
             serverLevel.sendParticles((ParticleOptions)ParticleTypes.LARGE_SMOKE, this.demon.getX(), this.demon.getY() + 1.5, this.demon.getZ(), 30, 0.5, 1.0, 0.5, 0.01);
-            serverLevel.createTick(null, this.demon.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 1.0f, 0.6f);
+            serverLevel.playSound((Player)null, this.demon.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 1.0f, 0.6f);
         }
         this.demon.setHuntPhase(1);
         this.teleportAway();
@@ -114,10 +119,10 @@ extends Goal {
             double angle = this.demon.getRandom().nextDouble() * 2.0 * Math.PI;
             double newX = this.demon.getX() + Math.cos(angle) * distance;
             double newZ = this.demon.getZ() + Math.sin(angle) * distance;
-            int newY = this.demon.level().getChunk(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int)newX, (int)newZ);
-            BlockPos groundPos = BlockPos.offset((double)newX, (double)(newY - 1), (double)newZ);
+            int newY = this.demon.level().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int)newX, (int)newZ);
+            BlockPos groundPos = new BlockPos((int)newX, newY - 1, (int)newZ);
             if (!this.demon.level().getFluidState(groundPos).isEmpty()) continue;
-            this.demon.removeTag(newX, (double)newY, newZ);
+            this.demon.teleportTo(newX, (double)newY, newZ);
             this.demon.getNavigation().stop();
             return;
         }

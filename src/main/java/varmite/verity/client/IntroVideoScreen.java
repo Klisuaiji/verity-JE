@@ -43,10 +43,10 @@ extends Screen {
         if (!this.videoStarted) {
             this.startTime = System.currentTimeMillis();
             ResourceLocation soundId = ResourceLocation.fromNamespaceAndPath((String)"verity", (String)"intro_video_audio");
-            SoundEvent event = SoundEvent.create((ResourceLocation)soundId, (float)1.0f);
-            this.minecraft.getSoundManager().prepare((SoundInstance)SimpleSoundInstance.forUI((SoundEvent)event, (float)1.0f, (float)1.0f));
+            SoundEvent event = SoundEvent.create((ResourceLocation)soundId);
+            this.minecraft.getSoundManager().play((SoundInstance)SimpleSoundInstance.forUI((SoundEvent)event, (float)1.0f, (float)1.0f));
             Minecraft mc = Minecraft.getInstance();
-            mc.options.getSoundSourceOptionInstance(SoundSource.MUSIC).set((Object)0.0);
+            mc.options.getSoundSourceOptionInstance(SoundSource.MUSIC).set(Double.valueOf(0.0));
             mc.options.save();
             this.videoStarted = true;
         }
@@ -71,7 +71,7 @@ extends Screen {
         }
         int drawX = (this.width - drawW) / 2;
         int drawY = (this.height - drawH) / 2;
-        guiGraphics.drawManaged(frameLoc, drawX, drawY, 0.0f, 0.0f, drawW, drawH, drawW, drawH);
+        guiGraphics.blit(frameLoc, drawX, drawY, 0.0f, 0.0f, drawW, drawH, drawW, drawH);
     }
 
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
@@ -83,7 +83,7 @@ extends Screen {
     }
 
     private void skip() {
-        this.minecraft.getSoundManager().prepare(ResourceLocation.fromNamespaceAndPath((String)"verity", (String)"intro_video_audio"), SoundSource.MASTER);
+        this.minecraft.getSoundManager().stop(ResourceLocation.fromNamespaceAndPath((String)"verity", (String)"intro_video_audio"), SoundSource.MASTER);
         this.minecraft.setScreen(this.previousScreen);
     }
 }

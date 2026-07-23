@@ -31,7 +31,7 @@ import varmite.verity.event.ModEvents;
 
 public class ChangeKarmaCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register((LiteralArgumentBuilder)((LiteralArgumentBuilder)Commands.mapSource((String)"changekarma").requires(source -> source.hasPermission(2))).then(Commands.mapSource((String)"karma", (ArgumentType)IntegerArgumentType.integer((int)0, (int)20)).executes(context -> {
+        dispatcher.register(Commands.literal("changekarma").requires(source -> source.hasPermission(2)).then(Commands.argument("karma", IntegerArgumentType.integer(0, 20)).executes(context -> {
             ServerPlayer player = ((CommandSourceStack)context.getSource()).getPlayerOrException();
             ServerLevel serverLevel = player.serverLevel();
             serverLevel.getServer().execute(() -> ModEvents.setAndSyncKarma((ServerLevel)serverLevel, (float)IntegerArgumentType.getInteger((CommandContext)context, (String)"karma")));

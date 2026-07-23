@@ -17,7 +17,7 @@ import varmite.verity.entity.custom.VerityDemonEntity;
 
 public class ClientSoundHandler {
     public static void playDemonChaseSound(VerityDemonEntity demon) {
-        Minecraft.getInstance().getSoundManager().prepare((SoundInstance)new DemonChaseSoundInstance(demon));
+        Minecraft.getInstance().getSoundManager().play((SoundInstance)new DemonChaseSoundInstance(demon));
     }
 }
 

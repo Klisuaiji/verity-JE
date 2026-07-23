@@ -38,12 +38,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Position;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -68,6 +69,11 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 public class FlashlightServerLogic {
     private static final Map<UUID, List<BlockPos>> activeLights = new HashMap();
 
+    private static boolean isFlashlightActive(ItemStack stack) {
+        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+        return data != null && data.copyTag().getBoolean("FlashlightOn");
+    }
+
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent event) {
         if (event.getServer() == null) {
@@ -79,27 +85,27 @@ public class FlashlightServerLogic {
             boolean isFlashlightOn = false;
             ItemStack main = player.getMainHandItem();
             ItemStack off = player.getOffhandItem();
-            if (main.is((Item)ModItems.FLASHLIGHT.get()) && main.getOrCreateTag().getBoolean("FlashlightOn") || off.is((Item)ModItems.FLASHLIGHT.get()) && off.getOrCreateTag().getBoolean("FlashlightOn")) {
+            if (main.is((Item)ModItems.FLASHLIGHT.get()) && isFlashlightActive(main) || off.is((Item)ModItems.FLASHLIGHT.get()) && isFlashlightActive(off)) {
                 isFlashlightOn = true;
             }
             if (isFlashlightOn) {
-                List currentPositions;
+                List<BlockPos> currentPositions;
                 Vec3 eyePos = player.getEyePosition();
                 Vec3 lookVec = player.getViewVector(1.0f);
                 double maxDist = 25.0;
                 Vec3 endPos = eyePos.add(lookVec.scale(maxDist));
-                BlockHitResult hitResult = level.getBlockEntity(new ClipContext(eyePos, endPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, (Entity)player));
+                BlockHitResult hitResult = level.clip(new ClipContext(eyePos, endPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, (Entity)player));
                 double hitDistance = maxDist;
                 if (hitResult.getType() == HitResult.Type.BLOCK) {
                     hitDistance = hitResult.getLocation().distanceTo(eyePos);
                 }
                 ArrayList<BlockPos> desiredPositions = new ArrayList<BlockPos>();
                 for (double i = 2.0; i <= hitDistance - 1.5; i += 2.5) {
-                    desiredPositions.add(BlockPos.offset((Position)eyePos.add(lookVec.scale(i))));
+                    desiredPositions.add(BlockPos.containing(eyePos.add(lookVec.scale(i))));
                 }
                 double finalHitDist = Math.max(0.5, hitDistance - 0.5);
                 Vec3 hitVec = eyePos.add(lookVec.scale(finalHitDist));
-                BlockPos hitCenter = BlockPos.offset((Position)hitVec);
+                BlockPos hitCenter = BlockPos.containing(hitVec);
                 if (!desiredPositions.contains(hitCenter)) {
                     desiredPositions.add(hitCenter);
                 }
@@ -111,12 +117,12 @@ public class FlashlightServerLogic {
                         right = new Vec3(-Math.cos(yawRad), 0.0, -Math.sin(yawRad)).normalize();
                     }
                     Vec3 trueUp = right.cross(lookVec).normalize();
-                    desiredPositions.add(BlockPos.offset((Position)hitVec.add(right.scale(1.5))));
-                    desiredPositions.add(BlockPos.offset((Position)hitVec.subtract(right.scale(1.5))));
-                    desiredPositions.add(BlockPos.offset((Position)hitVec.add(trueUp.scale(1.5))));
-                    desiredPositions.add(BlockPos.offset((Position)hitVec.subtract(trueUp.scale(1.5))));
+                    desiredPositions.add(BlockPos.containing(hitVec.add(right.scale(1.5))));
+                    desiredPositions.add(BlockPos.containing(hitVec.subtract(right.scale(1.5))));
+                    desiredPositions.add(BlockPos.containing(hitVec.add(trueUp.scale(1.5))));
+                    desiredPositions.add(BlockPos.containing(hitVec.subtract(trueUp.scale(1.5))));
                 }
-                if (desiredPositions.equals(currentPositions = (List)activeLights.getOrDefault(uuid, new ArrayList()))) continue;
+                if (desiredPositions.equals(currentPositions = activeLights.getOrDefault(uuid, new ArrayList<>()))) continue;
                 for (BlockPos pos : currentPositions) {
                     BlockState state;
                     if (desiredPositions.contains(pos) || !(state = level.getBlockState(pos)).is((Block)ModBlocks.FLASHLIGHT_LIGHT.get())) continue;
@@ -146,7 +152,7 @@ public class FlashlightServerLogic {
     }
 
     private static void cleanupLight(ServerPlayer player, UUID uuid) {
-        List positions = (List)activeLights.get(uuid);
+        List<BlockPos> positions = activeLights.get(uuid);
         if (positions != null) {
             ServerLevel level = player.serverLevel();
             for (BlockPos pos : positions) {

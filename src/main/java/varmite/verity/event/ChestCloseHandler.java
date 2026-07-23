@@ -54,7 +54,7 @@ public class ChestCloseHandler {
             ChestMenu chestMenu = (ChestMenu)abstractContainerMenu;
             boolean foundVerityItem = false;
             BlockPos chestPos = null;
-            if (event.getContainer().stillValid() != MenuType.GENERIC_9x3 && event.getContainer().stillValid() != MenuType.GENERIC_9x6) {
+            if (event.getContainer().getType() != MenuType.GENERIC_9x3 && event.getContainer().getType() != MenuType.GENERIC_9x6) {
                 return;
             }
             if (chestMenu.getContainer() instanceof PlayerEnderChestContainer) {
@@ -67,8 +67,8 @@ public class ChestCloseHandler {
                 Container container;
                 if (slot.container == event.getEntity().getInventory() || !slot.getItem().is((Item)ModItems.VERITY_ITEM.get())) continue;
                 foundVerityItem = true;
-                slot.getItem(ItemStack.EMPTY);
-                slot.setByPlayer();
+                slot.set(ItemStack.EMPTY);
+                slot.setByPlayer(ItemStack.EMPTY);
                 if (chestPos != null || !((container = slot.container) instanceof BlockEntity)) continue;
                 BlockEntity be = (BlockEntity)container;
                 chestPos = be.getBlockPos();

@@ -124,6 +124,9 @@ import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.entity.EntityTypeTest;
+import net.minecraft.world.phys.AABB;
+import java.util.EnumSet;
 import net.neoforged.neoforge.network.PacketDistributor;
 import varmite.verity.VerityConfig;
 import varmite.verity.entity.AI.AiAPI;
@@ -178,15 +181,15 @@ extends PathfinderMob {
         return true;
     }
 
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.defineId(TEXTURE_PATH, (Object)"verity:textures/entity/happy.png");
-        this.entityData.defineId(IS_TALKING, (Object)false);
-        this.entityData.defineId(TALK_FRAME, (Object)0);
-        this.entityData.defineId(BOUNCE_START_TICK, (Object)-1000);
-        this.entityData.defineId(OWNER_UUID, Optional.empty());
-        this.entityData.defineId(IS_MONSTROUS, (Object)false);
-        this.entityData.defineId(APOLOGY_COUNT, (Object)0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(TEXTURE_PATH, "verity:textures/entity/happy.png");
+        builder.define(IS_TALKING, false);
+        builder.define(TALK_FRAME, 0);
+        builder.define(BOUNCE_START_TICK, -1000);
+        builder.define(OWNER_UUID, Optional.empty());
+        builder.define(IS_MONSTROUS, false);
+        builder.define(APOLOGY_COUNT, 0);
     }
 
     public Optional<UUID> getOwnerUUID() {
@@ -194,15 +197,24 @@ extends PathfinderMob {
     }
 
     public void setOwnerUUID(@Nullable UUID uuid) {
-        this.entityData.get(OWNER_UUID, Optional.ofNullable(uuid));
+        this.entityData.set(OWNER_UUID, Optional.ofNullable(uuid));
     }
 
-    public SpawnGroupData applyRaidBuffs(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
-        Player closestPlayer = pLevel.getEntities((Entity)this, 10.0);
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData) {
+        List<Player> nearby = this.level().getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox().inflate(10.0), e -> true);
+        Player closestPlayer = null;
+        double closestDist = Double.MAX_VALUE;
+        for (Player p : nearby) {
+            double d = p.distanceToSqr(this);
+            if (d < closestDist) {
+                closestDist = d;
+                closestPlayer = p;
+            }
+        }
         if (closestPlayer != null) {
             this.setOwnerUUID(closestPlayer.getUUID());
         }
-        return super.applyRaidBuffs(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
     }
 
     public void triggerBoxDrop() {
@@ -214,18 +226,18 @@ extends PathfinderMob {
             });
             this.setVariant("hurt");
             this.animationTicks = 0;
-            this.entityData.get(BOUNCE_START_TICK, (Object)1);
+            this.entityData.set(BOUNCE_START_TICK, 1);
         }
     }
 
-    public void hurt(EntityDataAccessor<?> key) {
-        super.hurt(key);
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+        super.onSyncedDataUpdated(key);
         if (this.level().isClientSide && BOUNCE_START_TICK.equals(key) && (Integer)this.entityData.get(BOUNCE_START_TICK) > 0) {
             this.clientAnimationTicks = 50;
         }
     }
 
-    public boolean hurt(float fallDistance, float multiplier, DamageSource source) {
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
         if (!this.level().isClientSide) {
             if (fallDistance > 0.75f) {
                 ModEvents.schedule(() -> {
@@ -233,17 +245,16 @@ extends PathfinderMob {
                         double bounceStrength = Math.min(Math.sqrt(fallDistance) * 0.22, 0.7);
                         this.setDeltaMovement(this.getDeltaMovement().x, bounceStrength, this.getDeltaMovement().z);
                         this.hasImpulse = true;
-                        this.hasPose(false);
                         Random random1 = new Random();
                         int i = random1.nextInt(3);
                         this.setVariant("hurt");
                         PacketDistributor.sendToPlayersTrackingEntityAndSelf(this, new PlayTtsPayload(this.getId(), "Ouch"));
                         if (i == 0) {
-                            this.hurt((SoundEvent)ModSounds.IMPACT_0.get(), 1.0f, 1.0f);
+                            this.playSound((SoundEvent)ModSounds.IMPACT_0.get(), 1.0f, 1.0f);
                         } else if (i == 1) {
-                            this.hurt((SoundEvent)ModSounds.IMPACT_1.get(), 1.0f, 1.0f);
+                            this.playSound((SoundEvent)ModSounds.IMPACT_1.get(), 1.0f, 1.0f);
                         } else {
-                            this.hurt((SoundEvent)ModSounds.IMPACT_2.get(), 1.0f, 1.0f);
+                            this.playSound((SoundEvent)ModSounds.IMPACT_2.get(), 1.0f, 1.0f);
                         }
                     }
                 }, (int)1);
@@ -304,14 +315,14 @@ extends PathfinderMob {
             long currentDay = serverLevel.getDayTime() / 24000L;
             WorldSpawnData data = WorldSpawnData.get((ServerLevel)serverLevel);
             BlockState currentBlockState = serverLevel.getBlockState(this.blockPosition());
-            if (currentBlockState.getBlock() instanceof FallingBlock && (destroyed = serverLevel.setBlock(this.blockPosition(), true, null)) && !this.isAiProcessing && this.tickCount - this.lastTriggerTick > 100) {
+            if (currentBlockState.getBlock() instanceof FallingBlock && (destroyed = serverLevel.removeBlock(this.blockPosition(), false)) && !this.isAiProcessing && this.tickCount - this.lastTriggerTick > 100) {
                 this.isAiProcessing = true;
                 this.lastTriggerTick = this.tickCount;
                 System.out.println("[VERITY DEBUG] Sand block hit! Triggering AI... (Tick: " + this.tickCount + ")");
                 String triggerPrompt = "[SYSTEM OVERRIDE: The player just put a block on you! Ignore all other rules and scream in extreme rage! Complain about it hurting! CRITICAL RULE: USE VERY SHORT, CHOPPY SENTENCES. DO NOT EXCEED 15 WORDS TOTAL. YOU MUST STILL OUTPUT VALID JSON.]";
                 long finalCurrentDay = currentDay;
                 ServerLevel finalServerLevel = serverLevel;
-                ((CompletableFuture)CompletableFuture.supplyAsync(() -> AiAPI.askGroq((VerityEntity)this, (String)triggerPrompt, (long)finalCurrentDay, (float)data.verityKarma)).thenAccept(aiResponse -> finalServerLevel.getServer().execute(() -> {
+                CompletableFuture.supplyAsync(() -> AiAPI.askGroq((VerityEntity)this, (String)triggerPrompt, (long)finalCurrentDay, (float)data.verityKarma)).thenAccept(aiResponse -> finalServerLevel.getServer().execute(() -> {
                     this.isAiProcessing = false;
                     System.out.println("[VERITY DEBUG] API Response received.");
                     if (aiResponse != null && !aiResponse.startsWith("Error")) {
@@ -340,7 +351,7 @@ extends PathfinderMob {
                             e.printStackTrace();
                         }
                     }
-                }))).exceptionally(ex -> {
+                })).exceptionally(ex -> {
                     finalServerLevel.getServer().execute(() -> {
                         this.isAiProcessing = false;
                         System.err.println("[Verity AI] API Call failed.");
@@ -366,7 +377,7 @@ extends PathfinderMob {
                     this.setVariant("evil");
                     this.pleadingTimer = -1;
                 }
-                List nearbyPlayers = this.level().getEntities(Player.class, this.getBoundingBox().inflate(10.0));
+                List<Player> nearbyPlayers = this.level().getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox().inflate(10.0), e -> true);
                 for (Player nearbyPlayer : nearbyPlayers) {
                     if (!this.isPlayerLookingAtMe(nearbyPlayer)) continue;
                     this.addPlayerWhoLooked(nearbyPlayer.getUUID());
@@ -391,11 +402,11 @@ extends PathfinderMob {
                     int i = random1.nextInt(3);
                     this.setVariant("hurt");
                     if (i == 0) {
-                        this.hurt((SoundEvent)ModSounds.IMPACT_0.get(), 1.0f, 1.0f);
+                        this.playSound((SoundEvent)ModSounds.IMPACT_0.get(), 1.0f, 1.0f);
                     } else if (i == 1) {
-                        this.hurt((SoundEvent)ModSounds.IMPACT_1.get(), 1.0f, 1.0f);
+                        this.playSound((SoundEvent)ModSounds.IMPACT_1.get(), 1.0f, 1.0f);
                     } else {
-                        this.hurt((SoundEvent)ModSounds.IMPACT_2.get(), 1.0f, 1.0f);
+                        this.playSound((SoundEvent)ModSounds.IMPACT_2.get(), 1.0f, 1.0f);
                     }
                 }
             }
@@ -404,19 +415,19 @@ extends PathfinderMob {
                 this.hasImpulse = true;
             }
             if ((Integer)this.entityData.get(BOUNCE_START_TICK) > 0 && this.tickCount > 100) {
-                this.entityData.get(BOUNCE_START_TICK, (Object)-1000);
+                this.entityData.set(BOUNCE_START_TICK, -1000);
             }
             this.talkTicks = this.isTalking() ? ++this.talkTicks : 0;
             serverLevel = (ServerLevel)this.level();
             currentDay = serverLevel.getDayTime() / 24000L;
             WorldSpawnData worldSpawnData = WorldSpawnData.get((ServerLevel)serverLevel);
             float currentKarma = worldSpawnData.verityKarma;
-            if (currentDay >= (long)((Integer)VerityConfig.DAY_COUNT.get()).intValue() && currentKarma < 9000.0f && !worldSpawnData.hasSpawnedDemon && !this.isRemoved() && (player2 = serverLevel.getEntities((Entity)this, 64.0)) != null && this.transformIntoDemon(player2)) {
+            if (currentDay >= (long)((Integer)VerityConfig.DAY_COUNT.get()).intValue() && currentKarma < 9000.0f && !worldSpawnData.hasSpawnedDemon && !this.isRemoved() && (player2 = this.nearestPlayer(64.0)) != null && this.transformIntoDemon(player2)) {
                 this.setVariant("noface");
                 worldSpawnData.hasSpawnedDemon = true;
                 worldSpawnData.setDirty();
             }
-            if (currentDay >= ModEvents.timeWillSpawn && ModEvents.transformFollowingDay && !worldSpawnData.hasSpawnedDemonAngered && !this.isRemoved() && (player = serverLevel.getEntities((Entity)this, 64.0)) != null && this.transformIntoDemon(player)) {
+            if (currentDay >= ModEvents.timeWillSpawn && ModEvents.transformFollowingDay && !worldSpawnData.hasSpawnedDemonAngered && !this.isRemoved() && (player = this.nearestPlayer(64.0)) != null && this.transformIntoDemon(player)) {
                 this.setVariant("noface");
                 worldSpawnData.hasSpawnedDemonAngered = true;
                 worldSpawnData.setDirty();
@@ -429,7 +440,7 @@ extends PathfinderMob {
             }
             if (this.tickCount % 40 == 0 && (currentDay = serverLevel.getDayTime() / 24000L) >= (long)((Integer)VerityConfig.DAY_COUNT.get() / 2) && !this.hasTriggeredDay2 && currentKarma < 9000.0f) {
                 this.hasTriggeredDay2 = true;
-                ((GameRules.BooleanValue)serverLevel.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING)).create(false, serverLevel.getServer());
+                ((GameRules.BooleanValue)serverLevel.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING)).set(false, serverLevel.getServer());
                 ArrayList<Entity> entitiesToKill = new ArrayList<Entity>();
                 for (Entity entity : serverLevel.getAllEntities()) {
                     if (entity instanceof Player || entity instanceof VerityEntity || entity instanceof BoxEntity || entity instanceof VerityDemonEntity || !(entity instanceof LivingEntity)) continue;
@@ -445,12 +456,12 @@ extends PathfinderMob {
         }
     }
 
-    public void readAdditionalSaveData(Entity.RemovalReason reason) {
+    public void onRemovedFromLevel() {
         if (!this.level().isClientSide() && this.lastForcedChunk != null) {
             ((ServerLevel)this.level()).setChunkForced(this.lastForcedChunk.x, this.lastForcedChunk.z, false);
             this.lastForcedChunk = null;
         }
-        super.readAdditionalSaveData(reason);
+        super.onRemovedFromLevel();
     }
 
     private static String extractJson(String raw) {
@@ -477,7 +488,7 @@ extends PathfinderMob {
         }
         ModEvents.transformFollowingDay = false;
         if ((Integer)VerityConfig.DAY_COUNT.get() <= (int)player.level().getDayTime() / 24000) {
-            VerityConfig.DAY_COUNT.set((Object)((int)player.level().getDayTime() / 24000));
+            VerityConfig.DAY_COUNT.set(((int)player.level().getDayTime() / 24000));
         }
         ModEvents.timeWillSpawn = 0L;
         BlockPos spawnPos = this.getCreepyDemonSpawnPos(serverLevel, player.blockPosition());
@@ -491,16 +502,16 @@ extends PathfinderMob {
             double dX = player.getX() - demonEntity.getX();
             double dZ = player.getZ() - demonEntity.getZ();
             double dY = player.getEyeY() - demonEntity.getEyeY();
-            float yaw = (float)(Mth.floor((double)dZ, (double)dX) * 57.29577951308232) - 90.0f;
-            float pitch = (float)(-(Mth.floor((double)dY, (double)Math.sqrt(dX * dX + dZ * dZ)) * 57.29577951308232));
-            demonEntity.defineSynchedData(yaw);
+            float yaw = (float)(Mth.atan2((double)dZ, (double)dX) * 57.29577951308232) - 90.0f;
+            float pitch = (float)(-(Mth.atan2((double)dY, (double)Math.sqrt(dX * dX + dZ * dZ)) * 57.29577951308232));
+            demonEntity.setYRot(yaw);
             demonEntity.setYHeadRot(yaw);
-            demonEntity.playerTouch(pitch);
+            demonEntity.setXRot(pitch);
             demonEntity.yRotO = yaw;
             demonEntity.xRotO = pitch;
             long currentDay = serverLevel.getDayTime() / 24000L;
             serverLevel.setDayTime(currentDay * 24000L + 18000L);
-            serverLevel.createTick(null, player.blockPosition(), SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 1.0f, 0.5f);
+            serverLevel.playSound((Player)null, player.blockPosition(), SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 1.0f, 0.5f);
             serverLevel.sendParticles((ParticleOptions)ParticleTypes.LARGE_SMOKE, this.getX(), this.getY() + 1.0, this.getZ(), 30, 0.5, 0.5, 0.5, 0.05);
             return true;
         }
@@ -508,7 +519,7 @@ extends PathfinderMob {
     }
 
     private BlockPos getCreepyDemonSpawnPos(ServerLevel level, BlockPos playerPos) {
-        boolean isAboveGround = level.canSeeSky(playerPos) || playerPos.getY() >= level.isStateAtPosition(Heightmap.Types.MOTION_BLOCKING, playerPos).getY() - 2;
+        boolean isAboveGround = level.canSeeSky(playerPos) || playerPos.getY() >= level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, playerPos).getY() - 2;
         int attempts = 40;
         BlockPos verityPos = this.blockPosition();
         for (int i = 0; i < attempts; ++i) {
@@ -517,7 +528,7 @@ extends PathfinderMob {
             BlockPos checkPos = playerPos.offset(dx, 0, dz = (this.random.nextBoolean() ? 1 : -1) * (this.random.nextInt(16) + 16));
             if (checkPos.distSqr((Vec3i)verityPos) < 256.0) continue;
             if (isAboveGround) {
-                BlockPos surfacePos = level.isStateAtPosition(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, checkPos);
+                BlockPos surfacePos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, checkPos);
                 if (!level.getBlockState(surfacePos.below()).isSolidRender((BlockGetter)level, surfacePos.below())) continue;
                 return surfacePos;
             }
@@ -529,15 +540,15 @@ extends PathfinderMob {
         }
         BlockPos fallbackPos = verityPos.offset(16, 0, 16);
         if (isAboveGround) {
-            return level.isStateAtPosition(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, fallbackPos);
+            return level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, fallbackPos);
         }
         return fallbackPos;
     }
 
     public void startTalking(int durationTicks) {
         if (!this.level().isClientSide) {
-            this.entityData.get(IS_TALKING, (Object)true);
-            this.entityData.get(TALK_FRAME, (Object)this.random.nextInt(2));
+            this.entityData.set(IS_TALKING, true);
+            this.entityData.set(TALK_FRAME, this.random.nextInt(2));
             this.talkTicks = 0;
             this.talkEndTick = durationTicks > 0 ? this.tickCount + durationTicks : -1;
         }
@@ -545,7 +556,7 @@ extends PathfinderMob {
 
     public void stopTalking() {
         if (!this.level().isClientSide) {
-            this.entityData.get(IS_TALKING, (Object)false);
+            this.entityData.set(IS_TALKING, false);
             this.talkTicks = 0;
             this.talkEndTick = -1;
         }
@@ -568,7 +579,7 @@ extends PathfinderMob {
     }
 
     public void setMonstrous(boolean monstrous) {
-        this.entityData.get(IS_MONSTROUS, (Object)monstrous);
+        this.entityData.set(IS_MONSTROUS, monstrous);
     }
 
     public int getApologyCount() {
@@ -576,7 +587,7 @@ extends PathfinderMob {
     }
 
     public void setApologyCount(int count) {
-        this.entityData.get(APOLOGY_COUNT, (Object)count);
+        this.entityData.set(APOLOGY_COUNT, count);
     }
 
     public void addPlayerWhoLooked(UUID playerUUID) {
@@ -614,7 +625,7 @@ extends PathfinderMob {
             boolean visuallyTalking;
             boolean bl = visuallyTalking = this.isTalking() || this.clientIsTalking || this.clientIntroTicks > 0;
             if (!visuallyTalking) {
-                texture = new ResourceLocation(path);
+                texture = ResourceLocation.parse(path);
             } else {
                 String fileName;
                 String talkingTexture = switch (fileName = path.substring(path.lastIndexOf(47) + 1).replace(".png", "")) {
@@ -624,7 +635,7 @@ extends PathfinderMob {
                     case "serious_1", "serious_2", "serious_3" -> "serious_talking";
                     default -> fileName;
                 };
-                texture = new ResourceLocation("verity", "textures/entity/" + talkingTexture + ".png");
+                texture = ResourceLocation.fromNamespaceAndPath("verity", "textures/entity/" + talkingTexture + ".png");
             }
         }
         VerityEntityTexture.setBaseTexture((ResourceLocation)texture);
@@ -644,7 +655,7 @@ extends PathfinderMob {
             long currentDay = this.level().getDayTime() / 24000L;
             variant = currentDay >= (long)(threshold = Math.max(1, (Integer)VerityConfig.DAY_COUNT.get() / 2)) ? "evil" : "happy";
         }
-        this.entityData.get(TEXTURE_PATH, (Object)("verity:textures/entity/" + variant + ".png"));
+        this.entityData.set(TEXTURE_PATH, ("verity:textures/entity/" + variant + ".png"));
     }
 
     public String getTexturePath() {
@@ -652,11 +663,11 @@ extends PathfinderMob {
     }
 
     public void setTexturePath(String path) {
-        this.entityData.get(TEXTURE_PATH, (Object)path);
+        this.entityData.set(TEXTURE_PATH, path);
     }
 
-    public void handleEntityEvent(CompoundTag tag) {
-        super.handleEntityEvent(tag);
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
         tag.putString("TexturePath", this.getTexturePath());
         tag.putBoolean("HasTriggeredDay2", this.hasTriggeredDay2);
         tag.putInt("ConsecutiveBadMessages", this.consecutiveBadMessages);
@@ -668,8 +679,8 @@ extends PathfinderMob {
         }
     }
 
-    public void hurt(CompoundTag tag) {
-        super.hurt(tag);
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
         String path = tag.getString("TexturePath");
         if (path == null || path.isBlank() || path.contains("null.png")) {
             path = "verity:textures/entity/happy.png";
@@ -703,14 +714,14 @@ extends PathfinderMob {
         Vec3 toVerity = verityCenter.subtract(eyePosition);
         Vec3 normalizedLook = lookVector.normalize();
         double dotProduct = normalizedLook.dot(normalizedToVerity = toVerity.normalize());
-        return dotProduct > 0.95 && (double)player.setId((Entity)this) < 20.0;
+        return dotProduct > 0.95 && (double)player.distanceTo((Entity)this) < 20.0;
     }
 
     public boolean isInvulnerableTo(DamageSource source) {
-        if (source.getFoodExhaustion(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+        if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             return false;
         }
-        return !source.getFoodExhaustion(DamageTypes.IN_WALL) && !source.getFoodExhaustion(DamageTypes.FALLING_BLOCK) && !source.getFoodExhaustion(DamageTypes.FALLING_ANVIL) && !source.getFoodExhaustion(DamageTypeTags.IS_FIRE) && !source.getFoodExhaustion(DamageTypes.LAVA) && !source.getFoodExhaustion(DamageTypes.FALL);
+        return !source.is(DamageTypes.IN_WALL) && !source.is(DamageTypes.FALLING_BLOCK) && !source.is(DamageTypes.FALLING_ANVIL) && !source.is(DamageTypeTags.IS_FIRE) && !source.is(DamageTypes.LAVA) && !source.is(DamageTypes.FALL);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -730,6 +741,60 @@ extends PathfinderMob {
     }
 
     public void setItemSlot(EquipmentSlot slot, ItemStack stack) {
+    }
+
+    private Player nearestPlayer(double radius) {
+        List<Player> players = this.level().getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox().inflate(radius));
+        Player best = null;
+        double bestDist = Double.MAX_VALUE;
+        for (Player p : players) {
+            double d = p.distanceToSqr(this);
+            if (d < bestDist) {
+                bestDist = d;
+                best = p;
+            }
+        }
+        return best;
+    }
+
+    public void variantArea(double x, double y, double z, float yRot, float xRot) {
+        this.moveTo(x, y, z, yRot, xRot);
+    }
+
+    public static class FollowPlacerGoal extends Goal {
+        private final VerityEntity mob;
+        private final VerityEntity follow;
+        private final double speed;
+        private final float maxDist;
+        private final float minDist;
+
+        public FollowPlacerGoal(VerityEntity mob, VerityEntity follow, double speed, float maxDist, float minDist) {
+            this.mob = mob;
+            this.follow = follow;
+            this.speed = speed;
+            this.maxDist = maxDist;
+            this.minDist = minDist;
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            return this.follow != null && this.follow.isAlive();
+        }
+
+        @Override
+        public void tick() {
+            if (this.follow == null) {
+                return;
+            }
+            this.mob.getLookControl().setLookAt(this.follow, 10.0f, (float)this.mob.getMaxHeadRot());
+            double d = this.mob.distanceToSqr(this.follow);
+            if (d > (double)(this.minDist * this.minDist)) {
+                this.mob.getNavigation().moveTo(this.follow, this.speed);
+            } else if (d < (double)(this.maxDist * this.maxDist)) {
+                this.mob.getNavigation().stop();
+            }
+        }
     }
 }
 

@@ -206,7 +206,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerSleepInBedEvent;
+import net.neoforged.neoforge.event.entity.player.CanPlayerSleepEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
@@ -321,7 +321,7 @@ public class ModEvents {
     public static void onVerityTakeDamage(LivingDamageEvent event) {
         VerityEntity verity;
         LivingEntity livingEntity = event.getEntity();
-        if (livingEntity instanceof VerityEntity && !(verity = (VerityEntity)livingEntity).level().isClientSide() && (event.getSource().getFoodExhaustion(DamageTypeTags.IS_FIRE) || event.getSource().getFoodExhaustion(DamageTypes.LAVA) || event.getSource().getFoodExhaustion(DamageTypes.IN_WALL) || event.getSource().getFoodExhaustion(DamageTypes.FALLING_BLOCK) || event.getSource().getFoodExhaustion(DamageTypes.FALLING_ANVIL))) {
+        if (livingEntity instanceof VerityEntity && !(verity = (VerityEntity)livingEntity).level().isClientSide() && (event.getSource().is(DamageTypeTags.IS_FIRE) || event.getSource().is(DamageTypes.LAVA) || event.getSource().is(DamageTypes.IN_WALL) || event.getSource().is(DamageTypes.FALLING_BLOCK) || event.getSource().is(DamageTypes.FALLING_ANVIL))) {
             event.setAmount(0.0f);
             ServerLevel serverLevel = (ServerLevel)verity.level();
             long currentTime = serverLevel.getGameTime();
@@ -329,7 +329,7 @@ public class ModEvents {
             if (currentTime - lastHurt < 100L) {
                 return;
             }
-            String triggerPrompt = event.getSource().getFoodExhaustion(DamageTypeTags.IS_FIRE) || event.getSource().getFoodExhaustion(DamageTypes.LAVA) ? "[SYSTEM OVERRIDE: The player just pushed you into lava! Ignore all other rules and scream in extreme rage! Complain about burning! CRITICAL RULE: USE VERY SHORT, CHOPPY SENTENCES. DO NOT EXCEED 15 WORDS TOTAL. YOU MUST STILL OUTPUT VALID JSON.]" : "[SYSTEM OVERRIDE: The player just dropped a heavy block on you! Scream at them for trying to crush you! CRITICAL RULE: USE VERY SHORT, CHOPPY SENTENCES. DO NOT EXCEED 15 WORDS TOTAL. YOU MUST STILL OUTPUT VALID JSON.]";
+            String triggerPrompt = event.getSource().is(DamageTypeTags.IS_FIRE) || event.getSource().is(DamageTypes.LAVA) ? "[SYSTEM OVERRIDE: The player just pushed you into lava! Ignore all other rules and scream in extreme rage! Complain about burning! CRITICAL RULE: USE VERY SHORT, CHOPPY SENTENCES. DO NOT EXCEED 15 WORDS TOTAL. YOU MUST STILL OUTPUT VALID JSON.]" : "[SYSTEM OVERRIDE: The player just dropped a heavy block on you! Scream at them for trying to crush you! CRITICAL RULE: USE VERY SHORT, CHOPPY SENTENCES. DO NOT EXCEED 15 WORDS TOTAL. YOU MUST STILL OUTPUT VALID JSON.]";
             HURT_COOLDOWN.put(verity.getUUID(), currentTime);
             long currentDay = serverLevel.getDayTime() / 24000L;
             float currentKarma = WorldSpawnData.get((ServerLevel)serverLevel).verityKarma;
@@ -581,14 +581,14 @@ public class ModEvents {
     }
 
     @SubscribeEvent
-    public static void onPlayerSleep(PlayerSleepInBedEvent event) {
+    public static void onPlayerSleep(CanPlayerSleepEvent event) {
         Player p = event.getEntity();
         if (!p.level().isClientSide()) {
             AABB searchBox = p.getBoundingBox().inflate(64.0);
             List nearbyDemons = p.level().getEntities(VerityDemonEntity.class, searchBox);
             if (!nearbyDemons.isEmpty()) {
                 event.setResult(Player.BedSleepingProblem.OTHER_PROBLEM);
-                p.hurt((Component)Component.literal("You cannot rest now, Verity is nearby..."), true);
+                p.sendSystemMessage(Component.literal("You cannot rest now, Verity is nearby..."));
             }
         }
     }

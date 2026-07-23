@@ -167,7 +167,6 @@ Enemy {
 
     public VerityDemonEntity(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
-        this.setStepHeight(1.5f);
         this.setPathfindingMalus(PathType.WATER, 0.0f);
         this.setPathfindingMalus(PathType.WATER_BORDER, 0.0f);
         this.setPersistenceRequired();
@@ -177,15 +176,15 @@ Enemy {
         return new DemonPathNavigation((Mob)this, level);
     }
 
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        this.entityData.define(DEMON_STATE, 0);
-        this.entityData.define(IS_CLIMBING, false);
-        this.entityData.define(IS_CRAWLING, false);
-        this.entityData.define(HUNT_PHASE, 0);
-        this.entityData.define(IS_EATING, false);
-        this.entityData.define(IS_GRABBING, false);
-        this.entityData.define(GRABBED_ENTITY_ID, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DEMON_STATE, 0);
+        builder.define(IS_CLIMBING, false);
+        builder.define(IS_CRAWLING, false);
+        builder.define(HUNT_PHASE, 0);
+        builder.define(IS_EATING, false);
+        builder.define(IS_GRABBING, false);
+        builder.define(GRABBED_ENTITY_ID, 0);
     }
 
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
@@ -258,7 +257,7 @@ Enemy {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return LivingEntity.createLivingAttributes().add(Attributes.MAX_HEALTH, 400.0).add(Attributes.MOVEMENT_SPEED, 0.45).add(Attributes.FOLLOW_RANGE, 512.0).add(Attributes.ATTACK_DAMAGE, 19.0).add(Attributes.ATTACK_KNOCKBACK, 1.0).add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
+        return LivingEntity.createLivingAttributes().add(Attributes.MAX_HEALTH, 400.0).add(Attributes.MOVEMENT_SPEED, 0.45).add(Attributes.FOLLOW_RANGE, 512.0).add(Attributes.ATTACK_DAMAGE, 19.0).add(Attributes.ATTACK_KNOCKBACK, 1.0).add(Attributes.KNOCKBACK_RESISTANCE, 1.0).add(Attributes.STEP_HEIGHT, 1.5);
     }
 
     public boolean hurt(DamageSource source, float amount) {
@@ -471,10 +470,6 @@ Enemy {
 
     public boolean isPersistenceRequired() {
         return true;
-    }
-
-    public EntityDimensions getDimensions(Pose pose) {
-        return EntityDimensions.fixed((float)0.4f, (float)((Boolean)this.entityData.get(IS_CRAWLING) != false ? 1.8f : 4.8f));
     }
 
     public boolean onClimbable() {

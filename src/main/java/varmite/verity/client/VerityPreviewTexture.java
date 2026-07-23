@@ -38,8 +38,8 @@ public class VerityPreviewTexture {
         catch (IOException e) {
             throw new RuntimeException("Failed to load Verity preview texture", e);
         }
-        texture = new DynamicTexture(new NativeImage(baseImage.read(), baseImage.getHeight(), true));
-        Minecraft.getInstance().getTextureManager().bindForSetup(PREVIEW_ID, (AbstractTexture)texture);
+        texture = new DynamicTexture(baseImage.getWidth(), baseImage.getHeight(), true);
+        Minecraft.getInstance().getTextureManager().register(PREVIEW_ID, texture);
         VerityPreviewTexture.applyHue((int)0);
     }
 
@@ -51,22 +51,22 @@ public class VerityPreviewTexture {
         NativeImage out = texture.getPixels();
         float[] hsb = new float[3];
         for (int y = 0; y < baseImage.getHeight(); ++y) {
-            for (int x = 0; x < baseImage.read(); ++x) {
-                int abgr = baseImage.read(x, y);
+            for (int x = 0; x < baseImage.getWidth(); ++x) {
+                int abgr = baseImage.getPixelRGBA(x, y);
                 int a = abgr >> 24 & 0xFF;
                 int b = abgr >> 16 & 0xFF;
                 int g = abgr >> 8 & 0xFF;
                 int r = abgr & 0xFF;
                 Color.RGBtoHSB(r, g, b, hsb);
                 if (hue == 0 || hsb[1] < 0.15f) {
-                    out.read(x, y, abgr);
+                    out.setPixelRGBA(x, y, abgr);
                     continue;
                 }
                 int rgb = Color.HSBtoRGB((float)hue / 360.0f, hsb[1], hsb[2]);
                 int nr = rgb >> 16 & 0xFF;
                 int ng = rgb >> 8 & 0xFF;
                 int nb = rgb & 0xFF;
-                out.read(x, y, a << 24 | nb << 16 | ng << 8 | nr);
+                out.setPixelRGBA(x, y, a << 24 | nb << 16 | ng << 8 | nr);
             }
         }
         texture.upload();

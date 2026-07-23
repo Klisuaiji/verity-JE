@@ -616,7 +616,7 @@ public class AiAPI {
                     }
                     String errorBody = new String(response.body().readAllBytes());
                     if (errorBody.contains("rate_limit_exceeded")) {
-                        player.hurt((Component)Component.literal("You ran out of TTS tokens! Try switching to Native TTS.").withStyle(ChatFormatting.RED), true);
+                        player.sendSystemMessage(Component.literal("You ran out of TTS tokens! Try switching to Native TTS.").withStyle(ChatFormatting.RED));
                     }
                     System.out.println("[Verity TTS Error]: " + errorBody);
                 }

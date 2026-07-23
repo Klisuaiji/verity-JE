@@ -36,7 +36,7 @@ public class RecoverVerityCommand {
     private static final long COOLDOWN = 3600000L;
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register((LiteralArgumentBuilder)Commands.mapSource((String)"recoververity").executes(context -> {
+        dispatcher.register(Commands.literal("recoververity").executes(context -> {
             ServerPlayer player = ((CommandSourceStack)context.getSource()).getPlayerOrException();
             ServerLevel level = player.serverLevel();
             boolean verityExists = false;
@@ -65,7 +65,7 @@ public class RecoverVerityCommand {
                 return 0;
             }
             verity.variantArea(player.getX() + 1.5, player.getY(), player.getZ() + 1.5, player.getYRot(), 0.0f);
-            level.destroyBlock((Entity)verity);
+            level.addFreshEntity((Entity)verity);
             player.sendSystemMessage((Component)Component.literal("\u00a7aVerity has been recovered!"));
             return 1;
         }));

@@ -39,7 +39,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.IConfigSpec;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.fml.ModContainer;
 import org.slf4j.Logger;
 import varmite.verity.VerityConfig;
 import varmite.verity.block.ModBlocks;
@@ -57,17 +57,16 @@ public class Verity {
     public static final String MOD_ID = "verity";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public Verity() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public Verity(IEventBus modEventBus, ModContainer modContainer) {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, (IConfigSpec)VerityConfig.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, (IConfigSpec)VerityConfig.SPEC);
-        PlayerKarmaProvider.register((IEventBus)modEventBus);
+        PlayerKarmaProvider.register(modEventBus);
         modEventBus.addListener(arg_0 -> this.commonSetup(arg_0));
-        ModCreativeModeTabs.register((IEventBus)modEventBus);
-        ModEntities.register((IEventBus)modEventBus);
-        ModItems.register((IEventBus)modEventBus);
-        ModSounds.register((IEventBus)modEventBus);
-        ModBlocks.register((IEventBus)modEventBus);
+        ModCreativeModeTabs.register(modEventBus);
+        ModEntities.register(modEventBus);
+        ModItems.register(modEventBus);
+        ModSounds.register(modEventBus);
+        ModBlocks.register(modEventBus);
         ModTriggers.UNBOX_VERITY_TRIGGER.toString();
         NeoForge.EVENT_BUS.register(ModEvents.class);
         modEventBus.addListener(ModBusCommonSetup::registerAttributes);

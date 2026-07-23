@@ -20,13 +20,14 @@ import java.util.List;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.event.ServerChatEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import varmite.verity.entity.custom.VerityEntity;
 
-@EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.GAME)
 public class VerityPleadingHandler {
     private static final double PLEAD_DISTANCE = 10.0;
 
@@ -34,10 +35,10 @@ public class VerityPleadingHandler {
     public static void onServerChat(ServerChatEvent event) {
         ServerPlayer player = event.getPlayer();
         String message = event.getMessage().getString().toLowerCase();
-        List verities = player.serverLevel().getEntities(VerityEntity.class, new AABB(player.blockPosition()).inflate(60.0));
+        List<VerityEntity> verities = player.serverLevel().getEntities(EntityTypeTest.forClass(VerityEntity.class), new AABB(player.blockPosition()).inflate(60.0), e -> true);
         for (VerityEntity verity : verities) {
             if (!verity.isMonstrous()) continue;
-            if ((double)player.setId((Entity)verity) <= 10.0) {
+            if ((double)player.distanceTo((Entity)verity) <= 10.0) {
                 if (verity.hasPlayerLooked(player.getUUID())) {
                     boolean pleadedSuccessfully = false;
                     if (message.contains("i came back for you")) {
