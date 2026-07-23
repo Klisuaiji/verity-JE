@@ -30,3 +30,6 @@ Thumbs.db
 
 # Compiled class files (decompiler leftovers)
 *.class
+
+# Porting tools (local utilities, not mod source)
+tools/
