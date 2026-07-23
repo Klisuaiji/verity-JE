@@ -28,7 +28,10 @@ import varmite.verity.item.ModItems;
 
 public class ModCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create((ResourceKey)Registries.CREATIVE_MODE_TAB, (String)"verity");
-    public static final Supplier<CreativeModeTab> VERITY_TAB = CREATIVE_MODE_TABS.register("verity_tab", () -> CreativeModeTab.builder().title((Component)Component.getSiblings((String)"creativetab.verity.verity_tab")).title(() -> new ItemStack((ItemLike)ModItems.VERITY_ITEM.get())).title((parameters, output) -> {
+    public static final Supplier<CreativeModeTab> VERITY_TAB = CREATIVE_MODE_TABS.register("verity_tab", () -> CreativeModeTab.builder()
+            .title(Component.translatable("creativetab.verity.verity_tab"))
+            .icon(() -> new ItemStack((ItemLike)ModItems.VERITY_ITEM.get()))
+            .displayItems((parameters, output) -> {
         output.accept((ItemLike)ModItems.VERITY_ITEM.get());
         output.accept((ItemLike)ModItems.VERITY_DISC.get());
         output.accept((ItemLike)ModItems.VERITY_EDIT_DISC.get());

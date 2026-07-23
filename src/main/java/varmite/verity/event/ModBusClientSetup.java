@@ -6,6 +6,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 
 import java.util.Map;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -46,9 +47,9 @@ public class ModBusClientSetup {
     @SubscribeEvent
     public static void onModifyBakingResult(ModelEvent.ModifyBakingResult event) {
         ResourceLocation verityItemId = ResourceLocation.fromNamespaceAndPath("verity", "verity_item");
-        for (Map.Entry entry : event.getModels().entrySet()) {
-            ResourceLocation key = (ResourceLocation)entry.getKey();
-            if (!key.getNamespace().equals(verityItemId.getNamespace()) || !key.getPath().equals(verityItemId.getPath())) continue;
+        for (Map.Entry<ModelResourceLocation, BakedModel> entry : event.getModels().entrySet()) {
+            ModelResourceLocation key = entry.getKey();
+            if (!key.id().getNamespace().equals(verityItemId.getNamespace()) || !key.id().getPath().equals(verityItemId.getPath())) continue;
             event.getModels().put(key, new UnshadedBakedModel((BakedModel)entry.getValue()));
         }
     }

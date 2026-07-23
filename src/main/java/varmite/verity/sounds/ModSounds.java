@@ -13,17 +13,15 @@
  */
 package varmite.verity.sounds;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import net.neoforged.neoforge.registries.DeferredHolder;
-
-import net.minecraft.core.Registry;
 public class ModSounds {
-    public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(NeoForgeRegistries.SOUND_EVENTS, (String)"verity");
+    public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT, "verity");
     public static final DeferredHolder<SoundEvent, SoundEvent> BOX_OPEN = ModSounds.registerSoundEvent((String)"box_open");
     public static final DeferredHolder<SoundEvent, SoundEvent> BOX_CLICK = ModSounds.registerSoundEvent((String)"box_click");
     public static final DeferredHolder<SoundEvent, SoundEvent> BOX_VERITY_0 = ModSounds.registerSoundEvent((String)"box_verity_0");
@@ -38,11 +36,11 @@ public class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> BONE_0 = ModSounds.registerSoundEvent((String)"bone_snap");
     public static final DeferredHolder<SoundEvent, SoundEvent> BONE_1 = ModSounds.registerSoundEvent((String)"bone_break");
     public static final DeferredHolder<SoundEvent, SoundEvent> JUMPSCARE = ModSounds.registerSoundEvent((String)"jumpscare");
-    public static final DeferredHolder<SoundEvent, SoundEvent> VERITY_DISC_SOUND = SOUND_EVENTS.register("verity_disc", () -> SoundEvent.create((ResourceLocation)ResourceLocation.fromNamespaceAndPath("verity", "verity_disc")));
-    public static final DeferredHolder<SoundEvent, SoundEvent> VERITY_EDIT_DISC_SOUND = SOUND_EVENTS.register("verity_edit_disc", () -> SoundEvent.create((ResourceLocation)ResourceLocation.fromNamespaceAndPath("verity", "verity_edit_disc")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> VERITY_DISC_SOUND = SOUND_EVENTS.register("verity_disc", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("verity", "verity_disc")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> VERITY_EDIT_DISC_SOUND = SOUND_EVENTS.register("verity_edit_disc", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("verity", "verity_edit_disc")));
 
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String name) {
-        return SOUND_EVENTS.register(name, () -> SoundEvent.create((ResourceLocation)new ResourceLocation("verity", name)));
+        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath("verity", name)));
     }
 
     public static void register(IEventBus eventBus) {

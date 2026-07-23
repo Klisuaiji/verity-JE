@@ -25,8 +25,6 @@ extends GroundPathNavigation {
 
     protected PathFinder createPathFinder(int maxVisitedNodes) {
         this.nodeEvaluator = new DemonNodeEvaluator();
-        this.nodeEvaluator.prepare(this.level, this.mob);
-        this.nodeEvaluator.done();
         return new PathFinder(this.nodeEvaluator, maxVisitedNodes * 2);
     }
 }

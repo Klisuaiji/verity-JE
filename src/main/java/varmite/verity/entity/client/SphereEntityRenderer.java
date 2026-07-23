@@ -20,6 +20,7 @@
 package varmite.verity.entity.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import java.awt.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -50,7 +51,7 @@ extends EntityRenderer<VerityEntity> {
         if (entity.tickCount < 3 && entity.clientAnimationTicks < 0 && startTick > 0) {
             return;
         }
-        super.render((Entity)entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         LocalPlayer player = Minecraft.getInstance().player;
         float stretchY = 1.0f;
         float stretchXZ = 1.0f;
@@ -67,16 +68,16 @@ extends EntityRenderer<VerityEntity> {
             stretchY = 1.0f + Mth.sin((float)(talkTime * 0.6f)) * 0.12f;
             stretchXZ = 1.0f + (1.0f - stretchY) * 0.5f;
         }
-        double entityX = Mth.floor((double)partialTick, (double)entity.xo, (double)entity.getX());
-        double entityY = Mth.floor((double)partialTick, (double)entity.yo, (double)entity.getY()) + (double)entity.getBbHeight() * 0.5 + visualYOffset;
-        double entityZ = Mth.floor((double)partialTick, (double)entity.zo, (double)entity.getZ());
+        double entityX = Mth.lerp((double)partialTick, (double)entity.xo, (double)entity.getX());
+        double entityY = Mth.lerp((double)partialTick, (double)entity.yo, (double)entity.getY()) + (double)entity.getBbHeight() * 0.5 + visualYOffset;
+        double entityZ = Mth.lerp((double)partialTick, (double)entity.zo, (double)entity.getZ());
         double viewerX = entityX;
         double viewerY = entityY + 1.0;
         double viewerZ = entityZ;
         if (player != null) {
-            viewerX = Mth.floor((double)partialTick, (double)player.xo, (double)player.getX());
-            viewerY = Mth.floor((double)partialTick, (double)player.yo, (double)player.getY()) + (double)player.getEyeHeight();
-            viewerZ = Mth.floor((double)partialTick, (double)player.zo, (double)player.getZ());
+            viewerX = Mth.lerp((double)partialTick, (double)player.xo, (double)player.getX());
+            viewerY = Mth.lerp((double)partialTick, (double)player.yo, (double)player.getY()) + (double)player.getEyeHeight();
+            viewerZ = Mth.lerp((double)partialTick, (double)player.zo, (double)player.getZ());
         }
         int hueValue = (Integer)VerityConfig.COLOR.get();
         int r = 255;
@@ -84,17 +85,17 @@ extends EntityRenderer<VerityEntity> {
         int b = 255;
         int a = 255;
         if (hueValue != 0) {
-            int rgb = Mth.frac((float)((float)hueValue / 360.0f), (float)1.0f, (float)1.0f);
+            int rgb = Color.HSBtoRGB((float)hueValue / 360.0f, 1.0f, 1.0f);
             r = rgb >> 16 & 0xFF;
             g = rgb >> 8 & 0xFF;
             b = rgb & 0xFF;
         }
-        float rollAngle = Mth.invSqrt((float)partialTick, (float)entity.clientRollAngleO, (float)entity.clientRollAngle);
-        float bodyYaw = Mth.invSqrt((float)partialTick, (float)entity.yBodyRotO, (float)entity.yBodyRot);
-        poseStack.translate();
+        float rollAngle = Mth.lerp((float)partialTick, (float)entity.clientRollAngleO, (float)entity.clientRollAngle);
+        float bodyYaw = Mth.lerp((float)partialTick, (float)entity.yBodyRotO, (float)entity.yBodyRot);
+        poseStack.pushPose();
         poseStack.translate(0.0, visualYOffset, 0.0);
         SphereRenderHelper.renderEntityBillboard((PoseStack)poseStack, (MultiBufferSource)bufferSource, (ResourceLocation)this.getTextureLocation(entity), (int)packedLight, (double)entityX, (double)entityY, (double)entityZ, (double)viewerX, (double)viewerY, (double)viewerZ, (float)stretchY, (float)stretchXZ, (int)r, (int)g, (int)b, (int)a, (float)rollAngle, (float)bodyYaw);
-        poseStack.scale();
+        poseStack.popPose();
     }
 }
 

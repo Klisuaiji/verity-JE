@@ -58,6 +58,7 @@ import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModLoadingContext;
@@ -81,7 +82,7 @@ public class VerityClient {
         IEventBus forgeBus = NeoForge.EVENT_BUS;
         forgeBus.addListener(ModBusClientSetup::registerRenderers);
         forgeBus.addListener(ModBusClientSetup::onModifyBakingResult);
-        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((minecraft, previousScreen) -> VerityClient.createYACLScreen((Screen)previousScreen)));
+        ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class, () -> (minecraft, previousScreen) -> VerityClient.createYACLScreen((Screen)previousScreen));
     }
 
     public static Screen createYACLScreen(Screen previousScreen) {
@@ -96,7 +97,7 @@ public class VerityClient {
             if (value == 0) {
                 return Component.literal("0 (Disabled)");
             }
-            int rgb = Mth.frac((float)((float)value.intValue() / 360.0f), (float)1.0f, (float)1.0f);
+            int rgb = Color.HSBtoRGB((float)value.intValue() / 360.0f, 1.0f, 1.0f);
             return Component.literal(("\u2588\u2588 " + value)).withStyle(Style.EMPTY.withColor(rgb));
         })).build()).option(Option.createBuilder().name((Component)Component.literal("Custom Name")).description(OptionDescription.of((Component[])new Component[]{Component.literal("Rename Verity to anything you want!")})).binding((Object)"Verity", () -> ((ModConfigSpec.ConfigValue)VerityConfig.VERITY_CUSTOM_NAME).get(), arg_0 -> ((ModConfigSpec.ConfigValue)VerityConfig.VERITY_CUSTOM_NAME).set(arg_0)).controller(StringControllerBuilder::create).build()).option(Option.createBuilder().name((Component)Component.literal("Personality")).description(OptionDescription.of((Component[])new Component[]{Component.literal("Can conflict when changed multiple\ntimes in one world")})).binding((Object)"normal", () -> ((ModConfigSpec.ConfigValue)VerityConfig.PERSONALITY).get(), arg_0 -> ((ModConfigSpec.ConfigValue)VerityConfig.PERSONALITY).set(arg_0)).controller(StringControllerBuilder::create).build()).build()).build().generateScreen(previousScreen);
     }

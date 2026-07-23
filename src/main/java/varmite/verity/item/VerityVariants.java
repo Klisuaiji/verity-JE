@@ -10,9 +10,11 @@
 package varmite.verity.item;
 
 import java.util.List;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 
 /*
  * Exception performing whole class analysis ignored.
@@ -24,9 +26,11 @@ public final class VerityVariants {
     }
 
     public static String fromStack(ItemStack stack) {
-        CompoundTag tag;
-        if (stack.hasTag() && (tag = stack.getTag()).contains("VerityVariant")) {
-            return VerityVariants.sanitize((String)tag.getString("VerityVariant"));
+        if (stack.has(DataComponents.CUSTOM_DATA)) {
+            CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+            if (tag != null && tag.contains("VerityVariant")) {
+                return VerityVariants.sanitize(tag.getString("VerityVariant"));
+            }
         }
         return "happy";
     }

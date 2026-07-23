@@ -744,7 +744,7 @@ extends PathfinderMob {
     }
 
     private Player nearestPlayer(double radius) {
-        List<Player> players = this.level().getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox().inflate(radius));
+        List<Player> players = this.level().getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox().inflate(radius), e -> true);
         Player best = null;
         double bestDist = Double.MAX_VALUE;
         for (Player p : players) {
@@ -787,7 +787,7 @@ extends PathfinderMob {
             if (this.follow == null) {
                 return;
             }
-            this.mob.getLookControl().setLookAt(this.follow, 10.0f, (float)this.mob.getMaxHeadRot());
+            this.mob.getLookControl().setLookAt(this.follow, 10.0f, (float)this.mob.getMaxHeadYRot());
             double d = this.mob.distanceToSqr(this.follow);
             if (d > (double)(this.minDist * this.minDist)) {
                 this.mob.getNavigation().moveTo(this.follow, this.speed);

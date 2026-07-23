@@ -62,13 +62,13 @@ public final class SphereMesh {
         float z = (float)((double)radius * Math.sin(theta) * Math.sin(phi));
         float u = (float)((double)phi / (Math.PI * 2));
         float v = 0.25f + (float)((double)theta / Math.PI) * 0.5f;
-        u = Mth.sin((float)(0.5f + (u - 0.5f) * 1.3f), (float)0.0f, (float)1.0f);
-        v = Mth.sin((float)(0.5f + (v - 0.5f) * 1.3f), (float)0.0f, (float)1.0f);
+        u = Mth.clamp(0.5f + (u - 0.5f) * 1.3f, 0.0f, 1.0f);
+        v = Mth.clamp(0.5f + (v - 0.5f) * 1.3f, 0.0f, 1.0f);
         float length = (float)Math.sqrt(x * x + y * y + z * z);
         float nx = x / length;
         float ny = y / length;
         float nz = z / length;
-        consumer.vertex(pose, x, y, z).vertex(r, g, b, a).vertex(u, v).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).vertex(normalMatrix, nx, ny, nz).endVertex();
+        consumer.addVertex(pose, x, y, z).setColor(r, g, b, a).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(nx, ny, nz);
     }
 }
 

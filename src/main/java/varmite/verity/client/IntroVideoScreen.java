@@ -43,7 +43,7 @@ extends Screen {
         if (!this.videoStarted) {
             this.startTime = System.currentTimeMillis();
             ResourceLocation soundId = ResourceLocation.fromNamespaceAndPath((String)"verity", (String)"intro_video_audio");
-            SoundEvent event = SoundEvent.create((ResourceLocation)soundId);
+            SoundEvent event = SoundEvent.createVariableRangeEvent(soundId);
             this.minecraft.getSoundManager().play((SoundInstance)SimpleSoundInstance.forUI((SoundEvent)event, (float)1.0f, (float)1.0f));
             Minecraft mc = Minecraft.getInstance();
             mc.options.getSoundSourceOptionInstance(SoundSource.MUSIC).set(Double.valueOf(0.0));

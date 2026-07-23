@@ -42,6 +42,7 @@ package varmite.verity.item;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -50,14 +51,18 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
@@ -78,8 +83,7 @@ extends Item {
     public static WorldSpawnData data;
 
     public VerityItem(Item.Properties properties) {
-        super(properties);
-        properties.food(1);
+        super(properties.food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.6f).build()));
     }
 
     public boolean isDamageable(ItemStack stack) {
@@ -96,7 +100,7 @@ extends Item {
     }
 
     public Component getName(ItemStack stack) {
-        Object name = (String)VerityConfig.VERITY_CUSTOM_NAME.get();
+        String name = (String)VerityConfig.VERITY_CUSTOM_NAME.get();
         if (name == null || ((String)name).isBlank()) {
             name = "Verity";
         }
@@ -117,18 +121,24 @@ extends Item {
                     ServerLevel level = (ServerLevel)entity.level();
                     BlockPos pos = entity.blockPosition();
                     String variantToSpawn = "happy";
-                    if (stack.hasTag() && stack.getTag().contains("VerityVariant")) {
-                        variantToSpawn = stack.getTag().getString("VerityVariant");
+                    if (stack.has(DataComponents.CUSTOM_DATA)) {
+                        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+                        if (tag != null && tag.contains("VerityVariant")) {
+                            variantToSpawn = tag.getString("VerityVariant");
+                        }
                     }
                     if ((spawnedEntity = (VerityEntity)((EntityType)ModEntities.VERITY_ENTITY.get()).create((Level)level)) != null) {
                         spawnedEntity.variantArea((double)pos.getX() + 0.5, (double)pos.getY(), (double)pos.getZ() + 0.5, 0.0f, 0.0f);
                         spawnedEntity.setVariant(variantToSpawn);
-                        if (stack.hasTag() && stack.hasTag()) {
-                            spawnedEntity.hurt(stack.getTag());
+                        if (stack.has(DataComponents.CUSTOM_DATA)) {
+                            CompoundTag stackTag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+                            if (stackTag != null) {
+                                spawnedEntity.load(stackTag);
+                            }
                         }
-                        level.destroyBlock((Entity)spawnedEntity);
+                        level.destroyBlock(spawnedEntity.blockPosition(), false);
                     }
-                    level.createTick(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1.0f, 0.8f);
+                    level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1.0f, 0.8f);
                     entity.discard();
                     return true;
                 }
@@ -148,7 +158,6 @@ extends Item {
     }
 
     public void onDestroyed(ItemEntity itemEntity, DamageSource damageSource) {
-        Level nearestPlayer2;
         if (damageSource.is(DamageTypeTags.IS_FIRE)) {
             Level level = itemEntity.level();
             if (level instanceof ServerLevel) {
@@ -158,13 +167,13 @@ extends Item {
                 VerityEntity spawnedEntity = (VerityEntity)((EntityType)ModEntities.VERITY_ENTITY.get()).create((Level)serverLevel);
                 if (spawnedEntity != null) {
                     spawnedEntity.variantArea((double)safePos.getX() + 0.5, (double)safePos.getY(), (double)safePos.getZ() + 0.5, 0.0f, 0.0f);
-                    serverLevel.destroyBlock((Entity)spawnedEntity);
+                    serverLevel.destroyBlock(spawnedEntity.blockPosition(), false);
                     spawnedEntity.setVariant("serious_1");
-                    spawnedEntity.level().createTick(null, safePos, (SoundEvent)ModSounds.BONE_0.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+                    spawnedEntity.level().playSound(null, safePos, (SoundEvent)ModSounds.BONE_0.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
                     PacketDistributor.sendToPlayersTrackingEntityAndSelf(spawnedEntity, new PlayTtsPayload(spawnedEntity.getId(), "DO NOT DO THAT!"));
                     serverLevel.getServer().execute(() -> ModEvents.updateAndSyncKarma((ServerLevel)serverLevel, (float)-1.0f));
                     data = WorldSpawnData.get((ServerLevel)serverLevel);
-                    serverLevel.createTick(null, spawnedEntity.blockPosition(), SoundEvents.LAVA_EXTINGUISH, SoundSource.PLAYERS, 1.0f, 0.8f);
+                    serverLevel.playSound(null, spawnedEntity.blockPosition(), SoundEvents.LAVA_EXTINGUISH, SoundSource.PLAYERS, 1.0f, 0.8f);
                     if (((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
                         return;
                     }
@@ -172,34 +181,34 @@ extends Item {
                 }
             }
         } else if (damageSource.is(DamageTypeTags.IS_EXPLOSION)) {
-            ServerLevel serverLevel;
-            Player nearestPlayer2;
-            Level itemPos = itemEntity.level();
-            if (itemPos instanceof ServerLevel && (nearestPlayer2 = (serverLevel = (ServerLevel)itemPos).getEntities((Entity)itemEntity, 256.0)) instanceof ServerPlayer) {
-                ServerPlayer p = (ServerPlayer)nearestPlayer2;
-                ItemStack stack = new ItemStack((ItemLike)ModItems.VERITY_ITEM.get());
-                CompoundTag tag = stack.getOrCreateTag();
-                tag.putString("VerityVariant", "serious_3");
-                p.getInventory().add(stack);
-                p.sendSystemMessage((Component)Component.literal("<Verity> Ayo chat why u let me explode"));
-                PacketDistributor.sendToPlayer(p, new PlayTtsPayload(p.getId(), "Ayo chat why u let me explode"));
-                serverLevel.getServer().execute(() -> ModEvents.updateAndSyncKarma((ServerLevel)serverLevel, (float)-1.0f));
-                data = WorldSpawnData.get((ServerLevel)serverLevel);
-                serverLevel.createTick(null, p.blockPosition(), SoundEvents.GHAST_SCREAM, SoundSource.PLAYERS, 1.0f, 1.3f);
+            if (itemEntity.level() instanceof ServerLevel serverLevel) {
+                Player nearestPlayer = serverLevel.getNearestPlayer(itemEntity, 256.0);
+                if (nearestPlayer instanceof ServerPlayer p) {
+                    ItemStack stack = new ItemStack((ItemLike)ModItems.VERITY_ITEM.get());
+                    CompoundTag tag = new CompoundTag();
+                    tag.putString("VerityVariant", "serious_3");
+                    stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+                    p.getInventory().add(stack);
+                    p.sendSystemMessage((Component)Component.literal("<Verity> Ayo chat why u let me explode"));
+                    PacketDistributor.sendToPlayer(p, new PlayTtsPayload(p.getId(), "Ayo chat why u let me explode"));
+                    serverLevel.getServer().execute(() -> ModEvents.updateAndSyncKarma(serverLevel, -1.0f));
+                    data = WorldSpawnData.get(serverLevel);
+                    serverLevel.playSound(null, p.blockPosition(), SoundEvents.GHAST_SCREAM, SoundSource.PLAYERS, 1.0f, 1.3f);
+                }
             }
-        } else if (damageSource.is(DamageTypes.CACTUS) && (nearestPlayer2 = itemEntity.level()) instanceof ServerLevel) {
-            ServerLevel serverLevel = (ServerLevel)nearestPlayer2;
-            if ((nearestPlayer2 = serverLevel.getEntities((Entity)itemEntity, 256.0)) instanceof ServerPlayer) {
-                ServerPlayer p = (ServerPlayer)nearestPlayer2;
+        } else if (damageSource.is(DamageTypes.CACTUS) && itemEntity.level() instanceof ServerLevel serverLevel) {
+            Player nearestPlayer = serverLevel.getNearestPlayer(itemEntity, 256.0);
+            if (nearestPlayer instanceof ServerPlayer p) {
                 ItemStack stack = new ItemStack((ItemLike)ModItems.VERITY_ITEM.get());
-                CompoundTag tag = stack.getOrCreateTag();
+                CompoundTag tag = new CompoundTag();
                 tag.putString("VerityVariant", "serious_3");
+                stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
                 p.getInventory().add(stack);
                 p.sendSystemMessage((Component)Component.literal("<Verity> DON'T DO THAT."));
                 PacketDistributor.sendToPlayer(p, new PlayTtsPayload(p.getId(), "DO NOT DO THAT!"));
-                serverLevel.getServer().execute(() -> ModEvents.updateAndSyncKarma((ServerLevel)serverLevel, (float)-1.0f));
-                data = WorldSpawnData.get((ServerLevel)serverLevel);
-                serverLevel.createTick(null, p.blockPosition(), (SoundEvent)ModSounds.BONE_0.get(), SoundSource.PLAYERS, 1.0f, 0.8f);
+                serverLevel.getServer().execute(() -> ModEvents.updateAndSyncKarma(serverLevel, -1.0f));
+                data = WorldSpawnData.get(serverLevel);
+                serverLevel.playSound(null, p.blockPosition(), (SoundEvent)ModSounds.BONE_0.get(), SoundSource.PLAYERS, 1.0f, 0.8f);
             } else {
                 System.out.println("[VERITY DEBUG] Cactus destruction fired, but couldn't find a valid ServerPlayer nearby.");
             }
@@ -217,8 +226,8 @@ extends Item {
                     boolean isHeadEmpty;
                     BlockPos checkPos = startPos.offset(x, y, z);
                     boolean hasSolidFloor = level.getBlockState(checkPos.below()).isSolidRender((BlockGetter)level, checkPos.below());
-                    boolean isFeetEmpty = level.getBlockState(checkPos).getCollisionShape((BlockGetter)level, checkPos).min() && level.getFluidState(checkPos).isEmpty();
-                    boolean bl = isHeadEmpty = level.getBlockState(checkPos.above()).getCollisionShape((BlockGetter)level, checkPos.above()).min() && level.getFluidState(checkPos.above()).isEmpty();
+                    boolean isFeetEmpty = level.getBlockState(checkPos).getCollisionShape((BlockGetter)level, checkPos).isEmpty() && level.getFluidState(checkPos).isEmpty();
+                    isHeadEmpty = level.getBlockState(checkPos.above()).getCollisionShape((BlockGetter)level, checkPos.above()).isEmpty() && level.getFluidState(checkPos.above()).isEmpty();
                     if (!hasSolidFloor || !isFeetEmpty || !isHeadEmpty || !((distanceSqr = startPos.distSqr((Vec3i)checkPos)) < minDistanceSqr)) continue;
                     minDistanceSqr = distanceSqr;
                     closestSafePos = checkPos;

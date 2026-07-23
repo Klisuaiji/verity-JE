@@ -37,10 +37,12 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.ScreenEvent;
@@ -53,6 +55,7 @@ import varmite.verity.client.IntroVideoScreen;
 import varmite.verity.item.ModItems;
 
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
 /*
  * Exception performing whole class analysis ignored.
  */
@@ -78,23 +81,24 @@ public class ModClientEvents {
     public static void onClientTick(ClientTickEvent event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null && (Double)mc.options.gamma().get() > 0.0) {
-            mc.options.gamma().set((Object)0.0);
+            mc.options.gamma().set(0.0);
             mc.options.save();
         }
     }
 
     @SubscribeEvent
-    public static void onRenderTick(ClientTickEvent event) {
+    public static void onRenderFrame(RenderFrameEvent event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null || mc.levelRenderer == null) {
             return;
         }
         ArrayList<DynamicLightManager.Beam> beams = new ArrayList<DynamicLightManager.Beam>();
-        float pt = event.renderTickTime;
+        float pt = event.getPartialTick().getGameTimeDeltaPartialTick(true);
         for (Player player : mc.level.players()) {
-            CompoundTag tag;
             ItemStack flashlight = ModClientEvents.getFlashlight((Player)player);
-            if (flashlight.isEmpty() || (tag = flashlight.getTag()) == null || !tag.getBoolean("FlashlightOn")) continue;
+            if (flashlight.isEmpty()) continue;
+            CompoundTag tag = flashlight.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+            if (tag == null || !tag.getBoolean("FlashlightOn")) continue;
             Vec3 start = player.getEyePosition(pt);
             Vec3 forward = player.getViewVector(pt);
             Vec3 end = start.add(forward.scale(30.0));
@@ -113,14 +117,14 @@ public class ModClientEvents {
                 Vec3 dir = beam.end.subtract(beam.start).normalize();
                 for (double i = 0.0; i <= distance; i += 1.0) {
                     Vec3 point = beam.start.add(dir.scale(i));
-                    currentCenterBlocks.add(BlockPos.offset((double)point.x, (double)point.y, (double)point.z));
+                    currentCenterBlocks.add(BlockPos.containing(point.x, point.y, point.z));
                     int radius = (int)Math.ceil(2.0 + i / distance * 5.0);
-                    int minSecX = SectionPos.of((int)((int)Math.floor(point.x - (double)radius)));
-                    int maxSecX = SectionPos.of((int)((int)Math.floor(point.x + (double)radius)));
-                    int minSecY = SectionPos.of((int)((int)Math.floor(point.y - (double)radius)));
-                    int maxSecY = SectionPos.of((int)((int)Math.floor(point.y + (double)radius)));
-                    int minSecZ = SectionPos.of((int)((int)Math.floor(point.z - (double)radius)));
-                    int maxSecZ = SectionPos.of((int)((int)Math.floor(point.z + (double)radius)));
+                    int minSecX = SectionPos.blockToSectionCoord((int)Math.floor(point.x - (double)radius));
+                    int maxSecX = SectionPos.blockToSectionCoord((int)Math.floor(point.x + (double)radius));
+                    int minSecY = SectionPos.blockToSectionCoord((int)Math.floor(point.y - (double)radius));
+                    int maxSecY = SectionPos.blockToSectionCoord((int)Math.floor(point.y + (double)radius));
+                    int minSecZ = SectionPos.blockToSectionCoord((int)Math.floor(point.z - (double)radius));
+                    int maxSecZ = SectionPos.blockToSectionCoord((int)Math.floor(point.z + (double)radius));
                     for (int x = minSecX; x <= maxSecX; ++x) {
                         for (int y = minSecY; y <= maxSecY; ++y) {
                             for (int z = minSecZ; z <= maxSecZ; ++z) {
@@ -138,7 +142,7 @@ public class ModClientEvents {
         allToUpdate.addAll(previousSections);
         allToUpdate.addAll(currentSections);
         for (SectionPos section : allToUpdate) {
-            mc.levelRenderer.doEntityOutline(section.of(), section.blockToSectionCoord(), section.sectionRelativeZ());
+            mc.levelRenderer.setSectionDirtyWithNeighbors(section.x(), section.y(), section.z());
         }
         previousCenterBlocks = currentCenterBlocks;
         previousSections = currentSections;

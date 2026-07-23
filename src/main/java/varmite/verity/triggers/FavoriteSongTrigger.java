@@ -1,34 +1,38 @@
 package varmite.verity.triggers;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import java.util.Optional;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
+import net.minecraft.advancements.critereon.CriterionValidator;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 public class FavoriteSongTrigger extends SimpleCriterionTrigger<FavoriteSongTrigger.TriggerInstance> {
     public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath("verity", "favoritesong");
+    public ResourceLocation getId() { return ID; }
 
     @Override
-    public ResourceLocation getId() {
-        return ID;
+    public Codec codec() {
+        return TriggerInstance.CODEC;
     }
 
-    @Override
-    protected FavoriteSongTrigger.TriggerInstance createInstance(JsonObject json, ContextAwarePredicate player) {
-        return new FavoriteSongTrigger.TriggerInstance(player);
-    }
 
     public void trigger(ServerPlayer player) {
         this.trigger(player, instance -> true);
     }
 
     public static class TriggerInstance implements SimpleCriterionTrigger.SimpleInstance {
+        public static final Codec<TriggerInstance> CODEC = MapCodec.unit(new TriggerInstance(ContextAwarePredicate.create())).codec();
         private final ContextAwarePredicate player;
 
         public TriggerInstance(ContextAwarePredicate player) {
             this.player = player;
+        }
+
+        @Override
+        public void validate(CriterionValidator validator) {
         }
 
         @Override

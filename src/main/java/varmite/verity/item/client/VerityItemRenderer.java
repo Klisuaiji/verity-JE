@@ -20,6 +20,7 @@ package varmite.verity.item.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import java.awt.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -49,20 +50,20 @@ extends BlockEntityWithoutLevelRenderer {
             g = 255;
             b = 255;
         } else {
-            int rgb = Mth.frac((float)((float)hueValue / 360.0f), (float)1.0f, (float)1.0f);
+            int rgb = Color.HSBtoRGB((float)hueValue / 360.0f, 1.0f, 1.0f);
             r = rgb >> 16 & 0xFF;
             g = rgb >> 8 & 0xFF;
             b = rgb & 0xFF;
         }
-        poseStack.translate();
+        poseStack.pushPose();
         poseStack.translate(0.5, 0.5, 0.5);
         poseStack.scale(0.5f, 0.5f, 0.5f);
         if (displayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND || displayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND) {
             poseStack.translate(0.0, 0.25, 0.0);
-            poseStack.translate(Axis.YP.rotationDegrees(45.0f));
+            poseStack.mulPose(Axis.YP.rotationDegrees(45.0f));
         }
         SphereMesh.render((PoseStack)poseStack, (MultiBufferSource)bufferSource, (ResourceLocation)texture, (float)0.5f, (int)16, (int)16, (int)packedLight, (int)r, (int)g, (int)b, (int)a);
-        poseStack.scale();
+        poseStack.popPose();
     }
 }
 

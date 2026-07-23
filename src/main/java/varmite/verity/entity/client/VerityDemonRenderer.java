@@ -32,7 +32,7 @@ extends GeoEntityRenderer<VerityDemonEntity> {
     public void render(VerityDemonEntity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         int actualDeathTime = entity.deathTime;
         entity.deathTime = 0;
-        super.render((Entity)entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
         entity.deathTime = actualDeathTime;
     }
 }

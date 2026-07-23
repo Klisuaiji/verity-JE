@@ -21,9 +21,9 @@ import varmite.verity.entity.custom.VerityEntity;
 
 public class ModBusCommonSetup {
     public static void registerAttributes(EntityAttributeCreationEvent event) {
-        event.put((EntityType)ModEntities.VERITY_ENTITY.get(), VerityEntity.createAttributes().add());
-        event.put((EntityType)ModEntities.BOX_ENTITY.get(), BoxEntity.createAttributes().add());
-        event.put((EntityType)ModEntities.VERITY_DEMON_ENTITY.get(), VerityDemonEntity.createAttributes().add());
+        event.put((EntityType)ModEntities.VERITY_ENTITY.get(), VerityEntity.createAttributes().build());
+        event.put((EntityType)ModEntities.BOX_ENTITY.get(), BoxEntity.createAttributes().build());
+        event.put((EntityType)ModEntities.VERITY_DEMON_ENTITY.get(), VerityDemonEntity.createAttributes().build());
     }
 }
 

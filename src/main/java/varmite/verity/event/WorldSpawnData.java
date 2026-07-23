@@ -11,6 +11,7 @@
  */
 package varmite.verity.event;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -29,27 +30,28 @@ extends SavedData {
         CompoundTag messageTag = new CompoundTag();
         messageTag.putString("role", role);
         messageTag.putString("content", content);
-        this.chatHistory.add((Object)messageTag);
+        this.chatHistory.add(messageTag);
         while (this.chatHistory.size() > 10) {
             this.chatHistory.remove(0);
         }
         this.setDirty();
     }
 
-    public CompoundTag loadTeams(CompoundTag tag) {
+    @Override
+    public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
         tag.putBoolean("hasSpawnedEntity", this.hasSpawnedEntity);
         tag.putFloat("verityKarma", this.verityKarma);
         tag.putBoolean("hasSpawnedDemon", this.hasSpawnedDemon);
         tag.putBoolean("hasSpawnedDemonAngered", this.hasSpawnedDemonAngered);
-        tag.put("chatHistory", (Tag)this.chatHistory);
+        tag.put("chatHistory", this.chatHistory);
         return tag;
     }
 
     public static WorldSpawnData get(ServerLevel level) {
-        return (WorldSpawnData)level.getDataStorage().computeIfAbsent(WorldSpawnData::load, WorldSpawnData::new, "verity_world_data");
+        return level.getDataStorage().computeIfAbsent(new SavedData.Factory<>(WorldSpawnData::new, WorldSpawnData::load), "verity_world_data");
     }
 
-    public static WorldSpawnData load(CompoundTag tag) {
+    public static WorldSpawnData load(CompoundTag tag, HolderLookup.Provider provider) {
         WorldSpawnData data = new WorldSpawnData();
         data.hasSpawnedEntity = tag.getBoolean("hasSpawnedEntity");
         data.hasSpawnedDemon = tag.getBoolean("hasSpawnedDemon");

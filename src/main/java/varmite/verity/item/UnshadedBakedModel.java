@@ -30,7 +30,7 @@ extends BakedModelWrapper<BakedModel> {
     }
 
     public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
-        List originalQuads = super.getQuads(state, side, rand);
+        List<BakedQuad> originalQuads = super.getQuads(state, side, rand);
         ArrayList<BakedQuad> glowingQuads = new ArrayList<BakedQuad>();
         for (BakedQuad quad : originalQuads) {
             int[] vertexData = (int[])quad.getVertices().clone();

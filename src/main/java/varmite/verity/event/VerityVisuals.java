@@ -34,7 +34,7 @@ public class VerityVisuals {
             float partialTick = (float)event.getPartialTick();
             float angle = level.getTimeOfDay(partialTick);
             float brightness = Mth.cos((float)(angle * ((float)Math.PI * 2))) * 2.0f + 0.5f;
-            brightness = Mth.sin((float)brightness, (float)0.0f, (float)1.0f);
+            brightness = Mth.clamp(brightness, 0.0f, 1.0f);
             float targetRed = 0.55f;
             float targetGreen = 0.75f;
             float targetBlue = 1.0f;

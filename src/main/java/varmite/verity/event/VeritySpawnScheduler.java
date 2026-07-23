@@ -38,6 +38,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 import varmite.verity.entity.ModEntities;
+import varmite.verity.entity.custom.VerityEntity;
 import varmite.verity.event.VeritySpawnScheduler;
 import varmite.verity.network.PlayTtsPayload;
 
@@ -76,10 +77,11 @@ public class VeritySpawnScheduler {
             level.destroyBlock(abovePos, true);
         }
         if ((verity = ((EntityType)ModEntities.VERITY_ENTITY.get()).create((Level)level)) != null) {
-            verity.variantArea((double)chestPos.getX() + 0.5, (double)chestPos.getY() + 1.0, (double)chestPos.getZ() + 0.5, 0.0f, 0.0f);
-            level.destroyBlock(verity);
+            VerityEntity verityEntity = (VerityEntity)verity;
+            verityEntity.variantArea((double)chestPos.getX() + 0.5, (double)chestPos.getY() + 1.0, (double)chestPos.getZ() + 0.5, 0.0f, 0.0f);
+            level.destroyBlock(verity.blockPosition(), false);
             PacketDistributor.sendToPlayersTrackingEntityAndSelf(verity, new PlayTtsPayload(verity.getId(), "You can't trap me lil bro."));
-            level.createTick(null, verity.blockPosition(), SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, 1.0f, 1.0f);
+            level.playSound(null, verity.blockPosition(), SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, 1.0f, 1.0f);
         }
     }
 

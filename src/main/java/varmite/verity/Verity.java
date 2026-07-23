@@ -34,9 +34,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.IConfigSpec;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.ModContainer;
@@ -58,10 +56,10 @@ public class Verity {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public Verity(IEventBus modEventBus, ModContainer modContainer) {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, (IConfigSpec)VerityConfig.SPEC);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, (IConfigSpec)VerityConfig.SPEC);
+        modContainer.registerConfig(ModConfig.Type.CLIENT, VerityConfig.SPEC);
+        modContainer.registerConfig(ModConfig.Type.COMMON, VerityConfig.SPEC);
         PlayerKarmaProvider.register(modEventBus);
-        modEventBus.addListener(arg_0 -> this.commonSetup(arg_0));
+        modEventBus.addListener(this::commonSetup);
         ModCreativeModeTabs.register(modEventBus);
         ModEntities.register(modEventBus);
         ModItems.register(modEventBus);
