@@ -13,7 +13,6 @@ import net.minecraft.world.entity.EntityType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
-import net.neoforged.neoforge.client.event.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -28,9 +27,7 @@ import varmite.verity.entity.client.SphereEntityRenderer;
 import varmite.verity.entity.client.VerityDemonRenderer;
 import varmite.verity.entity.client.VerityEntityTexture;
 import varmite.verity.gui.KarmaHudOverlay;
-import varmite.verity.item.ModItems;
 import varmite.verity.item.UnshadedBakedModel;
-import varmite.verity.item.client.VerityItemRenderer;
 
 @EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.MOD, value={Dist.CLIENT})
 public class ModBusClientSetup {
@@ -39,11 +36,6 @@ public class ModBusClientSetup {
         event.registerEntityRenderer((EntityType)ModEntities.VERITY_ENTITY.get(), SphereEntityRenderer::new);
         event.registerEntityRenderer((EntityType)ModEntities.BOX_ENTITY.get(), BoxRenderer::new);
         event.registerEntityRenderer((EntityType)ModEntities.VERITY_DEMON_ENTITY.get(), VerityDemonRenderer::new);
-    }
-
-    @SubscribeEvent
-    public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
-        event.registerItem(new VerityItemRenderer(), ModItems.VERITY_ITEM.get());
     }
 
     @SubscribeEvent

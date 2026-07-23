@@ -63,7 +63,7 @@ public class Verity {
         // ModLoadingContext.get() is only valid inside @Mod constructors; using
         // modContainer.registerExtensionPoint is the correct approach.
         modContainer.registerExtensionPoint(IConfigScreenFactory.class,
-                () -> (container, previousScreen) -> VerityClient.createYACLScreen(previousScreen));
+                (IConfigScreenFactory) (container, previousScreen) -> VerityClient.createYACLScreen(previousScreen));
         PlayerKarmaProvider.register(modEventBus);
         modEventBus.addListener(this::commonSetup);
         ModCreativeModeTabs.register(modEventBus);

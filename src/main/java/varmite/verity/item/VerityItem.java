@@ -66,6 +66,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.network.PacketDistributor;
 import varmite.verity.VerityConfig;
@@ -74,6 +75,7 @@ import varmite.verity.entity.custom.VerityEntity;
 import varmite.verity.event.ModEvents;
 import varmite.verity.event.WorldSpawnData;
 import varmite.verity.item.ModItems;
+import varmite.verity.item.client.VerityItemRenderer;
 import varmite.verity.network.PlayTtsPayload;
 import varmite.verity.sounds.ModSounds;
 
@@ -154,7 +156,12 @@ extends Item {
     }
 
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        consumer.accept((IClientItemExtensions)new IClientItemExtensions() {});
+        consumer.accept(new IClientItemExtensions() {
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                return new VerityItemRenderer();
+            }
+        });
     }
 
     public void onDestroyed(ItemEntity itemEntity, DamageSource damageSource) {
