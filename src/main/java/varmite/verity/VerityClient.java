@@ -332,15 +332,21 @@ public class VerityClient {
                 .controller(StringControllerBuilder::create)
                 .build();
 
-        ConfigCategory aiVoiceCategory = ConfigCategory.createBuilder()
+        // AI Settings: cloud brain + voice provider selection (matches original 3.4.1)
+        ConfigCategory aiSettingsCategory = ConfigCategory.createBuilder()
                 .name(Component.translatable("verity.configuration.AISettings"))
-                .option(voice)
+                .option(apiKey)
+                .option(aiProvider)
+                .option(aiModel)
                 .option(useNativeTts)
+                .option(voice)
                 .option(useLocalTts)
                 .option(useLocalStt)
-                .option(apiKey)
-                .option(aiModel)
-                .option(aiProvider)
+                .build();
+
+        // ===== Local LLM Category (Ollama / Kokoro / Whisper) =====
+        ConfigCategory localLlmCategory = ConfigCategory.createBuilder()
+                .name(Component.translatable("verity.config.localLLM"))
                 .option(useOllama)
                 .option(ollamaUrl)
                 .option(ollamaAiModel)
@@ -399,7 +405,8 @@ public class VerityClient {
         return YetAnotherConfigLib.createBuilder()
                 .title(Component.translatable("verity.config.title"))
                 .category(generalCategory)
-                .category(aiVoiceCategory)
+                .category(aiSettingsCategory)
+                .category(localLlmCategory)
                 .category(customizationCategory)
                 .build()
                 .generateScreen(previousScreen);
