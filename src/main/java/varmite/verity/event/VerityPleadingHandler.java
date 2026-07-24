@@ -42,16 +42,16 @@ public class VerityPleadingHandler {
                 if (verity.hasPlayerLooked(player.getUUID())) {
                     boolean pleadedSuccessfully = false;
                     if (message.contains("i came back for you")) {
-                        player.sendSystemMessage((Component)Component.literal("\u00a7aYou remind Verity of your bond. He calms down."));
+                        player.sendSystemMessage((Component)Component.translatable("verity.msg.plead_bond"));
                         pleadedSuccessfully = true;
                     } else if (message.contains("i'm sorry") || message.contains("i am sorry") || message.contains("please forgive me")) {
                         int currentApologies = verity.getApologyCount();
                         verity.setApologyCount(currentApologies + 1);
                         if (verity.getApologyCount() >= 3) {
-                            player.sendSystemMessage((Component)Component.literal("\u00a7aYour repeated apologies finally reach Verity. He calms down."));
+                            player.sendSystemMessage((Component)Component.translatable("verity.msg.plead_apology"));
                             pleadedSuccessfully = true;
                         } else {
-                            player.sendSystemMessage((Component)Component.literal(("\u00a7eVerity seems to hear you, but remains agitated. (" + verity.getApologyCount() + "/3 apologies)")));
+                            player.sendSystemMessage((Component)Component.translatable("verity.msg.plead_agitated", verity.getApologyCount()));
                         }
                     }
                     if (!pleadedSuccessfully) continue;
@@ -63,10 +63,10 @@ public class VerityPleadingHandler {
                     event.setCanceled(true);
                     return;
                 }
-                player.sendSystemMessage((Component)Component.literal("\u00a7cYou must look at Verity to get his attention!"));
+                player.sendSystemMessage((Component)Component.translatable("verity.msg.plead_look"));
                 continue;
             }
-            player.sendSystemMessage((Component)Component.literal("\u00a7cYou need to be closer to Verity to plead with him."));
+            player.sendSystemMessage((Component)Component.translatable("verity.msg.plead_closer"));
         }
     }
 }

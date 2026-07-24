@@ -34,7 +34,7 @@ extends Screen {
     private boolean videoStarted = false;
 
     public IntroVideoScreen(Screen previousScreen) {
-        super((Component)Component.literal("Intro Video"));
+        super((Component)Component.translatable("verity.msg.intro_video"));
         this.previousScreen = previousScreen;
     }
 

@@ -52,17 +52,17 @@ public class MicrophoneManager {
 
     public static void cycleMicrophone() {
         if (AVAILABLE_MICS.isEmpty()) {
-            MicrophoneManager.sendClientMessage((String)"No compatible microphones found on this system.");
+            MicrophoneManager.sendClientMessage((Component)Component.translatable("verity.msg.mic_none"));
             return;
         }
         currentIndex = (currentIndex + 1) % AVAILABLE_MICS.size();
         Mixer.Info selected = (Mixer.Info)AVAILABLE_MICS.get(currentIndex);
-        MicrophoneManager.sendClientMessage((String)("Microphone switched to: " + selected.getName()));
+        MicrophoneManager.sendClientMessage((Component)Component.translatable("verity.msg.mic_switched", selected.getName()));
     }
 
-    private static void sendClientMessage(String text) {
+    private static void sendClientMessage(Component text) {
         if (Minecraft.getInstance().player != null) {
-            Minecraft.getInstance().player.sendSystemMessage(Component.literal(text));
+            Minecraft.getInstance().player.sendSystemMessage(text);
         }
     }
 }

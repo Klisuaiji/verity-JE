@@ -280,23 +280,23 @@ public class AiAPI {
             LOGGER.debug("[Verity AI] Full raw response body: {}", response.body());
             if (response.statusCode() < 200 || response.statusCode() >= 300) {
                 LOGGER.error("[Verity AI] HTTP Error {}: {}", response.statusCode(), response.body());
-                Minecraft.getInstance().player.sendSystemMessage((Component)Component.literal("Problem setting up AI? Watch these tutorials."));
-                MutableComponent message = Component.literal("Groq Setup Tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://youtu.be/_i4O7pyMlks")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.literal(" (Easy)"));
+                Minecraft.getInstance().player.sendSystemMessage((Component)Component.translatable("verity.msg.setup_tutorial_hint"));
+                MutableComponent message = Component.translatable("verity.msg.groq_tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://youtu.be/_i4O7pyMlks")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.translatable("verity.msg.tutorial_easy"));
                 Minecraft.getInstance().player.sendSystemMessage((Component)message);
-                MutableComponent ollamaMessage = Component.literal("Ollama Setup Tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/watch?v=515I23cVBIM&t=24s")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.literal(" (No limits and local)"));
+                MutableComponent ollamaMessage = Component.translatable("verity.msg.ollama_tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/watch?v=515I23cVBIM&t=24s")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.translatable("verity.msg.tutorial_local"));
                 Minecraft.getInstance().player.sendSystemMessage((Component)ollamaMessage);
-                return AiAPI.generateFallbackJson((String)("API connection failed. Status: " + response.statusCode() + ". Check console for details."));
+                return null;
             }
             JsonObject responseJson = JsonParser.parseString((String)response.body()).getAsJsonObject();
             if (responseJson.has("error")) {
                 String errorMsg = responseJson.getAsJsonObject("error").has("message") ? responseJson.getAsJsonObject("error").get("message").getAsString() : "Unknown API Error";
                 LOGGER.error("[Verity AI] API Error: {}", errorMsg);
-                Minecraft.getInstance().player.sendSystemMessage((Component)Component.literal("Problem setting up AI? Watch these tutorials."));
-                MutableComponent message = Component.literal("Groq Setup Tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://youtu.be/_i4O7pyMlks")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.literal(" (Easy)"));
+                Minecraft.getInstance().player.sendSystemMessage((Component)Component.translatable("verity.msg.setup_tutorial_hint"));
+                MutableComponent message = Component.translatable("verity.msg.groq_tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://youtu.be/_i4O7pyMlks")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.translatable("verity.msg.tutorial_easy"));
                 Minecraft.getInstance().player.sendSystemMessage((Component)message);
-                MutableComponent ollamaMessage = Component.literal("Ollama Setup Tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/watch?v=515I23cVBIM&t=24s")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.literal(" (No limits and local)"));
+                MutableComponent ollamaMessage = Component.translatable("verity.msg.ollama_tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/watch?v=515I23cVBIM&t=24s")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.translatable("verity.msg.tutorial_local"));
                 Minecraft.getInstance().player.sendSystemMessage((Component)ollamaMessage);
-                return AiAPI.generateFallbackJson((String)("API Error: " + errorMsg));
+                return null;
             }
             if (!responseJson.has("choices") || !responseJson.get("choices").isJsonArray()) {
                 LOGGER.error("[Verity AI] Unexpected API response format: {}", response.body());
@@ -347,12 +347,12 @@ public class AiAPI {
         }
         catch (Exception e) {
             e.printStackTrace();
-            Minecraft.getInstance().player.sendSystemMessage((Component)Component.literal("Problem setting up AI? Watch these tutorials."));
-            MutableComponent message = Component.literal("Groq Setup Tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://youtu.be/_i4O7pyMlks")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.literal(" (Easy)"));
+            Minecraft.getInstance().player.sendSystemMessage((Component)Component.translatable("verity.msg.setup_tutorial_hint"));
+            MutableComponent message = Component.translatable("verity.msg.groq_tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://youtu.be/_i4O7pyMlks")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.translatable("verity.msg.tutorial_easy"));
             Minecraft.getInstance().player.sendSystemMessage((Component)message);
-            MutableComponent ollamaMessage = Component.literal("Ollama Setup Tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/watch?v=515I23cVBIM&t=24s")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.literal(" (No limits and local)"));
+            MutableComponent ollamaMessage = Component.translatable("verity.msg.ollama_tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/watch?v=515I23cVBIM&t=24s")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.translatable("verity.msg.tutorial_local"));
             Minecraft.getInstance().player.sendSystemMessage((Component)ollamaMessage);
-            return AiAPI.generateFallbackJson((String)("Error contacting AI: " + e.getMessage()));
+            return null;
         }
     }
 
@@ -560,7 +560,7 @@ public class AiAPI {
             return;
         }
         if (VerityConfig.AI_PROVIDER.get() == AiProvider.OPENROUTER) {
-            player.sendSystemMessage((Component)Component.literal("\u00a7lOpen router doesn't support cloud TTS. Switch to Native TTS."));
+            player.sendSystemMessage((Component)Component.translatable("verity.msg.openrouter_no_tts"));
             return;
         }
         CompletableFuture.runAsync(() -> {
@@ -616,7 +616,7 @@ public class AiAPI {
                     }
                     String errorBody = new String(response.body().readAllBytes());
                     if (errorBody.contains("rate_limit_exceeded")) {
-                        player.sendSystemMessage(Component.literal("You ran out of TTS tokens! Try switching to Native TTS.").withStyle(ChatFormatting.RED));
+                        player.sendSystemMessage(Component.translatable("verity.msg.tts_tokens_out").withStyle(ChatFormatting.RED));
                     }
                     System.out.println("[Verity TTS Error]: " + errorBody);
                 }

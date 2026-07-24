@@ -184,7 +184,7 @@ extends Item {
                     if (((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
                         return;
                     }
-                    spawnedEntity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal("<%s> \u00a74DO NOT DO THAT.".formatted(VerityConfig.VERITY_CUSTOM_NAME.get())), false);
+                    spawnedEntity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.translatable("verity.msg.do_not_do_that", VerityConfig.VERITY_CUSTOM_NAME.get()), false);
                 }
             }
         } else if (damageSource.is(DamageTypeTags.IS_EXPLOSION)) {
@@ -196,7 +196,7 @@ extends Item {
                     tag.putString("VerityVariant", "serious_3");
                     stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
                     p.getInventory().add(stack);
-                    p.sendSystemMessage((Component)Component.literal("<Verity> Ayo chat why u let me explode"));
+                    p.sendSystemMessage((Component)Component.translatable("verity.msg.explode_chat", VerityConfig.VERITY_CUSTOM_NAME.get()));
                     PacketDistributor.sendToPlayer(p, new PlayTtsPayload(p.getId(), "Ayo chat why u let me explode"));
                     serverLevel.getServer().execute(() -> ModEvents.updateAndSyncKarma(serverLevel, -1.0f));
                     data = WorldSpawnData.get(serverLevel);
@@ -211,7 +211,7 @@ extends Item {
                 tag.putString("VerityVariant", "serious_3");
                 stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
                 p.getInventory().add(stack);
-                p.sendSystemMessage((Component)Component.literal("<Verity> DON'T DO THAT."));
+                p.sendSystemMessage((Component)Component.translatable("verity.msg.dont_do_that", VerityConfig.VERITY_CUSTOM_NAME.get()));
                 PacketDistributor.sendToPlayer(p, new PlayTtsPayload(p.getId(), "DO NOT DO THAT!"));
                 serverLevel.getServer().execute(() -> ModEvents.updateAndSyncKarma(serverLevel, -1.0f));
                 data = WorldSpawnData.get(serverLevel);

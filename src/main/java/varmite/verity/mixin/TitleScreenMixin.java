@@ -63,7 +63,7 @@ extends Screen {
                 widget.setY(widget.getY() + 24);
             }
         }
-        this.addWidget(Button.builder(Component.literal("Mod by Varmite").withStyle(ChatFormatting.BOLD), button -> Util.getPlatform().openUri("https://www.youtube.com/@varmite")).pos(varmiteX, varmiteY).size(varmiteWidth, 20).build());
+        this.addWidget(Button.builder(Component.translatable("verity.msg.mod_by_varmite").withStyle(ChatFormatting.BOLD), button -> Util.getPlatform().openUri("https://www.youtube.com/@varmite")).pos(varmiteX, varmiteY).size(varmiteWidth, 20).build());
     }
 }
 

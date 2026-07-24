@@ -498,7 +498,7 @@ extends PathfinderMob {
             this.setApologyCount(0);
             this.clearPlayersWhoLooked();
             this.pleadingTimer = 6000;
-            player.sendSystemMessage((Component)Component.literal("\u00a74Verity's face goes blank... You must look at him to calm him down."));
+            player.sendSystemMessage((Component)Component.translatable("verity.msg.face_blank"));
             double dX = player.getX() - demonEntity.getX();
             double dZ = player.getZ() - demonEntity.getZ();
             double dY = player.getEyeY() - demonEntity.getEyeY();

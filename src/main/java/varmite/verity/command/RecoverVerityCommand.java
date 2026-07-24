@@ -46,7 +46,7 @@ public class RecoverVerityCommand {
                 break;
             }
             if (verityExists) {
-                player.sendSystemMessage((Component)Component.literal("\u00a7cVerity is already recovered."));
+                player.sendSystemMessage((Component)Component.translatable("verity.msg.recover_already"));
                 return 0;
             }
             long now = System.currentTimeMillis();
@@ -55,18 +55,18 @@ public class RecoverVerityCommand {
                 long hours = remaining / 3600000L;
                 long minutes = remaining % 3600000L / 60000L;
                 long seconds = remaining % 60000L / 1000L;
-                player.sendSystemMessage((Component)Component.literal(("\u00a7cRecovery is on cooldown. Time remaining: " + hours + "h " + minutes + "m " + seconds + "s")));
+                player.sendSystemMessage((Component)Component.translatable("verity.msg.recover_cooldown", hours, minutes, seconds));
                 return 0;
             }
             lastUseTime = now;
             VerityEntity verity = (VerityEntity)((EntityType)ModEntities.VERITY_ENTITY.get()).create((Level)level);
             if (verity == null) {
-                player.sendSystemMessage((Component)Component.literal("\u00a7cFailed to recover Verity."));
+                player.sendSystemMessage((Component)Component.translatable("verity.msg.recover_failed"));
                 return 0;
             }
             verity.variantArea(player.getX() + 1.5, player.getY(), player.getZ() + 1.5, player.getYRot(), 0.0f);
             level.addFreshEntity((Entity)verity);
-            player.sendSystemMessage((Component)Component.literal("\u00a7aVerity has been recovered!"));
+            player.sendSystemMessage((Component)Component.translatable("verity.msg.recover_success"));
             return 1;
         }));
     }

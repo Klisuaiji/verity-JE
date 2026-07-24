@@ -381,7 +381,7 @@ public class ModEvents {
             if (p != null) {
                 p.getInventory().add(new ItemStack((ItemLike)ModItems.VERITY_ITEM.get()));
                 serverLevel.playSound((Player)null, p.blockPosition(), SoundEvents.GHAST_HURT, SoundSource.PLAYERS, 1.0f, 1.0f);
-                p.sendSystemMessage((Component)Component.literal("<Verity> Ayo chat why u lettin me despawn like that"));
+                p.sendSystemMessage((Component)Component.translatable("verity.msg.despawn_chat", VerityConfig.VERITY_CUSTOM_NAME.get()));
                 PacketDistributor.sendToPlayersTrackingEntityAndSelf(p, new PlayTtsPayload(p.getId(), "Ayo chat why u lettin me despawn like that"));
             }
         }
@@ -532,7 +532,7 @@ public class ModEvents {
                         if (((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
                             return;
                         }
-                        verityEntity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal("<%s> I'm alone... where did you go?".formatted(VerityConfig.VERITY_CUSTOM_NAME.get())), false);
+                        verityEntity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.translatable("verity.msg.alone", VerityConfig.VERITY_CUSTOM_NAME.get()), false);
                     }
                 } else {
                     lonelinessTimer = 3000;
@@ -597,7 +597,7 @@ public class ModEvents {
             List nearbyDemons = p.level().getEntities(EntityTypeTest.forClass(VerityDemonEntity.class), searchBox, e -> true);
             if (!nearbyDemons.isEmpty()) {
                 event.setProblem(Player.BedSleepingProblem.OTHER_PROBLEM);
-                p.sendSystemMessage(Component.literal("You cannot rest now, Verity is nearby..."));
+                p.sendSystemMessage(Component.translatable("verity.msg.cannot_rest"));
             }
         }
     }
@@ -671,7 +671,7 @@ public class ModEvents {
             }
             if (((Boolean)vEntity.getEntityData().get(VerityEntity.IS_TALKING)).booleanValue()) {
                 if (!event.getLevel().isClientSide()) {
-                    player.sendSystemMessage((Component)Component.literal("\u00a7cYou can't do this while he's talking."));
+                    player.sendSystemMessage((Component)Component.translatable("verity.msg.while_talking"));
                     player.level().playSound((Player)null, player.blockPosition(), SoundEvents.VILLAGER_NO, SoundSource.PLAYERS, 1.0f, 0.9f);
                 }
                 event.setCanceled(true);
@@ -771,10 +771,10 @@ public class ModEvents {
         if (!data.hasSpawnedEntity) {
             isMonstrous = false;
             data.verityKarma = 10.0f;
-            player.sendSystemMessage((Component)Component.literal("Need help setting up this mod? Watch these tutorials."));
-            MutableComponent message = Component.literal("\nGroq Setup Tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://youtu.be/_i4O7pyMlks")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.literal(" (Easy)").withStyle(ChatFormatting.AQUA));
+            player.sendSystemMessage((Component)Component.translatable("verity.msg.need_help_tutorial"));
+            MutableComponent message = Component.translatable("verity.msg.groq_tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://youtu.be/_i4O7pyMlks")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.translatable("verity.msg.tutorial_easy").withStyle(ChatFormatting.AQUA));
             player.sendSystemMessage((Component)message);
-            MutableComponent ollamaMessage = Component.literal("\nOllama Setup Tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/watch?v=515I23cVBIM&t=24s")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.literal(" (No limits and local)").withStyle(ChatFormatting.AQUA));
+            MutableComponent ollamaMessage = Component.translatable("verity.msg.ollama_tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/watch?v=515I23cVBIM&t=24s")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.translatable("verity.msg.tutorial_local").withStyle(ChatFormatting.AQUA));
             player.sendSystemMessage((Component)ollamaMessage);
             BlockPos safeSpawnPos = ModEvents.findNearestLand((ServerLevel)level2, (BlockPos)player.blockPosition());
             ((EntityType)ModEntities.BOX_ENTITY.get()).spawn(level2, safeSpawnPos, MobSpawnType.MOB_SUMMONED);
@@ -891,7 +891,7 @@ public class ModEvents {
         float currentKarma = spawnData.verityKarma;
         CompletableFuture.supplyAsync(() -> AiAPI.askGroq((VerityEntity)verityEntity, (String)message, (long)currentDay, (float)currentKarma)).thenAccept(aiResponse -> {
             if (aiResponse == null || aiResponse.startsWith("Error")) {
-                player.getServer().execute(() -> ModEvents.send((ServerPlayer)player, (String)"AI connection error. You might need to replace your API Key."));
+                player.getServer().execute(() -> ModEvents.send((ServerPlayer)player, (Component)Component.translatable("verity.msg.ai_connection_error")));
                 return;
             }
             try {
@@ -1190,6 +1190,9 @@ public class ModEvents {
                         combinedData.append(action).append(" returned: ").append((String)data).append("\n");
                     }
                     CompletableFuture.supplyAsync(() -> AiAPI.askGroq((VerityEntity)verityEntity, (String)"Player asked: %s\nTools used: %s\nData retrieved:\n%s\nTell the player this information naturally. YOU MUST STILL output your response as a VALID JSON OBJECT with the array 'actions' left empty.\n".formatted(message, toolsUsed.toString(), combinedData.toString()), (long)currentDay, (float)WorldSpawnData.get((ServerLevel)serverLevel).verityKarma)).thenAccept(response -> player.getServer().execute(() -> {
+                        if (response == null) {
+                            return;
+                        }
                         try {
                             String cleanResponse = ModEvents.extractJson((String)response);
                             JsonObject finalObj = JsonParser.parseString((String)cleanResponse).getAsJsonObject();
@@ -1208,14 +1211,14 @@ public class ModEvents {
                             if (verityEntity != null) {
                                 verityEntity.stopTalking();
                             }
-                            ModEvents.send((ServerPlayer)player, (String)"Error parsing final AI response.");
+                            ModEvents.send((ServerPlayer)player, (Component)Component.translatable("verity.msg.error_parse_final"));
                             e.printStackTrace();
                         }
                     }));
                 });
             }
             catch (Exception e) {
-                player.getServer().execute(() -> ModEvents.send((ServerPlayer)player, (String)"Failed to parse AI instruction."));
+                player.getServer().execute(() -> ModEvents.send((ServerPlayer)player, (Component)Component.translatable("verity.msg.failed_parse_instruction")));
                 e.printStackTrace();
             }
         });
@@ -1261,15 +1264,19 @@ public class ModEvents {
         return type + " ore at X=" + best.getX() + " Y=" + best.getY() + " Z=" + best.getZ();
     }
 
-    private static void send(ServerPlayer player, String msg) {
-        if (((String)msg).length() > 1500) {
-            msg = ((String)msg).substring(0, 1500) + "...";
+    private static void send(ServerPlayer player, Component msg) {
+        if (msg.getString().length() > 1500) {
+            msg = (Component)Component.literal(msg.getString().substring(0, 1500) + "...");
         }
         ModTriggers.TALK_TRIGGER.get().trigger(player);
         if (((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
             return;
         }
-        player.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal(("<" + (String)VerityConfig.VERITY_CUSTOM_NAME.get() + "> " + (String)msg)), false);
+        player.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal("<" + (String)VerityConfig.VERITY_CUSTOM_NAME.get() + "> ").append(msg), false);
+    }
+
+    private static void send(ServerPlayer player, String msg) {
+        send(player, (Component)Component.literal(msg));
     }
 
     private static String extractJson(String raw) {
