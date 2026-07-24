@@ -27,7 +27,7 @@ import net.minecraft.sounds.SoundSource;
 
 public class IntroVideoScreen
 extends Screen {
-    private static final int TOTAL_FRAMES = 532;
+    private static final int TOTAL_FRAMES = 248;
     private static final int FPS = 24;
     private final Screen previousScreen;
     private long startTime = 0L;

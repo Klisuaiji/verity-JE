@@ -56,7 +56,7 @@ implements SimpleWaterloggedBlock {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     public FlashlightLightBlock() {
-        super(BlockBehaviour.Properties.of().replaceable().noCollission().noOcclusion().noLootTable());
+        super(BlockBehaviour.Properties.of().replaceable().noCollission().noOcclusion().noLootTable().pushReaction(PushReaction.DESTROY).lightLevel(state -> 15));
         this.registerDefaultState((BlockState)((BlockState)this.stateDefinition.any()).setValue(WATERLOGGED, Boolean.valueOf(false)));
     }
 
