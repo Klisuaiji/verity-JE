@@ -1,13 +1,10 @@
-## ⚠️ 重要法律声明 (Legal Disclaimer)
+##  重要法律声明
 1. **非官方产物**：本仓库为教育性质的反编译学习产物，**绝非** Verity™ 模组的官方分支或重制版。
-2. **版权归属**：所有代码逻辑、资源文件（纹理、模型、音效）的**知识产权完全归属于** CurseForge 上的原始作者。
+2. **版权归属**：所有代码逻辑、资源文件（纹理、模型、音效）的**知识产权完全归属于** CurseForge 上的。
 3. **无侵权意图**：本仓库仅用于 **Minecraft 模组开发技术研究** 与 **个人学习**。
+4. **禁止商业化**：不得基于此代码进行任何收费、众筹或广告盈利
 
-## 🚫 使用限制
-- **禁止商业化**：不得基于此代码进行任何收费、众筹或广告盈利。
-- **仅供代码审计**：本仓库代码仅供学习其加密/混淆思路或 API 调用逻辑。
-
-## 💻 稳定性声明
+##  稳定性声明
 - 此代码为反编译产物，可能存在**逻辑缺失、混淆残留或运行时崩溃**。
 - 不建议将其导入正式开发环境，由此引发的任何存档损坏或客户端崩溃，责任自负。
 
@@ -15,7 +12,8 @@
 
 [English README](README_EN.md)
 
->注意：**这不是Verity™的官方仓库，官方仅发布在curseforge且为闭源模组**
+[![CurseForge](https://img.shields.io/badge/CurseForge-Verity_JE-f16436?logo=curseforge)](https://www.curseforge.com/minecraft/mc-mods/verity-je)
+[![Modrinth](https://img.shields.io/badge/Modrinth-Verity_JE-1bd96a?logo=modrinth)](https://modrinth.com/mod/verity-je-official)
 > 一个为 Minecraft 1.21.1（NeoForge）打造的 **AI 伙伴模组**——把名为 **Verity™** 的角色带进你的世界。
 
 ## 简介
