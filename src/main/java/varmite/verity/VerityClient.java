@@ -404,6 +404,11 @@ public class VerityClient {
         // ===== Assemble =====
         return YetAnotherConfigLib.createBuilder()
                 .title(Component.translatable("verity.config.title"))
+                .save(() -> {
+                    // ConfigValue.set() only updates in-memory values;
+                    // SPEC.save() writes them to disk so changes persist across restarts.
+                    VerityConfig.SPEC.save();
+                })
                 .category(generalCategory)
                 .category(aiSettingsCategory)
                 .category(localLlmCategory)
