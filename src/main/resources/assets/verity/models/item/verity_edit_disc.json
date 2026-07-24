@@ -1,1 +1,6 @@
-{"parent": "minecraft:item/generated", "textures": {"layer0": "verity:item/verity_edit_disc"}}
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "verity:item/verity_edit_disc"
+  }
+}

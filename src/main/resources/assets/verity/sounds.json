@@ -91,5 +91,15 @@
     "sounds": [
       "verity:jumpscare"
     ]
+  },
+  "verity_edit_disc": {
+    "category": "record",
+    "subtitle": "sounds.verity.edit",
+    "sounds": [
+      {
+        "name": "verity:intro_video_audio",
+        "stream": true
+      }
+    ]
   }
 }

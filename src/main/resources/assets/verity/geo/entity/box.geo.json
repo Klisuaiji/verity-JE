@@ -3,40 +3,35 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.Box",
+				"identifier": "geometry.unknown",
 				"texture_width": 128,
 				"texture_height": 128,
 				"visible_bounds_width": 3,
-				"visible_bounds_height": 3.5,
-				"visible_bounds_offset": [0, 1.25, 0]
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
 			},
 			"bones": [
 				{
-					"name": "bone4",
-					"pivot": [0, 0, 0]
-				},
-				{
-					"name": "bone2",
-					"parent": "bone4",
-					"pivot": [-10, 16, 0],
+					"name": "box",
+					"pivot": [0, 0, 0],
 					"cubes": [
-						{"origin": [-10, 16.025, -8], "size": [10, 0, 16], "uv": [0, 32]}
+						{"origin": [-9, 0, -8], "size": [18, 17, 16], "uv": [0, 0]}
 					]
 				},
 				{
-					"name": "bone3",
-					"parent": "bone4",
-					"pivot": [0, 1, 0],
+					"name": "flap1",
+					"parent": "box",
+					"pivot": [9, 17.05, 0],
 					"cubes": [
-						{"origin": [-10, 0, -8], "size": [20, 16, 16], "uv": [0, 0]}
+						{"origin": [0, 17.05, -8], "size": [9, 0, 16], "uv": [0, 33]}
 					]
 				},
 				{
-					"name": "bone",
-					"parent": "bone4",
-					"pivot": [10, 16, 0],
+					"name": "flap2",
+					"parent": "box",
+					"pivot": [-9, 17.05, 0],
 					"cubes": [
-						{"origin": [0, 16.025, -8], "size": [10, 0, 16], "uv": [0, 48]}
+						{"origin": [-9, 17.05, -8], "size": [9, 0, 16], "uv": [0, 49]}
 					]
 				}
 			]
