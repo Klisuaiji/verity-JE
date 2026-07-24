@@ -79,12 +79,19 @@ implements SimpleWaterloggedBlock {
         return RenderShape.INVISIBLE;
     }
 
-    public VoxelShape updateIndirectNeighbourShapes(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    // The light block is purely visual light; it must not show a block selection
+    // outline (the black wireframe) when the player looks at it. Both the solid
+    // shape and the selection shape are empty. (Original 1.20.1 overrode getShape;
+    // in 1.21.1 the selection outline is driven by getSelectionShape, which
+    // defaults to getShape — overriding both keeps the outline gone.)
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
-    public boolean getCollisionShape(BlockState state, BlockGetter level, BlockPos pos) {
-        return true;
+    @Override
+    public VoxelShape getInteractionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        return Shapes.empty();
     }
 }
 

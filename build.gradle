@@ -118,6 +118,22 @@ dependencies {
         implementation files(sherpaJar)
     }
 
+    // Bundle the optional sherpa-onnx engine into the shipped mod jar. The fat jar
+    // (libs/sherpa-onnx-all.jar) carries the com.k2fsa.* classes and the per-platform
+    // JNI natives under sherpa-onnx/native/. `implementation files(...)` only puts it
+    // on the (dev) classpath; it is NOT auto-bundled into the mod jar, so the shipped
+    // jar would be missing com/k2fsa and sherpa-onnx/native — breaking local STT/TTS.
+    // The original 5.7.3 distribution bundles them; replicate that here. The mod still
+    // compiles and degrades gracefully if the jar is absent.
+    jar {
+        def bundledSherpa = file('libs/sherpa-onnx-all.jar')
+        if (bundledSherpa.exists()) {
+            from(zipTree(bundledSherpa)) {
+                include 'com/k2fsa/**', 'sherpa-onnx/**'
+            }
+        }
+    }
+
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
