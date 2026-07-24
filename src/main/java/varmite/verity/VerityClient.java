@@ -10,9 +10,9 @@ public class VerityClient {
     public static Screen createYACLScreen(Screen previousScreen) {
         // ===== General Category =====
         Option<Boolean> canCrash = Option.<Boolean>createBuilder()
-                .name(Component.literal("Can Crash"))
+                .name(Component.translatable("verity.configuration.canCrash"))
                 .description(OptionDescription.of(
-                        Component.literal("Allow Verity to kick you from the server.")
+                        Component.translatable("verity.configuration.canCrash.tooltip")
                 ))
                 .binding(Binding.generic(true,
                         () -> VerityConfig.CAN_CRASH.get(),
@@ -21,9 +21,9 @@ public class VerityClient {
                 .build();
 
         Option<Boolean> playVideo = Option.<Boolean>createBuilder()
-                .name(Component.literal("Play Video"))
+                .name(Component.translatable("verity.configuration.playVideo"))
                 .description(OptionDescription.of(
-                        Component.literal("Play the Verity Edit on the startup of the client.")
+                        Component.translatable("verity.configuration.playVideo.tooltip")
                 ))
                 .binding(Binding.generic(true,
                         () -> VerityConfig.PLAY_VIDEO.get(),
@@ -32,9 +32,9 @@ public class VerityClient {
                 .build();
 
         Option<Boolean> requireVerity = Option.<Boolean>createBuilder()
-                .name(Component.literal("Require Verity"))
+                .name(Component.translatable("verity.configuration.requireVerity"))
                 .description(OptionDescription.of(
-                        Component.literal("Require 'Verity' in every sentence to speak to him.")
+                        Component.translatable("verity.configuration.requireVerity.tooltip")
                 ))
                 .binding(Binding.generic(false,
                         () -> VerityConfig.REQUIRE_VERITY.get(),
@@ -43,9 +43,9 @@ public class VerityClient {
                 .build();
 
         Option<Boolean> trueDarkness = Option.<Boolean>createBuilder()
-                .name(Component.literal("True Darkness"))
+                .name(Component.translatable("verity.configuration.trueDarkness"))
                 .description(OptionDescription.of(
-                        Component.literal("Toggle the extreme darkness.")
+                        Component.translatable("verity.configuration.trueDarkness.tooltip")
                 ))
                 .binding(Binding.generic(true,
                         () -> VerityConfig.TRUE_DARKNESS.get(),
@@ -54,9 +54,9 @@ public class VerityClient {
                 .build();
 
         Option<Boolean> killVillagers = Option.<Boolean>createBuilder()
-                .name(Component.literal("Kill Villagers"))
+                .name(Component.translatable("verity.configuration.killVillagers"))
                 .description(OptionDescription.of(
-                        Component.literal("Toggles if Verity should kill villagers.")
+                        Component.translatable("verity.configuration.killVillagers.tooltip")
                 ))
                 .binding(Binding.generic(true,
                         () -> VerityConfig.KILL_VILLAGERS.get(),
@@ -65,9 +65,9 @@ public class VerityClient {
                 .build();
 
         Option<Boolean> clearPeacefulMobs = Option.<Boolean>createBuilder()
-                .name(Component.literal("Clear Peaceful Mobs"))
+                .name(Component.translatable("verity.configuration.clearPeacefulMobs"))
                 .description(OptionDescription.of(
-                        Component.literal("Toggles if Verity should clear peaceful mobs when turning hostile.")
+                        Component.translatable("verity.configuration.clearPeacefulMobs.tooltip")
                 ))
                 .binding(Binding.generic(false,
                         () -> VerityConfig.CLEAR_PEACEFUL_MOBS.get(),
@@ -76,9 +76,9 @@ public class VerityClient {
                 .build();
 
         Option<Boolean> showKarma = Option.<Boolean>createBuilder()
-                .name(Component.literal("Show Karma"))
+                .name(Component.translatable("verity.configuration.showKarma"))
                 .description(OptionDescription.of(
-                        Component.literal("Toggles the Karma bar above your hotbar.")
+                        Component.translatable("verity.configuration.showKarma.tooltip")
                 ))
                 .binding(Binding.generic(true,
                         () -> VerityConfig.SHOW_VERITYS_KARMA.get(),
@@ -87,9 +87,9 @@ public class VerityClient {
                 .build();
 
         Option<Boolean> immersiveMode = Option.<Boolean>createBuilder()
-                .name(Component.literal("Immersive Mode"))
+                .name(Component.translatable("verity.configuration.immersiveMode"))
                 .description(OptionDescription.of(
-                        Component.literal("Hide all Verity UI (and chat if the server host has this on).")
+                        Component.translatable("verity.configuration.immersiveMode.tooltip")
                 ))
                 .binding(Binding.generic(false,
                         () -> VerityConfig.IMMERSIVE_MODE.get(),
@@ -98,9 +98,9 @@ public class VerityClient {
                 .build();
 
         Option<Boolean> useTts = Option.<Boolean>createBuilder()
-                .name(Component.literal("Use TTS"))
+                .name(Component.translatable("verity.configuration.useTts"))
                 .description(OptionDescription.of(
-                        Component.literal("Use the text to speech at all.")
+                        Component.translatable("verity.configuration.useTts.tooltip")
                 ))
                 .binding(Binding.generic(true,
                         () -> VerityConfig.USE_TTS.get(),
@@ -109,9 +109,9 @@ public class VerityClient {
                 .build();
 
         Option<Integer> dayCount = Option.<Integer>createBuilder()
-                .name(Component.literal("Day Count"))
+                .name(Component.translatable("verity.configuration.dayCount"))
                 .description(OptionDescription.of(
-                        Component.literal("The amount of in-game days before Verity turns hostile/demon.")
+                        Component.translatable("verity.configuration.dayCount.tooltip")
                 ))
                 .binding(Binding.generic(5,
                         () -> VerityConfig.DAY_COUNT.get(),
@@ -120,7 +120,7 @@ public class VerityClient {
                 .build();
 
         ConfigCategory generalCategory = ConfigCategory.createBuilder()
-                .name(Component.literal("General"))
+                .name(Component.translatable("verity.config.general"))
                 .option(canCrash)
                 .option(playVideo)
                 .option(requireVerity)
@@ -135,9 +135,9 @@ public class VerityClient {
 
         // ===== AI & Voice Category =====
         Option<String> voice = Option.<String>createBuilder()
-                .name(Component.literal("Voice"))
+                .name(Component.translatable("verity.configuration.voice"))
                 .description(OptionDescription.of(
-                        Component.literal("Choose the voice Verity has.")
+                        Component.translatable("verity.configuration.voice.tooltip")
                 ))
                 .binding(Binding.generic("Daniel",
                         () -> VerityConfig.VOICE.get(),
@@ -146,9 +146,9 @@ public class VerityClient {
                 .build();
 
         Option<Boolean> useNativeTts = Option.<Boolean>createBuilder()
-                .name(Component.literal("Use Native TTS"))
+                .name(Component.translatable("verity.configuration.useNativeTts"))
                 .description(OptionDescription.of(
-                        Component.literal("Use the OS's built-in narrator (Windows, macOS, Linux) instead of Groq cloud TTS.")
+                        Component.translatable("verity.configuration.useNativeTts.tooltip")
                 ))
                 .binding(Binding.generic(false,
                         () -> VerityConfig.USE_NATIVE_TTS.get(),
@@ -157,9 +157,9 @@ public class VerityClient {
                 .build();
 
         Option<Boolean> useLocalTts = Option.<Boolean>createBuilder()
-                .name(Component.literal("Use Offline AI Voice"))
+                .name(Component.translatable("verity.configuration.useLocalTts"))
                 .description(OptionDescription.of(
-                        Component.literal("Use the offline Kitten AI Voice instead of Groq cloud TTS.")
+                        Component.translatable("verity.configuration.useLocalTts.tooltip")
                 ))
                 .binding(Binding.generic(true,
                         () -> VerityConfig.USE_LOCAL_TTS.get(),
@@ -168,9 +168,9 @@ public class VerityClient {
                 .build();
 
         Option<Boolean> useLocalStt = Option.<Boolean>createBuilder()
-                .name(Component.literal("Use Offline STT"))
+                .name(Component.translatable("verity.configuration.useLocalStt"))
                 .description(OptionDescription.of(
-                        Component.literal("Offline STT.")
+                        Component.translatable("verity.configuration.useLocalStt.tooltip")
                 ))
                 .binding(Binding.generic(false,
                         () -> VerityConfig.USE_LOCAL_STT.get(),
@@ -179,9 +179,9 @@ public class VerityClient {
                 .build();
 
         Option<String> apiKey = Option.<String>createBuilder()
-                .name(Component.literal("API Key"))
+                .name(Component.translatable("verity.configuration.apiKey"))
                 .description(OptionDescription.of(
-                        Component.literal("Put your Groq API Key here to give Verity a brain.")
+                        Component.translatable("verity.configuration.apiKey.tooltip")
                 ))
                 .binding(Binding.generic("",
                         () -> VerityConfig.API_KEY.get(),
@@ -190,9 +190,9 @@ public class VerityClient {
                 .build();
 
         Option<AiModel> aiModel = Option.<AiModel>createBuilder()
-                .name(Component.literal("AI Model"))
+                .name(Component.translatable("verity.configuration.aiModel"))
                 .description(OptionDescription.of(
-                        Component.literal("Choose the AI intelligence level.")
+                        Component.translatable("verity.configuration.aiModel.tooltip")
                 ))
                 .binding(Binding.generic(AiModel.FAST,
                         () -> VerityConfig.AI_MODEL.get(),
@@ -201,9 +201,9 @@ public class VerityClient {
                 .build();
 
         Option<AiProvider> aiProvider = Option.<AiProvider>createBuilder()
-                .name(Component.literal("AI Provider"))
+                .name(Component.translatable("verity.configuration.aiProvider"))
                 .description(OptionDescription.of(
-                        Component.literal("Choose the AI Provider to use for Verity.")
+                        Component.translatable("verity.configuration.aiProvider.tooltip")
                 ))
                 .binding(Binding.generic(AiProvider.GROQ,
                         () -> VerityConfig.AI_PROVIDER.get(),
@@ -212,9 +212,9 @@ public class VerityClient {
                 .build();
 
         Option<Boolean> useOllama = Option.<Boolean>createBuilder()
-                .name(Component.literal("Use Ollama"))
+                .name(Component.translatable("verity.configuration.useOllama"))
                 .description(OptionDescription.of(
-                        Component.literal("If true the mod will always use Ollama instead of an AI Provider.")
+                        Component.translatable("verity.configuration.useOllama.tooltip")
                 ))
                 .binding(Binding.generic(false,
                         () -> VerityConfig.USE_OLLAMA.get(),
@@ -223,9 +223,9 @@ public class VerityClient {
                 .build();
 
         Option<String> ollamaUrl = Option.<String>createBuilder()
-                .name(Component.literal("Ollama URL"))
+                .name(Component.translatable("verity.configuration.ollamaUrl"))
                 .description(OptionDescription.of(
-                        Component.literal("The URL of the LiteLLM Server.")
+                        Component.translatable("verity.configuration.ollamaUrl.tooltip")
                 ))
                 .binding(Binding.generic("http://127.0.0.1:4000/v1/",
                         () -> VerityConfig.OLLAMA_URL.get(),
@@ -234,9 +234,9 @@ public class VerityClient {
                 .build();
 
         Option<String> ollamaAiModel = Option.<String>createBuilder()
-                .name(Component.literal("Ollama AI Model"))
+                .name(Component.translatable("verity.configuration.ollamaAiModel"))
                 .description(OptionDescription.of(
-                        Component.literal("The AI model the mod uses.")
+                        Component.translatable("verity.configuration.ollamaAiModel.tooltip")
                 ))
                 .binding(Binding.generic("ollama/qwen2.5:1.5b",
                         () -> VerityConfig.OLLAMA_AI_MODEL.get(),
@@ -245,9 +245,9 @@ public class VerityClient {
                 .build();
 
         Option<Boolean> thinkingMode = Option.<Boolean>createBuilder()
-                .name(Component.literal("Thinking Mode"))
+                .name(Component.translatable("verity.configuration.thinkingMode"))
                 .description(OptionDescription.of(
-                        Component.literal("Toggles thinking mode for smarter or faster responses. (Qwen3 Models only)")
+                        Component.translatable("verity.configuration.thinkingMode.tooltip")
                 ))
                 .binding(Binding.generic(false,
                         () -> VerityConfig.THINKING_MODE.get(),
@@ -256,9 +256,9 @@ public class VerityClient {
                 .build();
 
         Option<Boolean> useKokoro = Option.<Boolean>createBuilder()
-                .name(Component.literal("Use Kokoro TTS"))
+                .name(Component.translatable("verity.configuration.useKokoro"))
                 .description(OptionDescription.of(
-                        Component.literal("If true the mod will always use Kokoro TTS instead of an AI Provider or built-in TTS.")
+                        Component.translatable("verity.configuration.useKokoro.tooltip")
                 ))
                 .binding(Binding.generic(false,
                         () -> VerityConfig.USE_KOKORO.get(),
@@ -267,9 +267,9 @@ public class VerityClient {
                 .build();
 
         Option<String> ollamaTtsUrl = Option.<String>createBuilder()
-                .name(Component.literal("Kokoro TTS URL"))
+                .name(Component.translatable("verity.configuration.ollamaTtsUrl"))
                 .description(OptionDescription.of(
-                        Component.literal("The URL of the FastKokoro Server.")
+                        Component.translatable("verity.configuration.ollamaTtsUrl.tooltip")
                 ))
                 .binding(Binding.generic("http://127.0.0.1:8880/v1/",
                         () -> VerityConfig.OLLAMA_TTS_URL.get(),
@@ -278,9 +278,9 @@ public class VerityClient {
                 .build();
 
         Option<String> ollamaTtsModel = Option.<String>createBuilder()
-                .name(Component.literal("Kokoro TTS Model"))
+                .name(Component.translatable("verity.configuration.ollamaTtsModel"))
                 .description(OptionDescription.of(
-                        Component.literal("The TTS model the mod uses.")
+                        Component.translatable("verity.configuration.ollamaTtsModel.tooltip")
                 ))
                 .binding(Binding.generic("kokoro",
                         () -> VerityConfig.OLLAMA_TTS_MODEL.get(),
@@ -289,9 +289,9 @@ public class VerityClient {
                 .build();
 
         Option<String> ollamaTtsVoice = Option.<String>createBuilder()
-                .name(Component.literal("Kokoro TTS Voice"))
+                .name(Component.translatable("verity.configuration.ollamaTtsVoice"))
                 .description(OptionDescription.of(
-                        Component.literal("The voice Kokoro uses.")
+                        Component.translatable("verity.configuration.ollamaTtsVoice.tooltip")
                 ))
                 .binding(Binding.generic("am_fenrir",
                         () -> VerityConfig.OLLAMA_TTS_VOICE.get(),
@@ -300,9 +300,9 @@ public class VerityClient {
                 .build();
 
         Option<Boolean> useLocalWhisper = Option.<Boolean>createBuilder()
-                .name(Component.literal("Use Local Whisper"))
+                .name(Component.translatable("verity.configuration.useLocalWhisper"))
                 .description(OptionDescription.of(
-                        Component.literal("If true the mod will always use local STT instead of an AI Provider.")
+                        Component.translatable("verity.configuration.useLocalWhisper.tooltip")
                 ))
                 .binding(Binding.generic(false,
                         () -> VerityConfig.USE_LOCAL_WHISPER.get(),
@@ -311,9 +311,9 @@ public class VerityClient {
                 .build();
 
         Option<String> ollamaSttUrl = Option.<String>createBuilder()
-                .name(Component.literal("Whisper STT URL"))
+                .name(Component.translatable("verity.configuration.ollamaSttUrl"))
                 .description(OptionDescription.of(
-                        Component.literal("The URL of the Whisper Server.")
+                        Component.translatable("verity.configuration.ollamaSttUrl.tooltip")
                 ))
                 .binding(Binding.generic("http://127.0.0.1:9000/v1/",
                         () -> VerityConfig.OLLAMA_STT_URL.get(),
@@ -322,9 +322,9 @@ public class VerityClient {
                 .build();
 
         Option<String> ollamaSttModel = Option.<String>createBuilder()
-                .name(Component.literal("Whisper STT Model"))
+                .name(Component.translatable("verity.configuration.ollamaSttModel"))
                 .description(OptionDescription.of(
-                        Component.literal("The STT model the mod uses.")
+                        Component.translatable("verity.configuration.ollamaSttModel.tooltip")
                 ))
                 .binding(Binding.generic("models/ggml-large-v3-turbo.bin",
                         () -> VerityConfig.OLLAMA_STT_MODEL.get(),
@@ -333,7 +333,7 @@ public class VerityClient {
                 .build();
 
         ConfigCategory aiVoiceCategory = ConfigCategory.createBuilder()
-                .name(Component.literal("AI & Voice"))
+                .name(Component.translatable("verity.configuration.AISettings"))
                 .option(voice)
                 .option(useNativeTts)
                 .option(useLocalTts)
@@ -356,20 +356,20 @@ public class VerityClient {
 
         // ===== Customization Category =====
         Option<Integer> color = Option.<Integer>createBuilder()
-                .name(Component.literal("Color"))
+                .name(Component.translatable("verity.configuration.color"))
                 .description(OptionDescription.of(
-                        Component.literal("The Hue of Verity's texture color (0 to 360 degrees).")
+                        Component.translatable("verity.configuration.color.tooltip")
                 ))
                 .binding(Binding.generic(0,
                         () -> VerityConfig.COLOR.get(),
                         v -> VerityConfig.COLOR.set(v)))
-                .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 360))
+                .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 360).step(1))
                 .build();
 
         Option<String> customName = Option.<String>createBuilder()
-                .name(Component.literal("Custom Name"))
+                .name(Component.translatable("verity.configuration.customName"))
                 .description(OptionDescription.of(
-                        Component.literal("The custom name for Verity. Leave empty to use default 'Verity'.")
+                        Component.translatable("verity.configuration.customName.tooltip")
                 ))
                 .binding(Binding.generic("Verity",
                         () -> VerityConfig.VERITY_CUSTOM_NAME.get(),
@@ -378,9 +378,9 @@ public class VerityClient {
                 .build();
 
         Option<String> personality = Option.<String>createBuilder()
-                .name(Component.literal("Personality"))
+                .name(Component.translatable("verity.configuration.personality"))
                 .description(OptionDescription.of(
-                        Component.literal("The custom personality for Verity.")
+                        Component.translatable("verity.configuration.personality.tooltip")
                 ))
                 .binding(Binding.generic("normal",
                         () -> VerityConfig.PERSONALITY.get(),
@@ -389,7 +389,7 @@ public class VerityClient {
                 .build();
 
         ConfigCategory customizationCategory = ConfigCategory.createBuilder()
-                .name(Component.literal("Customization"))
+                .name(Component.translatable("verity.config.customization"))
                 .option(color)
                 .option(customName)
                 .option(personality)
@@ -397,7 +397,7 @@ public class VerityClient {
 
         // ===== Assemble =====
         return YetAnotherConfigLib.createBuilder()
-                .title(Component.literal("Verity Configuration"))
+                .title(Component.translatable("verity.config.title"))
                 .category(generalCategory)
                 .category(aiVoiceCategory)
                 .category(customizationCategory)
