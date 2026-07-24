@@ -413,6 +413,10 @@ public class VerityClient {
                 .category(aiSettingsCategory)
                 .category(localLlmCategory)
                 .category(customizationCategory)
+                // Persist changes to disk. ModConfigSpec.ConfigValue.set() only updates the
+                // in-memory config; it does NOT write the .toml file (per its own Javadoc).
+                // YACL calls this Runnable when the screen is closed, so we flush the spec here.
+                .save(() -> VerityConfig.SPEC.save())
                 .build()
                 .generateScreen(previousScreen);
     }

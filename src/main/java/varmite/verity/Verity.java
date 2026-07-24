@@ -57,8 +57,13 @@ public class Verity {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public Verity(IEventBus modEventBus, ModContainer modContainer) {
+        // Register the config EXACTLY ONCE. Registering the same ModConfigSpec for both
+        // CLIENT and COMMON creates two ModConfig objects that share one ModConfigSpec; in
+        // NeoForge 21.1 a ModConfigSpec keeps only a single 'loadedConfig', so the two .toml
+        // files clobber each other on reload and in-game changes never persisted. Every
+        // VerityConfig option is client-side (TTS, voice, color, the YACL screen) and is also
+        // visible to the integrated (single-player) server in the same JVM.
         modContainer.registerConfig(ModConfig.Type.CLIENT, VerityConfig.SPEC);
-        modContainer.registerConfig(ModConfig.Type.COMMON, VerityConfig.SPEC);
         // Register the in-game config screen factory via the ModContainer (NeoForge 1.21.1+ API).
         // ModLoadingContext.get() is only valid inside @Mod constructors; using
         // modContainer.registerExtensionPoint is the correct approach.
