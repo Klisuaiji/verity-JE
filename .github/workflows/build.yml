@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ "main", "master" ]
 
-# 仅读取仓库内容，不写回（不发版、不上传产物）
+# 仅读取仓库内容，不写回（不发版；jar 仅作为 Actions 产物供下载）
 permissions:
   contents: read
 
@@ -28,3 +28,10 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: verity-mod
+          path: build/libs/*.jar
+          if-no-files-found: error
