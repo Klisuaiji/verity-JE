@@ -1,6 +1,6 @@
 ## ⚠️ Important Legal Disclaimer
 
-[中文（简体）](README.md)
+
 
 1. **Unofficial artifact**: This repository is an educational decompilation study artifact and is **in no way** an official fork or remake of the Verity™ mod.
 2. **Copyright ownership**: All code logic and resource files (textures, models, audio) have their **intellectual property fully owned by** the original author on CurseForge.
