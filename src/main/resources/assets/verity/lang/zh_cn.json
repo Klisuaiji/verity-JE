@@ -130,5 +130,21 @@
   "verity.msg.while_talking": "§c他在说话时你不能这么做。",
   "verity.msg.mod_by_varmite": "模组作者：Varmite",
   "verity.msg.intro_video": "开场视频",
-  "verity.msg.disabled": "0（已禁用）"
+  "verity.msg.disabled": "0（已禁用）",
+  "advancements.verity.root.title": "你好，我是 Verity",
+  "advancements.verity.root.description": "你的 MC 助手朋友。",
+  "advancements.verity.talk.title": "与 Verity 对话",
+  "advancements.verity.talk.description": "做个自我介绍。",
+  "advancements.verity.karmachange.title": "心情变化",
+  "advancements.verity.karmachange.description": "影响 Verity 的情绪。",
+  "advancements.verity.goodkarma.title": "友善的 MC 助手",
+  "advancements.verity.goodkarma.description": "让 Verity 开心。",
+  "advancements.verity.badkarma.title": "我也有感情",
+  "advancements.verity.badkarma.description": "把 Verity 惹毛。",
+  "advancements.verity.village.title": "别往东走",
+  "advancements.verity.village.description": "向 Verity 询问最近的村庄。",
+  "advancements.verity.playsound.title": "发出声响",
+  "advancements.verity.playsound.description": "让 Verity 发出一个声音。",
+  "advancements.verity.favoritesong.title": "最爱的歌",
+  "advancements.verity.favoritesong.description": "让 Verity 播放他最爱的歌。"
 }

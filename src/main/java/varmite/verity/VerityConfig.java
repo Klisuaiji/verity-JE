@@ -74,8 +74,8 @@ public class VerityConfig {
         builder.push("Local LLM");
         builder.pop();
         USE_OLLAMA = builder.comment("If true the mod will always use Ollama instead of an AI Provider.").define("use_ollama", false);
-        OLLAMA_URL = builder.comment("The URL of the LiteLLM Server.").define("ollama_url", "http://127.0.0.1:4000/v1/");
-        OLLAMA_AI_MODEL = builder.comment("The AI model the mod uses.").define("ollama_ai_model", "ollama/qwen2.5:1.5b");
+        OLLAMA_URL = builder.comment("The URL of the Ollama OpenAI-compatible endpoint (native Ollama: http://127.0.0.1:11434/v1/).").define("ollama_url", "http://127.0.0.1:11434/v1/");
+        OLLAMA_AI_MODEL = builder.comment("The AI model the mod uses (native Ollama model tag, no 'ollama/' prefix).").define("ollama_ai_model", "gemma4-e4b-q3");
         THINKING_MODE = builder.comment("Toggels thinking mode for smarter or faster responsens. (Qwen3 Models only)").define("thinking_mode", false);
         USE_KOKORO = builder.comment("If true the mod will always use Kokoro TTS instead of an AI Provider or build in TTS.").define("use_kokoro", false);
         OLLAMA_TTS_URL = builder.comment("The URL of the FastKokoro Server.").define("ollama_tts_url", "http://127.0.0.1:8880/v1/");

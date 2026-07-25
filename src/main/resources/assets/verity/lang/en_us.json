@@ -133,5 +133,21 @@
   "verity.msg.while_talking": "§cYou can't do this while he's talking.",
   "verity.msg.mod_by_varmite": "Mod by Varmite",
   "verity.msg.intro_video": "Intro Video",
-  "verity.msg.disabled": "0 (Disabled)"
+  "verity.msg.disabled": "0 (Disabled)",
+  "advancements.verity.root.title": "Hello, I'm Verity",
+  "advancements.verity.root.description": "Your minecraft helper friend.",
+  "advancements.verity.talk.title": "Talk to Verity",
+  "advancements.verity.talk.description": "Introduce yourself.",
+  "advancements.verity.karmachange.title": "Mood Change",
+  "advancements.verity.karmachange.description": "Influence Verity's mood.",
+  "advancements.verity.goodkarma.title": "Friendy Minecraft Helper",
+  "advancements.verity.goodkarma.description": "Make Verity happy.",
+  "advancements.verity.badkarma.title": "I have feelings too",
+  "advancements.verity.badkarma.description": "Make Verity mad.",
+  "advancements.verity.village.title": "Don't go east",
+  "advancements.verity.village.description": "Ask Verity for the nearest village.",
+  "advancements.verity.playsound.title": "Make a sound",
+  "advancements.verity.playsound.description": "Ask Verity to make a sound.",
+  "advancements.verity.favoritesong.title": "Favorite Song",
+  "advancements.verity.favoritesong.description": "Ask Verity to play his favorite song."
 }

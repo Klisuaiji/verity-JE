@@ -130,5 +130,21 @@
   "verity.msg.while_talking": "§c彼が話している間はこれはできません。",
   "verity.msg.mod_by_varmite": "MOD 製作：Varmite",
   "verity.msg.intro_video": "オープニングムービー",
-  "verity.msg.disabled": "0（無効）"
+  "verity.msg.disabled": "0（無効）",
+  "advancements.verity.root.title": "こんにちは、Verityです",
+  "advancements.verity.root.description": "あなたのマイクラ助手となる友達。",
+  "advancements.verity.talk.title": "Verityと話す",
+  "advancements.verity.talk.description": "自己紹介しましょう。",
+  "advancements.verity.karmachange.title": "気分の変化",
+  "advancements.verity.karmachange.description": "Verityの機嫌を変える。",
+  "advancements.verity.goodkarma.title": "親切なマイクラ助手",
+  "advancements.verity.goodkarma.description": "Verityを喜ばせる。",
+  "advancements.verity.badkarma.title": "僕にも感情がある",
+  "advancements.verity.badkarma.description": "Verityを怒らせる。",
+  "advancements.verity.village.title": "東には行くな",
+  "advancements.verity.village.description": "Verityに一番近い村を聞く。",
+  "advancements.verity.playsound.title": "音を鳴らす",
+  "advancements.verity.playsound.description": "Verityに音を鳴らさせる。",
+  "advancements.verity.favoritesong.title": "お気に入りの曲",
+  "advancements.verity.favoritesong.description": "Verityに一番好きな曲を流させる。"
 }

@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:creeper_head"
+    },
+    "title": {
+      "translate": "advancements.verity.playsound.title"
+    },
+    "description": {
+      "translate": "advancements.verity.playsound.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "playsound": {
+      "trigger": "verity:playsound"
+    }
+  },
+  "requirements": [
+    [
+      "playsound"
+    ]
+  ],
+  "parent": "verity:verity/talk"
+}

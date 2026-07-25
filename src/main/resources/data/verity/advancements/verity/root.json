@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "verity:verity_item"
+    },
+    "title": {
+      "translate": "advancements.verity.root.title"
+    },
+    "description": {
+      "translate": "advancements.verity.root.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "background": "minecraft:textures/block/yellow_wool.png"
+  },
+  "criteria": {
+    "openbox": {
+      "trigger": "verity:openbox"
+    }
+  },
+  "requirements": [
+    [
+      "openbox"
+    ]
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "verity:verity_item"
+    },
+    "title": {
+      "translate": "advancements.verity.talk.title"
+    },
+    "description": {
+      "translate": "advancements.verity.talk.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "talk": {
+      "trigger": "verity:talk"
+    }
+  },
+  "requirements": [
+    [
+      "talk"
+    ]
+  ],
+  "parent": "verity:verity/root"
+}
