@@ -1,7 +1,8 @@
 {
   "pack": {
     "description": "verity resources",
-    "pack_format": 15,
-    "forge:server_data_pack_format": 15
+    "pack_format": 34,
+    "forge:resource_pack_format": 34,
+    "forge:data_pack_format": 48
   }
 }

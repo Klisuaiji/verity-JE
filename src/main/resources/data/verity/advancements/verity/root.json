@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "verity:verity_item"
+      "id": "verity:verity_item"
     },
     "title": {
       "translate": "advancements.verity.root.title"
