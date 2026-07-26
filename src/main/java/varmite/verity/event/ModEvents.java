@@ -526,14 +526,13 @@ public class ModEvents {
                 nearestPlayer = level.getEntities(EntityTypeTest.forClass(Player.class), verityEntity.getBoundingBox().inflate(32.0), e -> true).stream().findFirst().orElse(null);
                 if (nearestPlayer == null) {
                     ModEvents.updateAndSyncKarma((ServerLevel)level, (float)-1.0f);
-                    if (!verityEntity.isRemoved()) {
-                        verityEntity.setVariant("serious_1");
-                        PacketDistributor.sendToPlayersTrackingEntityAndSelf(verityEntity, new PlayTtsPayload(verityEntity.getId(), "I'm alone... where did you go?"));
-                        if (((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
-                            return;
-                        }
+                if (!verityEntity.isRemoved()) {
+                    verityEntity.setVariant("serious_1");
+                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(verityEntity, new PlayTtsPayload(verityEntity.getId(), "I'm alone... where did you go?"));
+                    if (!((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
                         verityEntity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.translatable("verity.msg.alone", VerityConfig.VERITY_CUSTOM_NAME.get()), false);
                     }
+                }
                 } else {
                     lonelinessTimer = 3000;
                 }
@@ -623,7 +622,9 @@ public class ModEvents {
                 entity = event.getEntity();
                 if (entity instanceof Cow) {
                     Cow c = (Cow)entity;
-                    c.kill();
+                    if (shouldKillEntity) {
+                        c.kill();
+                    }
                 } else {
                     entity = event.getEntity();
                     if (entity instanceof Sheep) {
@@ -713,7 +714,7 @@ public class ModEvents {
                 event.setCanceled(true);
                 event.setCancellationResult(InteractionResult.sidedSuccess((boolean)event.getLevel().isClientSide()));
                 if (!event.getLevel().isClientSide()) {
-                    bEntity.triggerOpen();
+                    bEntity.triggerOpen((ServerPlayer) player);
                     player.swing(hand);
                     bEntity.getEntityData().set(BoxEntity.HAS_CLICKED, true);
                     player.level().playSound((Player)null, bEntity.blockPosition(), (SoundEvent)ModSounds.BOX_CLICK.get(), SoundSource.BLOCKS, 0.7f, 1.0f);
@@ -790,7 +791,7 @@ public class ModEvents {
             return;
         }
         Player player = event.getEntity();
-        if (player.getUUID().equals(verityEntity.getOwnerUUID().get())) {
+        if (verityEntity != null && verityEntity.getOwnerUUID().isPresent() && player.getUUID().equals(verityEntity.getOwnerUUID().get())) {
             ItemStack stack2 = new ItemStack((ItemLike)ModItems.VERITY_ITEM.get());
             CompoundTag itemNbt = new CompoundTag();
             verityEntity.saveWithoutId(itemNbt);
@@ -877,7 +878,7 @@ public class ModEvents {
         if (!hasSpawned) {
             return;
         }
-        if (((Boolean)VerityConfig.REQUIRE_VERITY.get()).booleanValue() && !event.getRawText().toLowerCase().contains("verity")) {
+        if (((Boolean)VerityConfig.REQUIRE_VERITY.get()).booleanValue() && !event.getMessage().getString().toLowerCase().contains("verity")) {
             return;
         }
         String message = event.getMessage().getString();
