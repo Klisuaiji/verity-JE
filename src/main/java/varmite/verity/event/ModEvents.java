@@ -127,7 +127,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.datafixers.util.Pair;
-import java.lang.invoke.CallSite;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -135,7 +134,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.ChatFormatting;
@@ -170,6 +168,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.StructureTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -544,7 +543,7 @@ public class ModEvents {
                     --idleChatTimer;
                 }
             } else {
-                idleChatTimer = 2400 + new Random().nextInt(2400);
+                idleChatTimer = 2400 + RandomSource.create().nextInt(2400);
                 level = (ServerLevel)verityEntity.level();
                 nearestPlayer = level.getEntities(EntityTypeTest.forClass(Player.class), verityEntity.getBoundingBox().inflate(32.0), e -> true).stream().findFirst().orElse(null);
                 if (nearestPlayer != null && nearestPlayer instanceof ServerPlayer) {
@@ -603,8 +602,7 @@ public class ModEvents {
 
     @SubscribeEvent
     public static void entitySpawnEvent(EntityJoinLevelEvent event) {
-        Random rand = new Random();
-        boolean shouldKillEntity = rand.nextBoolean();
+        boolean shouldKillEntity = RandomSource.create().nextBoolean();
         if (event.getLevel().isClientSide()) {
             return;
         }
@@ -773,9 +771,9 @@ public class ModEvents {
             isMonstrous = false;
             data.verityKarma = 10.0f;
             player.sendSystemMessage((Component)Component.translatable("verity.msg.need_help_tutorial"));
-            MutableComponent message = Component.translatable("verity.msg.groq_tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://youtu.be/_i4O7pyMlks")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.translatable("verity.msg.tutorial_easy").withStyle(ChatFormatting.AQUA));
+            MutableComponent message = Component.translatable("verity.msg.groq_tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://youtu.be/_i4O7pyMlks")).withUnderlined(true)).append((Component)Component.translatable("verity.msg.tutorial_easy").withStyle(ChatFormatting.AQUA));
             player.sendSystemMessage((Component)message);
-            MutableComponent ollamaMessage = Component.translatable("verity.msg.ollama_tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/watch?v=515I23cVBIM&t=24s")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.translatable("verity.msg.tutorial_local").withStyle(ChatFormatting.AQUA));
+            MutableComponent ollamaMessage = Component.translatable("verity.msg.ollama_tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/watch?v=515I23cVBIM&t=24s")).withUnderlined(true)).append((Component)Component.translatable("verity.msg.tutorial_local").withStyle(ChatFormatting.AQUA));
             player.sendSystemMessage((Component)ollamaMessage);
             BlockPos safeSpawnPos = ModEvents.findNearestLand((ServerLevel)level2, (BlockPos)player.blockPosition());
             ((EntityType)ModEntities.BOX_ENTITY.get()).spawn(level2, safeSpawnPos, MobSpawnType.MOB_SUMMONED);
@@ -965,12 +963,12 @@ public class ModEvents {
                                 break;
                             }
                             case "get_inventory": {
-                                ArrayList<CallSite> items = new ArrayList<CallSite>();
+                                ArrayList<String> items = new ArrayList<>();
                                 for (ItemStack inventoryStack : player.getInventory().items) {
                                     if (inventoryStack.isEmpty()) continue;
-                                    items.add((CallSite)((Object)(inventoryStack.getCount() + "x " + inventoryStack.getHoverName().getString())));
+                                    items.add(inventoryStack.getCount() + "x " + inventoryStack.getHoverName().getString());
                                 }
-                                data = ((Object)items).toString();
+                                data = items.toString();
                                 break;
                             }
                             case "get_nearby_entities": {

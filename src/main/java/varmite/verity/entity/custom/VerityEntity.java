@@ -75,7 +75,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nullable;
@@ -245,8 +244,7 @@ extends PathfinderMob {
                         double bounceStrength = Math.min(Math.sqrt(fallDistance) * 0.22, 0.7);
                         this.setDeltaMovement(this.getDeltaMovement().x, bounceStrength, this.getDeltaMovement().z);
                         this.hasImpulse = true;
-                        Random random1 = new Random();
-                        int i = random1.nextInt(3);
+                        int i = this.random.nextInt(3);
                         this.setVariant("hurt");
                         PacketDistributor.sendToPlayersTrackingEntityAndSelf(this, new PlayTtsPayload(this.getId(), "Ouch"));
                         if (i == 0) {
@@ -398,8 +396,7 @@ extends PathfinderMob {
                 if (bounced) {
                     this.setDeltaMovement(newX, this.getDeltaMovement().y, newZ);
                     this.hasImpulse = true;
-                    Random random1 = new Random();
-                    int i = random1.nextInt(3);
+                    int i = this.random.nextInt(3);
                     this.setVariant("hurt");
                     if (i == 0) {
                         this.playSound((SoundEvent)ModSounds.IMPACT_0.get(), 1.0f, 1.0f);
