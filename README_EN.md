@@ -1,11 +1,11 @@
-## ⚠️ Important Legal Disclaimer
+## Important Legal Disclaimer
 1. **Unofficial artifact**: This repository is an educational decompilation study artifact and is **in no way** an official fork or remake of the Verity™ mod.
 2. **Copyright ownership**: All code logic and resource files (textures, models, audio) have their **intellectual property fully owned by** the original author on CurseForge.
 3. **No infringement intended**: This repository is for **Minecraft mod-development technical research** and **personal study** only.
 4. **No commercialization**: You may not charge, crowdfund, or profit from advertising based on this code.
 5. **Code-audit only**: The code here is for studying obfuscation/encryption techniques or API-call logic only; it provides no playable artifact or alternative.
 
-## 💻 Stability Statement
+## Stability Statement
 - This code is a decompiled artifact and may contain **missing logic, obfuscation residue, or runtime crashes**.
 - Do not import it into a production development environment. Any save corruption or client crash resulting from this is at your own risk.
 
@@ -24,14 +24,14 @@ Verity is a NeoForge mod centered on an AI companion powered by the **Groq API**
 
 ## Features
 
-- 🤖 **AI conversation** — integrates the Groq API; set your API Key and "Intelligence Level" (model) in the config screen.
-- 🎙️ **Voice interaction** — "Push to talk" and "Cycle Selected Mic" support, with native TTS playback.
-- 👿 **Demon form** — `VERITY` (verity_demon), a dangerous second form.
-- 📦 **The Box** — an interactive entity holding Verity's easter eggs and sounds.
-- 🔦 **Flashlight** — a practical lighting item.
-- 💿 **Verity's Disc** — a signature music disc.
-- ⚙️ **Configuration** — AI settings, "Can Crash", "Require Verity", "Play Video", "Use Native TTS", and more.
-- 🌐 **Multiplayer** — all clients must configure the same API Key.
+- **AI conversation** — integrates the Groq API; set your API Key and "Intelligence Level" (model) in the config screen.
+- **Voice interaction** — "Push to talk" and "Cycle Selected Mic" support, with native TTS playback.
+- **Demon form** — `VERITY` (verity_demon), a dangerous second form.
+- **The Box** — an interactive entity holding Verity's easter eggs and sounds.
+- **Flashlight** — a practical lighting item.
+- **Verity's Disc** — a signature music disc.
+- **Configuration** — AI settings, "Can Crash", "Require Verity", "Play Video", "Use Native TTS", and more.
+- **Multiplayer** — all clients must configure the same API Key.
 
 ## Requirements
 
