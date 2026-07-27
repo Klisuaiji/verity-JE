@@ -57,7 +57,6 @@ import net.minecraft.world.phys.Vec3;
 
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import varmite.verity.block.ModBlocks;
 import varmite.verity.item.ModItems;
 
@@ -136,7 +135,7 @@ public class FlashlightServerLogic {
                     boolean isAir = targetState.isAir();
                     boolean bl = isWaterSource = targetState.is(Blocks.WATER) && targetState.getFluidState().isSource();
                     if (!isAir && !isWaterSource) continue;
-                    level.setBlock(pos, (BlockState)((Block)ModBlocks.FLASHLIGHT_LIGHT.get()).defaultBlockState().setValue((Property)BlockStateProperties.WATERLOGGED, (Comparable)Boolean.valueOf(isWaterSource)), 3);
+                    level.setBlock(pos, (BlockState)((Block)ModBlocks.FLASHLIGHT_LIGHT.get()).defaultBlockState().setValue((Property)BlockStateProperties.WATERLOGGED, isWaterSource), 3);
                 }
                 activeLights.put(uuid, desiredPositions);
                 continue;

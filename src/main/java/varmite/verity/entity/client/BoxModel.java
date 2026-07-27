@@ -16,15 +16,15 @@ import varmite.verity.entity.custom.BoxEntity;
 public class BoxModel
 extends GeoModel<BoxEntity> {
     public ResourceLocation getModelResource(BoxEntity entity) {
-        return ResourceLocation.parse((String)"verity:geo/entity/box.geo.json");
+        return ResourceLocation.parse("verity:geo/entity/box.geo.json");
     }
 
     public ResourceLocation getTextureResource(BoxEntity entity) {
-        return ResourceLocation.parse((String)"verity:textures/entity/box.png");
+        return ResourceLocation.parse("verity:textures/entity/box.png");
     }
 
     public ResourceLocation getAnimationResource(BoxEntity entity) {
-        return ResourceLocation.parse((String)"verity:animations/entity/box.animation.json");
+        return ResourceLocation.parse("verity:animations/entity/box.animation.json");
     }
 }
 

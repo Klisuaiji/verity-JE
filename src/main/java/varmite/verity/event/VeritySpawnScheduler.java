@@ -35,7 +35,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 import varmite.verity.entity.ModEntities;
 import varmite.verity.entity.custom.VerityEntity;

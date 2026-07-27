@@ -22,7 +22,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import varmite.verity.block.FlashlightLightBlock;
 
 public class ModBlocks {
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, (String)"verity");
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, "verity");
     public static final DeferredHolder<Block, Block> FLASHLIGHT_LIGHT = BLOCKS.register("flashlight_light", FlashlightLightBlock::new);
 
     public static void register(IEventBus eventBus) {

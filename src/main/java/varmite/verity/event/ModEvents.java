@@ -211,7 +211,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.CanPlayerSleepEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforgespi.language.IModInfo;
 import net.neoforged.neoforge.network.PacketDistributor;
 import varmite.verity.VerityConfig;
@@ -1188,7 +1187,7 @@ public class ModEvents {
                         toolsUsed.append(action).append(", ");
                         combinedData.append(action).append(" returned: ").append((String)data).append("\n");
                     }
-                    CompletableFuture.supplyAsync(() -> AiAPI.askGroq((VerityEntity)verityEntity, (String)"Player asked: %s\nTools used: %s\nData retrieved:\n%s\nTell the player this information naturally. YOU MUST STILL output your response as a VALID JSON OBJECT with the array 'actions' left empty.\n".formatted(message, toolsUsed.toString(), combinedData.toString()), (long)currentDay, (float)WorldSpawnData.get((ServerLevel)serverLevel).verityKarma)).thenAccept(response -> player.getServer().execute(() -> {
+                    CompletableFuture.supplyAsync(() -> AiAPI.askGroq((VerityEntity)verityEntity, "Player asked: %s\nTools used: %s\nData retrieved:\n%s\nTell the player this information naturally. YOU MUST STILL output your response as a VALID JSON OBJECT with the array 'actions' left empty.\n".formatted(message, toolsUsed.toString(), combinedData.toString()), (long)currentDay, (float)WorldSpawnData.get((ServerLevel)serverLevel).verityKarma)).thenAccept(response -> player.getServer().execute(() -> {
                         if (response == null) {
                             return;
                         }

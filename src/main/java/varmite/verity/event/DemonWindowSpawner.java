@@ -33,7 +33,6 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import varmite.verity.entity.ModEntities;
 import varmite.verity.entity.custom.VerityDemonEntity;
 

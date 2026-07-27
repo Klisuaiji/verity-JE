@@ -24,7 +24,6 @@ import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.event.ServerChatEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import varmite.verity.entity.custom.VerityEntity;
 
 @EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.GAME)

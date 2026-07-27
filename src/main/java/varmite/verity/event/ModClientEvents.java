@@ -48,7 +48,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import varmite.verity.VerityConfig;
 import varmite.verity.client.DynamicLightManager;
 import varmite.verity.client.IntroVideoScreen;

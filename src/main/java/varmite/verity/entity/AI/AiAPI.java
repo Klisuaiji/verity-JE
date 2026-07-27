@@ -275,7 +275,7 @@ public class AiAPI {
             userMessage.addProperty("content", prompt);
             messages.add((JsonElement)userMessage);
             root.add("messages", (JsonElement)messages);
-            HttpRequest request = AiAPI.createRequestBuilder((String)"chat/completions").header("Content-Type", "application/json").version(HttpClient.Version.HTTP_1_1).timeout(REQUEST_TIMEOUT).POST(HttpRequest.BodyPublishers.ofString(root.toString())).build();
+            HttpRequest request = AiAPI.createRequestBuilder("chat/completions").header("Content-Type", "application/json").version(HttpClient.Version.HTTP_1_1).timeout(REQUEST_TIMEOUT).POST(HttpRequest.BodyPublishers.ofString(root.toString())).build();
             HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
             LOGGER.debug("[Verity AI] Full raw response body: {}", response.body());
             if (response.statusCode() < 200 || response.statusCode() >= 300) {
@@ -300,7 +300,7 @@ public class AiAPI {
             }
             if (!responseJson.has("choices") || !responseJson.get("choices").isJsonArray()) {
                 LOGGER.error("[Verity AI] Unexpected API response format: {}", response.body());
-                return AiAPI.generateFallbackJson((String)"Unexpected API response format");
+                return AiAPI.generateFallbackJson("Unexpected API response format");
             }
             Object aiContent = responseJson.getAsJsonArray("choices").get(0).getAsJsonObject().getAsJsonObject("message").get("content").getAsString().trim();
             LOGGER.debug("[Verity AI] Raw content before think-strip: {}", aiContent);
@@ -320,7 +320,7 @@ public class AiAPI {
             }
             catch (Exception e) {
                 LOGGER.error("[Verity AI] Failed to parse AI JSON: {}", aiContent);
-                return AiAPI.generateFallbackJson((String)"Failed to parse AI response as JSON.");
+                return AiAPI.generateFallbackJson("Failed to parse AI response as JSON.");
             }
             if (!reconstructed.has("variant")) {
                 reconstructed.addProperty("variant", "neutral");
@@ -579,7 +579,7 @@ public class AiAPI {
                     }
                     json.addProperty("response_format", "wav");
                     json.addProperty("speed", (Number)1.2);
-                    HttpRequest request = AiAPI.createRequestBuilder((String)"audio/speech").header("Content-Type", "application/json").timeout(REQUEST_TIMEOUT).POST(HttpRequest.BodyPublishers.ofString(json.toString())).build();
+                    HttpRequest request = AiAPI.createRequestBuilder("audio/speech").header("Content-Type", "application/json").timeout(REQUEST_TIMEOUT).POST(HttpRequest.BodyPublishers.ofString(json.toString())).build();
                     HttpResponse<InputStream> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofInputStream());
                     if (response.statusCode() == 200) {
                         try (InputStream rawStream = response.body();

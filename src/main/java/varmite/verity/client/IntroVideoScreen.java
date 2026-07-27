@@ -42,7 +42,7 @@ extends Screen {
         super.init();
         if (!this.videoStarted) {
             this.startTime = System.currentTimeMillis();
-            ResourceLocation soundId = ResourceLocation.fromNamespaceAndPath((String)"verity", (String)"intro_video_audio");
+            ResourceLocation soundId = ResourceLocation.fromNamespaceAndPath("verity", "intro_video_audio");
             SoundEvent event = SoundEvent.createVariableRangeEvent(soundId);
             this.minecraft.getSoundManager().play((SoundInstance)SimpleSoundInstance.forUI((SoundEvent)event, (float)1.0f, (float)1.0f));
             Minecraft mc = Minecraft.getInstance();
@@ -61,7 +61,7 @@ extends Screen {
             return;
         }
         String path = String.format("textures/intro/frame_%04d.png", currentFrame);
-        ResourceLocation frameLoc = ResourceLocation.fromNamespaceAndPath((String)"verity", (String)path);
+        ResourceLocation frameLoc = ResourceLocation.fromNamespaceAndPath("verity", (String)path);
         float aspect = 1.7777778f;
         int drawW = this.width;
         int drawH = (int)((float)this.width / aspect);
@@ -83,7 +83,7 @@ extends Screen {
     }
 
     private void skip() {
-        this.minecraft.getSoundManager().stop(ResourceLocation.fromNamespaceAndPath((String)"verity", (String)"intro_video_audio"), SoundSource.MASTER);
+        this.minecraft.getSoundManager().stop(ResourceLocation.fromNamespaceAndPath("verity", "intro_video_audio"), SoundSource.MASTER);
         this.minecraft.setScreen(this.previousScreen);
     }
 }
