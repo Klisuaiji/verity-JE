@@ -121,6 +121,7 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -361,7 +362,7 @@ Enemy {
             return;
         }
         if (this.isEating()) {
-            level.sendParticles((ParticleOptions)DustParticleOptions.REDSTONE, this.getX(), this.getY(), this.getZ(), 20, 0.5, 0.5, 0.5, 0.05);
+            level.sendParticles(new DustParticleOptions(new Vector3f(1.0F, 0.0F, 0.0F), 1.0F), this.getX(), this.getY(), this.getZ(), 20, 0.5, 0.5, 0.5, 0.05);
             BlockPos centerPos = this.blockPosition();
             for (int i = -1; i <= 1; ++i) {
                 for (int j = -1; j <= 1; ++j) {

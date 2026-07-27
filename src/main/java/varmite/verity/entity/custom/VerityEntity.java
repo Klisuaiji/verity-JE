@@ -330,7 +330,7 @@ extends PathfinderMob {
                             if (obj.has("message")) {
                                 String expression;
                                 Object reply = obj.get("message").getAsString();
-                                String string = expression = obj.has("variant") ? obj.get("variant").getAsString() : "serious_angry";
+                                String string = expression = obj.has("variant") ? obj.get("variant").getAsString() : "evil";
                                 if (!this.isRemoved()) {
                                     this.setVariant(expression);
                                     System.out.println("[VERITY DEBUG] Sending TTS packet to client.");

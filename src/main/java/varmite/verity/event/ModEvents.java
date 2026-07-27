@@ -344,7 +344,7 @@ public class ModEvents {
                             if (obj.has("message")) {
                                 String expression;
                                 Object reply = obj.get("message").getAsString();
-                                String string = expression = obj.has("variant") ? obj.get("variant").getAsString() : "serious_angry";
+                                String string = expression = obj.has("variant") ? obj.get("variant").getAsString() : "evil";
                                 if (!verity.isRemoved()) {
                                     verity.setVariant(expression);
                                     PacketDistributor.sendToPlayersTrackingEntityAndSelf(verity, new PlayTtsPayload(verity.getId(), (String)reply));

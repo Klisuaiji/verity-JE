@@ -6,7 +6,9 @@
   "refmap": "verity.refmap.json",
   "client": [
     "LightTextureMixin",
-    "TitleScreenMixin"
+    "TitleScreenMixin",
+    "MixinLevelRenderer",
+    "MixinEntityRenderer"
   ],
   "injectors": {
     "defaultRequire": 1
