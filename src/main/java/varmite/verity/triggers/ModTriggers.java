@@ -27,6 +27,10 @@ public class ModTriggers {
             TRIGGERS.register("favoritesong", FavoriteSongTrigger::new);
     public static final DeferredHolder<CriterionTrigger<?>, PlaySoundTrigger> PLAY_SOUND_TRIGGER =
             TRIGGERS.register("playsound", PlaySoundTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, BadDayTrigger> BAD_DAY_TRIGGER =
+            TRIGGERS.register("badday", BadDayTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, ThreeDaysTrigger> THREE_DAYS_TRIGGER =
+            TRIGGERS.register("threedays", ThreeDaysTrigger::new);
 
     public static void register(IEventBus modEventBus) {
         TRIGGERS.register(modEventBus);

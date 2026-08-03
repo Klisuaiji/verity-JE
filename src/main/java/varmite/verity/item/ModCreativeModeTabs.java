@@ -18,6 +18,7 @@ package varmite.verity.item;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
@@ -26,7 +27,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import varmite.verity.item.ModItems;
 
 public class ModCreativeModeTabs {
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, "verity");
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create((ResourceKey)Registries.CREATIVE_MODE_TAB, (String)"verity");
     public static final Supplier<CreativeModeTab> VERITY_TAB = CREATIVE_MODE_TABS.register("verity_tab", () -> CreativeModeTab.builder()
             .title(Component.translatable("creativetab.verity.verity_tab"))
             .icon(() -> new ItemStack((ItemLike)ModItems.VERITY_ITEM.get()))

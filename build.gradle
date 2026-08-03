@@ -108,6 +108,31 @@ dependencies {
     // YACL — YetAnotherConfigLib (3.7+), configuration screen library used by VerityClient.
     implementation "maven.modrinth:1eAoo2KR:3.7.0+1.21.1-neoforge"
 
+    // ── langchain4j 1.18.0 (Verity 6.1) ────────────────────────────────────────
+    // 6.1 replaced the hand-rolled HTTP AI client with langchain4j: chat models
+    // (OpenAI / Ollama / Mistral / Google Gemini), chat-memory stores and the
+    // @Tool-based function-calling used by entity/LLM/actions/Tools.
+    // The upstream 6.1 jar ships these via jarjar (see META-INF/jarjar/metadata.json),
+    // together with their transitive deps (jackson 2.22, jtokkit, opennlp, jspecify).
+    // jarJar() replicates that so the shipped mod jar is self-contained.
+    // NOTE on slf4j: langchain4j 1.18 depends on org.slf4j:slf4j-api:2.0.18, while
+    // net.neoforged:neoform pins it to { strictly 2.0.9 }. Two conflicting `strictly`
+    // constraints are unresolvable, so slf4j-api is excluded from the langchain4j graph
+    // — the Minecraft runtime already provides an API-compatible slf4j-api on the
+    // classpath, and langchain4j only uses it for logging.
+    [
+            "dev.langchain4j:langchain4j",
+            "dev.langchain4j:langchain4j-open-ai",
+            "dev.langchain4j:langchain4j-ollama",
+            "dev.langchain4j:langchain4j-mistral-ai",
+            "dev.langchain4j:langchain4j-google-ai-gemini",
+    ].each { coord ->
+        jarJar(implementation("${coord}:[1.18.0,)")) {
+            version { prefer "1.18.0" }
+            exclude group: "org.slf4j", module: "slf4j-api"
+        }
+    }
+
     // Offline speech engine (sherpa-onnx) is OPTIONAL. Drop a sherpa-onnx jar (core + JNI,
     // e.g. sherpa-onnx-all.jar) into ./libs to enable local STT/TTS. If absent, the build
     // still compiles and the mod degrades gracefully to cloud / native-OS voice.

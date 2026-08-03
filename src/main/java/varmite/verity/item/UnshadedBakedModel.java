@@ -36,10 +36,11 @@ extends BakedModelWrapper<BakedModel> {
             int[] vertexData = (int[])quad.getVertices().clone();
             for (int i = 0; i < 4; ++i) {
                 int packedUpNormal;
-                // Block vertex format: [pos, color, u, v, lightmap, normal, ...], 8 ints per vertex
-                vertexData[i * 8 + 1] = -1;                    // color = white (0xFFFFFFFF ABGR)
-                vertexData[i * 8 + 4] = 0xF000F0;              // lightmap = fullbright
-                vertexData[i * 8 + 5] = packedUpNormal = 32512; // normal = (0, 1, 0) packed
+                // DefaultVertexFormat.BLOCK = Position(3 int) + Color(1) + UV0(2) + UV2(1) + Normal(1)，共 8 int/顶点。
+                // 偏移依次为 0..2=pos、3=color、4..5=u/v、6=lightmap、7=normal。
+                vertexData[i * 8 + 3] = -1;                    // color = white (0xFFFFFFFF ABGR)
+                vertexData[i * 8 + 6] = 0xF000F0;              // lightmap = fullbright
+                vertexData[i * 8 + 7] = packedUpNormal = 32512; // normal = (0, 1, 0) packed
             }
             glowingQuads.add(new BakedQuad(vertexData, quad.getTintIndex(), quad.getDirection(), quad.getSprite(), false));
         }

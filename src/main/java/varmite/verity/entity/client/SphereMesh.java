@@ -30,6 +30,7 @@ import org.joml.Matrix4f;
  */
 public final class SphereMesh {
     private static final float TEXTURE_SCALE = 1.3f;
+    private static final float TEXTURE_SQUISH_Y = 0.9f;
 
     private SphereMesh() {
     }
@@ -63,7 +64,7 @@ public final class SphereMesh {
         float u = (float)((double)phi / (Math.PI * 2));
         float v = 0.25f + (float)((double)theta / Math.PI) * 0.5f;
         u = Mth.clamp(0.5f + (u - 0.5f) * 1.3f, 0.0f, 1.0f);
-        v = Mth.clamp(0.5f + (v - 0.5f) * 1.3f, 0.0f, 1.0f);
+        v = Mth.clamp(0.5f + (v - 0.5f) * 1.4444444f, 0.0f, 1.0f);
         float length = (float)Math.sqrt(x * x + y * y + z * z);
         float nx = x / length;
         float ny = y / length;

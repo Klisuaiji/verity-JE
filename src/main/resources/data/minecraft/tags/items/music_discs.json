@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "verity:verity_disc",
+    "verity:verity_edit_disc"
+  ]
+}

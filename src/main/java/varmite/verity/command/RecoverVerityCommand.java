@@ -19,6 +19,7 @@
 package varmite.verity.command;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -29,6 +30,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import varmite.verity.entity.ModEntities;
 import varmite.verity.entity.custom.VerityEntity;
+import varmite.verity.event.WorldSpawnData;
 
 public class RecoverVerityCommand {
     private static long lastUseTime = 0L;
@@ -66,6 +68,14 @@ public class RecoverVerityCommand {
             verity.variantArea(player.getX() + 1.5, player.getY(), player.getZ() + 1.5, player.getYRot(), 0.0f);
             level.addFreshEntity((Entity)verity);
             player.sendSystemMessage((Component)Component.translatable("verity.msg.recover_success"));
+            return 1;
+        }));
+        dispatcher.register(Commands.literal("clear_history").executes(context -> {
+            ServerPlayer player = ((CommandSourceStack)context.getSource()).getPlayerOrException();
+            WorldSpawnData data = WorldSpawnData.get(player.serverLevel());
+            data.chatHistory.clear();
+            data.setDirty();
+            ((CommandSourceStack)context.getSource()).sendSuccess(() -> Component.literal("Chat history cleared."), false);
             return 1;
         }));
     }

@@ -32,10 +32,10 @@
 package varmite.verity.event;
 import net.neoforged.fml.common.EventBusSubscriber;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -57,6 +57,7 @@ import net.minecraft.world.phys.Vec3;
 
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 import varmite.verity.block.ModBlocks;
 import varmite.verity.item.ModItems;
 
@@ -66,7 +67,8 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
  */
 @EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.GAME)
 public class FlashlightServerLogic {
-    private static final Map<UUID, List<BlockPos>> activeLights = new HashMap();
+    private static final int LIGHT_UPDATE_FLAGS = 18;
+    private static final Map<UUID, Set<BlockPos>> activeLights = new HashMap<UUID, Set<BlockPos>>();
 
     private static boolean isFlashlightActive(ItemStack stack) {
         CustomData data = stack.get(DataComponents.CUSTOM_DATA);
@@ -74,7 +76,7 @@ public class FlashlightServerLogic {
     }
 
     @SubscribeEvent
-    public static void onServerTick(ServerTickEvent.Pre event) {
+    public static void onServerTick(ServerTickEvent.Post event) {
         if (event.getServer() == null) {
             return;
         }
@@ -88,7 +90,7 @@ public class FlashlightServerLogic {
                 isFlashlightOn = true;
             }
             if (isFlashlightOn) {
-                List<BlockPos> currentPositions;
+                Set<BlockPos> currentPositions;
                 Vec3 eyePos = player.getEyePosition();
                 Vec3 lookVec = player.getViewVector(1.0f);
                 double maxDist = 25.0;
@@ -98,16 +100,14 @@ public class FlashlightServerLogic {
                 if (hitResult.getType() == HitResult.Type.BLOCK) {
                     hitDistance = hitResult.getLocation().distanceTo(eyePos);
                 }
-                ArrayList<BlockPos> desiredPositions = new ArrayList<BlockPos>();
+                LinkedHashSet<BlockPos> desiredPositions = new LinkedHashSet<BlockPos>();
                 for (double i = 2.0; i <= hitDistance - 1.5; i += 2.5) {
                     desiredPositions.add(BlockPos.containing(eyePos.add(lookVec.scale(i))));
                 }
                 double finalHitDist = Math.max(0.5, hitDistance - 0.5);
                 Vec3 hitVec = eyePos.add(lookVec.scale(finalHitDist));
                 BlockPos hitCenter = BlockPos.containing(hitVec);
-                if (!desiredPositions.contains(hitCenter)) {
-                    desiredPositions.add(hitCenter);
-                }
+                desiredPositions.add(hitCenter);
                 if (hitDistance > 4.0) {
                     Vec3 up = player.getUpVector(1.0f);
                     Vec3 right = lookVec.cross(up).normalize();
@@ -121,12 +121,12 @@ public class FlashlightServerLogic {
                     desiredPositions.add(BlockPos.containing(hitVec.add(trueUp.scale(1.5))));
                     desiredPositions.add(BlockPos.containing(hitVec.subtract(trueUp.scale(1.5))));
                 }
-                if (desiredPositions.equals(currentPositions = activeLights.getOrDefault(uuid, new ArrayList<>()))) continue;
+                if (desiredPositions.equals(currentPositions = activeLights.getOrDefault(uuid, Set.of()))) continue;
                 for (BlockPos pos : currentPositions) {
                     BlockState state;
                     if (desiredPositions.contains(pos) || !(state = level.getBlockState(pos)).is((Block)ModBlocks.FLASHLIGHT_LIGHT.get())) continue;
                     boolean wasWater = (Boolean)state.getValue((Property)BlockStateProperties.WATERLOGGED);
-                    level.setBlock(pos, wasWater ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 3);
+                    level.setBlock(pos, wasWater ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), LIGHT_UPDATE_FLAGS);
                 }
                 for (BlockPos pos : desiredPositions) {
                     boolean isWaterSource;
@@ -135,7 +135,7 @@ public class FlashlightServerLogic {
                     boolean isAir = targetState.isAir();
                     boolean bl = isWaterSource = targetState.is(Blocks.WATER) && targetState.getFluidState().isSource();
                     if (!isAir && !isWaterSource) continue;
-                    level.setBlock(pos, (BlockState)((Block)ModBlocks.FLASHLIGHT_LIGHT.get()).defaultBlockState().setValue((Property)BlockStateProperties.WATERLOGGED, isWaterSource), 3);
+                    level.setBlock(pos, (BlockState)((Block)ModBlocks.FLASHLIGHT_LIGHT.get()).defaultBlockState().setValue((Property)BlockStateProperties.WATERLOGGED, (Comparable)Boolean.valueOf(isWaterSource)), LIGHT_UPDATE_FLAGS);
                 }
                 activeLights.put(uuid, desiredPositions);
                 continue;
@@ -151,14 +151,14 @@ public class FlashlightServerLogic {
     }
 
     private static void cleanupLight(ServerPlayer player, UUID uuid) {
-        List<BlockPos> positions = activeLights.get(uuid);
+        Set<BlockPos> positions = activeLights.get(uuid);
         if (positions != null) {
             ServerLevel level = player.serverLevel();
             for (BlockPos pos : positions) {
                 BlockState state = level.getBlockState(pos);
                 if (!state.is((Block)ModBlocks.FLASHLIGHT_LIGHT.get())) continue;
                 boolean wasWater = (Boolean)state.getValue((Property)BlockStateProperties.WATERLOGGED);
-                level.setBlock(pos, wasWater ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), 3);
+                level.setBlock(pos, wasWater ? Blocks.WATER.defaultBlockState() : Blocks.AIR.defaultBlockState(), LIGHT_UPDATE_FLAGS);
             }
             activeLights.remove(uuid);
         }

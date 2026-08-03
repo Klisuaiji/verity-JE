@@ -20,7 +20,6 @@
 package varmite.verity.entity.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import java.awt.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -85,7 +84,7 @@ extends EntityRenderer<VerityEntity> {
         int b = 255;
         int a = 255;
         if (hueValue != 0) {
-            int rgb = Color.HSBtoRGB((float)hueValue / 360.0f, 1.0f, 1.0f);
+            int rgb = Mth.hsvToRgb((float)hueValue / 360.0f, 1.0f, 1.0f);
             r = rgb >> 16 & 0xFF;
             g = rgb >> 8 & 0xFF;
             b = rgb & 0xFF;

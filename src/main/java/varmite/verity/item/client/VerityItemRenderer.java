@@ -20,7 +20,6 @@ package varmite.verity.item.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import java.awt.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -51,7 +50,7 @@ extends BlockEntityWithoutLevelRenderer {
             g = 255;
             b = 255;
         } else {
-            int rgb = Color.HSBtoRGB((float)hueValue / 360.0f, 1.0f, 1.0f);
+            int rgb = Mth.hsvToRgb((float)hueValue / 360.0f, 1.0f, 1.0f);
             r = rgb >> 16 & 0xFF;
             g = rgb >> 8 & 0xFF;
             b = rgb & 0xFF;

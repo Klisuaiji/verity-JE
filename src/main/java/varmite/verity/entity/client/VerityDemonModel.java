@@ -26,15 +26,15 @@ import varmite.verity.entity.custom.VerityDemonEntity;
 public class VerityDemonModel
 extends GeoModel<VerityDemonEntity> {
     public ResourceLocation getModelResource(VerityDemonEntity animatable) {
-        return ResourceLocation.fromNamespaceAndPath("verity", "geo/entity/verity_demon.geo.json");
+        return ResourceLocation.fromNamespaceAndPath((String)"verity", (String)"geo/entity/verity_demon.geo.json");
     }
 
     public ResourceLocation getTextureResource(VerityDemonEntity animatable) {
-        return ResourceLocation.fromNamespaceAndPath("verity", "textures/entity/verity_demon.png");
+        return ResourceLocation.fromNamespaceAndPath((String)"verity", (String)"textures/entity/verity_demon.png");
     }
 
     public ResourceLocation getAnimationResource(VerityDemonEntity animatable) {
-        return ResourceLocation.fromNamespaceAndPath("verity", "animations/entity/verity_demon.animation.json");
+        return ResourceLocation.fromNamespaceAndPath((String)"verity", (String)"animations/entity/verity_demon.animation.json");
     }
 
     public void setCustomAnimations(VerityDemonEntity animatable, long instanceId, AnimationState<VerityDemonEntity> animationState) {

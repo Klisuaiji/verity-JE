@@ -51,9 +51,10 @@ extends MeleeAttackGoal {
         }
     }
 
-    protected void checkAndPerformAttack(LivingEntity target, double distance) {
-        double reachSqr = (double)(this.demon.getBbWidth() * this.demon.getBbWidth() * 2.0f) + (double)(target.getBbWidth() * target.getBbWidth());
-        if (distance <= reachSqr && this.attackCooldown <= 0) {
+    @Override
+    protected void checkAndPerformAttack(LivingEntity target) {
+        double distance = this.mob.distanceToSqr(target.getX(), target.getY(), target.getZ());
+        if (distance <= this.getAttackReachSqr(target) && this.attackCooldown <= 0) {
             this.resetAttackCooldown();
             if (this.demon.getRandom().nextFloat() < 0.5f) {
                 this.demon.startGrabbing(target);
@@ -64,8 +65,13 @@ extends MeleeAttackGoal {
         }
     }
 
+    protected double getAttackReachSqr(LivingEntity target) {
+        return (double)(this.mob.getBbWidth() * 2.0f * this.mob.getBbWidth() * 2.0f + target.getBbWidth());
+    }
+
+    @Override
     protected void resetAttackCooldown() {
-        this.attackCooldown = 20;
+        this.attackCooldown = this.adjustedTickDelay(20);
     }
 }
 

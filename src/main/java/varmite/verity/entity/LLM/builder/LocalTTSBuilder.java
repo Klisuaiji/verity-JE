@@ -1,4 +1,13 @@
-package varmite.verity.entity.AI;
+/*
+ * Ported from Verity 6.1 (Forge 1.20.1) to NeoForge 1.21.1.
+ *
+ * Offline TTS (Piper / VITS through Sherpa-ONNX). 6.1 links against
+ * com.k2fsa.sherpa.onnx directly; this port keeps the existing reflective
+ * SherpaBridge so the mod still compiles and runs when the optional
+ * sherpa-onnx jar is absent — voice then degrades to silence instead of
+ * crashing the game.
+ */
+package varmite.verity.entity.LLM.builder;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -10,29 +19,25 @@ import java.util.zip.ZipInputStream;
 import javax.sound.sampled.AudioFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import varmite.verity.entity.AI.AiAPI;
+import varmite.verity.entity.AI.SherpaBridge;
 
-/**
- * Local offline TTS via Sherpa-ONNX (Piper/VITS). All access to the optional
- * sherpa-onnx library is funnelled through {@link SherpaBridge} so the mod
- * compiles and runs without it; when the engine is absent, voice simply
- * degrades to silent.
- */
-public class VerityLocalTTS {
-    private static final Logger LOGGER = LoggerFactory.getLogger(VerityLocalTTS.class);
+public class LocalTTSBuilder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocalTTSBuilder.class);
     private static Object ttsEngine;
 
     public static void init() {
         try {
             Path tempDir = Files.createTempDirectory("verity_tts_engine", new FileAttribute[0]);
-            InputStream zipStream = VerityLocalTTS.class.getClassLoader().getResourceAsStream("assets/verity/tts/piper.zip");
+            InputStream zipStream =
+                    LocalTTSBuilder.class.getClassLoader().getResourceAsStream("assets/verity/tts/piper.zip");
             if (zipStream == null) {
-                zipStream = VerityLocalTTS.class.getResourceAsStream("/assets/verity/tts/piper.zip");
+                zipStream = LocalTTSBuilder.class.getResourceAsStream("/assets/verity/tts/piper.zip");
             }
             if (zipStream == null) {
-                throw new Exception("Could not find piper.zip in resources!");
+                LOGGER.error("[Verity Local TTS] Could not find piper.zip in resources!");
+                return;
             }
-            try (ZipInputStream zis = new ZipInputStream(zipStream);){
+            try (ZipInputStream zis = new ZipInputStream(zipStream)) {
                 ZipEntry entry;
                 while ((entry = zis.getNextEntry()) != null) {
                     Path resolvedPath = tempDir.resolve(entry.getName());
@@ -54,8 +59,7 @@ public class VerityLocalTTS {
             } else {
                 LOGGER.error("[Verity Local TTS] Failed to initialize local AI engine (sherpa-onnx unavailable?).");
             }
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             LOGGER.error("[Verity Local TTS] Failed to initialize local AI engine!", e);
         }
     }
@@ -63,27 +67,26 @@ public class VerityLocalTTS {
     public static byte[] generateSpeech(String text) {
         if (ttsEngine == null) {
             LOGGER.info("[Verity Local TTS] Lazy loading offline AI engine...");
-            VerityLocalTTS.init();
+            init();
         }
         if (ttsEngine == null) {
             LOGGER.error("[Verity Local TTS] Engine failed to lazy load! Aborting.");
             return null;
         }
         try {
-            float[] samples2 = SherpaBridge.generate(ttsEngine, text);
-            if (samples2 == null) {
+            float[] samples = SherpaBridge.generate(ttsEngine, text);
+            if (samples == null) {
                 return null;
             }
-            byte[] pcmData = new byte[samples2.length * 2];
-            for (int i = 0; i < samples2.length; ++i) {
-                float clamped = Math.max(-1.0f, Math.min(1.0f, samples2[i]));
-                short val = (short)(clamped * 32767.0f);
-                pcmData[i * 2] = (byte)(val & 0xFF);
-                pcmData[i * 2 + 1] = (byte)(val >> 8 & 0xFF);
+            byte[] pcmData = new byte[samples.length * 2];
+            for (int i = 0; i < samples.length; ++i) {
+                float clamped = Math.max(-1.0f, Math.min(1.0f, samples[i]));
+                short val = (short) (clamped * 32767.0f);
+                pcmData[i * 2] = (byte) (val & 0xFF);
+                pcmData[i * 2 + 1] = (byte) (val >> 8 & 0xFF);
             }
             return pcmData;
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             LOGGER.error("[Verity Local TTS] Speech generation crashed!", e);
             return null;
         }

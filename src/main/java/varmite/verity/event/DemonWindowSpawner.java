@@ -33,6 +33,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 import varmite.verity.entity.ModEntities;
 import varmite.verity.entity.custom.VerityDemonEntity;
 
@@ -40,7 +41,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 @EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.GAME)
 public class DemonWindowSpawner {
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Pre event) {
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
         boolean isIndoors;
         Player player = event.getEntity();
         Level level = player.level();
@@ -78,7 +79,7 @@ public class DemonWindowSpawner {
                             ServerLevel serverLevel = (ServerLevel)level;
                             serverLevel.setDayTime(18000L);
                         }
-                        level.destroyBlock(demon.blockPosition(), false);
+                        level.addFreshEntity((Entity)demon);
                         player.addTag("verity_window_scare_done");
                         return;
                     }
@@ -108,7 +109,7 @@ public class DemonWindowSpawner {
                     ServerLevel serverLevel = (ServerLevel)level;
                     serverLevel.setDayTime(18000L);
                 }
-                level.destroyBlock(demon.blockPosition(), false);
+                level.addFreshEntity((Entity)demon);
                 player.addTag("verity_window_scare_done");
             }
         }

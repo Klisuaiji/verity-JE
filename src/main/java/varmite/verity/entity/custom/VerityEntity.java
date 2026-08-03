@@ -54,7 +54,7 @@
  *  net.minecraft.world.phys.Vec3
  *  net.neoforged.neoforge.network.PacketDistributor
  *  varmite.verity.VerityConfig
- *  varmite.verity.entity.AI.AiAPI
+ *  varmite.verity.entity.LLM.AiManager
  *  varmite.verity.entity.ModEntities
  *  varmite.verity.entity.client.VerityEntityTexture
  *  varmite.verity.entity.custom.BoxEntity
@@ -128,7 +128,7 @@ import net.minecraft.world.phys.AABB;
 import java.util.EnumSet;
 import net.neoforged.neoforge.network.PacketDistributor;
 import varmite.verity.VerityConfig;
-import varmite.verity.entity.AI.AiAPI;
+import varmite.verity.entity.LLM.AiManager;
 import varmite.verity.entity.ModEntities;
 import varmite.verity.entity.client.VerityEntityTexture;
 import varmite.verity.entity.custom.BoxEntity;
@@ -167,7 +167,7 @@ extends PathfinderMob {
     public float clientRollAngle = 0.0f;
     public float clientRollAngleO = 0.0f;
     private boolean hasTriggeredDay2 = false;
-    private static final List<String> VALID_VARIANTS = List.of("crazy_talking", "happy", "happy_sleep", "happy_talking", "hurt", "neutral", "noface", "serious_1", "serious_2", "serious_3", "serious_talking", "evil", "evil_talking", "smiling_evil", "crazy", "neutral_talking");
+    public static final List<String> VALID_VARIANTS = List.of("crazy_talking", "happy", "happy_sleep", "happy_talking", "hurt", "neutral", "noface", "serious_1", "serious_2", "serious_3", "serious_talking", "evil", "evil_talking", "smiling_evil", "crazy", "neutral_talking");
     public static final String VARIANT_DEFAULT = "happy";
 
     public VerityEntity(EntityType<? extends PathfinderMob> type, Level level) {
@@ -313,50 +313,9 @@ extends PathfinderMob {
             long currentDay = serverLevel.getDayTime() / 24000L;
             WorldSpawnData data = WorldSpawnData.get((ServerLevel)serverLevel);
             BlockState currentBlockState = serverLevel.getBlockState(this.blockPosition());
-            if (currentBlockState.getBlock() instanceof FallingBlock && (destroyed = serverLevel.removeBlock(this.blockPosition(), false)) && !this.isAiProcessing && this.tickCount - this.lastTriggerTick > 100) {
-                this.isAiProcessing = true;
+            if (currentBlockState.getBlock() instanceof FallingBlock && (destroyed = serverLevel.removeBlock(this.blockPosition(), false)) && this.tickCount - this.lastTriggerTick > 100) {
                 this.lastTriggerTick = this.tickCount;
-                System.out.println("[VERITY DEBUG] Sand block hit! Triggering AI... (Tick: " + this.tickCount + ")");
-                String triggerPrompt = "[SYSTEM OVERRIDE: The player just put a block on you! Ignore all other rules and scream in extreme rage! Complain about it hurting! CRITICAL RULE: USE VERY SHORT, CHOPPY SENTENCES. DO NOT EXCEED 15 WORDS TOTAL. YOU MUST STILL OUTPUT VALID JSON.]";
-                long finalCurrentDay = currentDay;
-                ServerLevel finalServerLevel = serverLevel;
-                CompletableFuture.supplyAsync(() -> AiAPI.askGroq((VerityEntity)this, (String)triggerPrompt, (long)finalCurrentDay, (float)data.verityKarma)).thenAccept(aiResponse -> finalServerLevel.getServer().execute(() -> {
-                    this.isAiProcessing = false;
-                    System.out.println("[VERITY DEBUG] API Response received.");
-                    if (aiResponse != null && !aiResponse.startsWith("Error")) {
-                        try {
-                            String cleanResponse = VerityEntity.extractJson((String)aiResponse);
-                            JsonObject obj = JsonParser.parseString((String)cleanResponse).getAsJsonObject();
-                            if (obj.has("message")) {
-                                String expression;
-                                Object reply = obj.get("message").getAsString();
-                                String string = expression = obj.has("variant") ? obj.get("variant").getAsString() : "evil";
-                                if (!this.isRemoved()) {
-                                    this.setVariant(expression);
-                                    System.out.println("[VERITY DEBUG] Sending TTS packet to client.");
-                                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(this, new PlayTtsPayload(this.getId(), (String)reply));
-                                }
-                                if (((String)reply).length() > 1500) {
-                                    reply = ((String)reply).substring(0, 1500) + "...";
-                                }
-                                if (!((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
-                                    this.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal(("<%s> ".formatted(VerityConfig.VERITY_CUSTOM_NAME.get()) + (String)reply)), false);
-                                }
-                            }
-                        }
-                        catch (Exception e) {
-                            System.err.println("[Verity AI] Failed to parse damage reaction JSON.");
-                            e.printStackTrace();
-                        }
-                    }
-                })).exceptionally(ex -> {
-                    finalServerLevel.getServer().execute(() -> {
-                        this.isAiProcessing = false;
-                        System.err.println("[Verity AI] API Call failed.");
-                        ex.printStackTrace();
-                    });
-                    return null;
-                });
+                AiManager.queryAI(this, "<SYSTEM> The player just dropped a block on verity during this turn. React with very short, angry sentences.", null);
             }
             if (this.lastForcedChunk == null || !this.lastForcedChunk.equals((Object)currentChunk)) {
                 if (this.lastForcedChunk != null) {

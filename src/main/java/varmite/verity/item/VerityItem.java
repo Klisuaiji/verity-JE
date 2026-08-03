@@ -59,7 +59,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -85,7 +84,8 @@ extends Item {
     public static WorldSpawnData data;
 
     public VerityItem(Item.Properties properties) {
-        super(properties.food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.6f).build()));
+        // 6.1 只把 Verity 当作最大堆叠 1 的普通物品（原版 properties.m_41487_(1)），并非食物。
+        super(properties.stacksTo(1));
     }
 
     public boolean isDamageable(ItemStack stack) {
@@ -138,7 +138,7 @@ extends Item {
                                 spawnedEntity.load(stackTag);
                             }
                         }
-                        level.destroyBlock(spawnedEntity.blockPosition(), false);
+                        level.addFreshEntity(spawnedEntity);
                     }
                     level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1.0f, 0.8f);
                     entity.discard();
@@ -174,7 +174,7 @@ extends Item {
                 VerityEntity spawnedEntity = (VerityEntity)((EntityType)ModEntities.VERITY_ENTITY.get()).create((Level)serverLevel);
                 if (spawnedEntity != null) {
                     spawnedEntity.variantArea((double)safePos.getX() + 0.5, (double)safePos.getY(), (double)safePos.getZ() + 0.5, 0.0f, 0.0f);
-                    serverLevel.destroyBlock(spawnedEntity.blockPosition(), false);
+                    serverLevel.addFreshEntity(spawnedEntity);
                     spawnedEntity.setVariant("serious_1");
                     spawnedEntity.level().playSound(null, safePos, (SoundEvent)ModSounds.BONE_0.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
                     PacketDistributor.sendToPlayersTrackingEntityAndSelf(spawnedEntity, new PlayTtsPayload(spawnedEntity.getId(), "DO NOT DO THAT!"));

@@ -48,6 +48,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 import varmite.verity.VerityConfig;
 import varmite.verity.client.DynamicLightManager;
 import varmite.verity.client.IntroVideoScreen;
@@ -77,7 +78,7 @@ public class ModClientEvents {
     }
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Pre event) {
+    public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null && (Double)mc.options.gamma().get() > 0.0) {
             mc.options.gamma().set(0.0);

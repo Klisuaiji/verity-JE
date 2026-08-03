@@ -23,6 +23,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 
 @EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.GAME, value={Dist.CLIENT})
 public class VerityVisuals {

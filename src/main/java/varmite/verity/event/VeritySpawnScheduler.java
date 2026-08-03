@@ -35,6 +35,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 import varmite.verity.entity.ModEntities;
 import varmite.verity.entity.custom.VerityEntity;
@@ -58,11 +59,11 @@ public class VeritySpawnScheduler {
     }
 
     @SubscribeEvent
-    public static void onServerTick(ServerTickEvent.Pre event) {
+    public static void onServerTick(ServerTickEvent.Post event) {
         long currentTick = event.getServer().getTickCount();
-        Iterator iterator = SCHEDULED_SPAWNS.iterator();
+        Iterator<ScheduledSpawn> iterator = SCHEDULED_SPAWNS.iterator();
         while (iterator.hasNext()) {
-            ScheduledSpawn task = (ScheduledSpawn)iterator.next();
+            ScheduledSpawn task = iterator.next();
             if (currentTick < task.executeTick) continue;
             VeritySpawnScheduler.executeVerityEvent((ServerLevel)task.level, (BlockPos)task.pos);
             iterator.remove();
@@ -78,7 +79,7 @@ public class VeritySpawnScheduler {
         if ((verity = ((EntityType)ModEntities.VERITY_ENTITY.get()).create((Level)level)) != null) {
             VerityEntity verityEntity = (VerityEntity)verity;
             verityEntity.variantArea((double)chestPos.getX() + 0.5, (double)chestPos.getY() + 1.0, (double)chestPos.getZ() + 0.5, 0.0f, 0.0f);
-            level.destroyBlock(verity.blockPosition(), false);
+            level.addFreshEntity(verity);
             PacketDistributor.sendToPlayersTrackingEntityAndSelf(verity, new PlayTtsPayload(verity.getId(), "You can't trap me lil bro."));
             level.playSound(null, verity.blockPosition(), SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, 1.0f, 1.0f);
         }

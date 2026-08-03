@@ -40,7 +40,7 @@ public final class VerityVariants {
         if (!VALID_VARIANTS.contains(safeVariant)) {
             safeVariant = "happy";
         }
-        return ResourceLocation.fromNamespaceAndPath("verity", (String)("textures/entity/" + safeVariant + ".png"));
+        return ResourceLocation.fromNamespaceAndPath((String)"verity", (String)("textures/entity/" + safeVariant + ".png"));
     }
 
     private static String sanitize(String variant) {
