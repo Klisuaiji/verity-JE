@@ -15,7 +15,7 @@
 
 [![CurseForge](https://img.shields.io/badge/CurseForge-Verity_JE-f16436?logo=curseforge)](https://www.curseforge.com/minecraft/mc-mods/verity-je)
 [![Modrinth](https://img.shields.io/badge/Modrinth-Verity_JE-1bd96a?logo=modrinth)](https://modrinth.com/mod/verity-je-official)
-> 一个为 Minecraft 1.21.1（NeoForge）打造的 **AI 伙伴模组**——把名为 **Verity™** 的角色带进你的世界。
+> 一个为 Minecraft打造的 **AI 伙伴模组**——把名为 **Verity™** 的角色带进你的世界。
 
 ## 简介
 
@@ -25,7 +25,6 @@ Verity 是一个基于 NeoForge 的模组，核心是一个由 **Groq API** 驱�
 
 -  **AI 对话**：接入 Groq API，可在配置界面填写 API Key 与“智能等级（模型）”。
 -  **语音交互**：支持“按住说话”与“切换麦克风”，使用原生 TTS 进行语音朗读。
--  **恶魔形态**：`VERITY`（verity_demon）。
 -  **盒子**：可交互的实体，内含 Verity 的“小彩蛋”与音效。
 -  **手电筒**：实用照明道具。
 -  **Verity 唱片**：专属背景音乐唱片。
