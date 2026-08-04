@@ -112,23 +112,58 @@ dependencies {
     // 6.1 replaced the hand-rolled HTTP AI client with langchain4j: chat models
     // (OpenAI / Ollama / Mistral / Google Gemini), chat-memory stores and the
     // @Tool-based function-calling used by entity/LLM/actions/Tools.
-    // The upstream 6.1 jar ships these via jarjar (see META-INF/jarjar/metadata.json),
-    // together with their transitive deps (jackson 2.22, jtokkit, opennlp, jspecify).
-    // jarJar() replicates that so the shipped mod jar is self-contained.
+    //
+    // ROOT CAUSE OF THE 2026-08-03 CRASH (NoClassDefFoundError:
+    // dev/langchain4j/store/memory/chat/ChatMemoryStore):
+    // The mod's code imports classes that live in `langchain4j-core`
+    //   - dev.langchain4j.agent.tool.Tool / .P
+    //   - dev.langchain4j.store.memory.chat.ChatMemoryStore
+    //   - dev.langchain4j.memory.ChatMemory
+    //   - dev.langchain4j.model.chat.ChatModel
+    //   - dev.langchain4j.data.message.*
+    // and in the transitive runtime libs (jackson, jtokkit, opennlp, jspecify,
+    // langchain4j-http-client). moddev-gradle's jarJar embeds ONLY the artifacts
+    // declared explicitly in the `jarJar` configuration — it does NOT pull in
+    // transitive dependencies. The previous config only declared the 5 top-level
+    // langchain4j model modules, so `langchain4j-core` and every transitive were
+    // missing from the shipped jar, causing the startup NoClassDefFoundError.
+    // FIX: declare every runtime-needed artifact as jarJar so the mod jar is
+    // self-contained. (Overlap between `langchain4j` and `langchain4j-core` is 0
+    // classes, so both can be embedded side by side without duplicates.)
     // NOTE on slf4j: langchain4j 1.18 depends on org.slf4j:slf4j-api:2.0.18, while
     // net.neoforged:neoform pins it to { strictly 2.0.9 }. Two conflicting `strictly`
     // constraints are unresolvable, so slf4j-api is excluded from the langchain4j graph
     // — the Minecraft runtime already provides an API-compatible slf4j-api on the
     // classpath, and langchain4j only uses it for logging.
+    def langchain4jJar(String coord, String v = "1.18.0") {
+        jarJar(implementation("${coord}:[${v},)")) {
+            version { prefer v }
+            exclude group: "org.slf4j", module: "slf4j-api"
+        }
+    }
     [
             "dev.langchain4j:langchain4j",
+            "dev.langchain4j:langchain4j-core",
+            "dev.langchain4j:langchain4j-http-client",
             "dev.langchain4j:langchain4j-open-ai",
             "dev.langchain4j:langchain4j-ollama",
             "dev.langchain4j:langchain4j-mistral-ai",
             "dev.langchain4j:langchain4j-google-ai-gemini",
+    ].each { coord -> langchain4jJar(coord) }
+
+    // Transitive runtime libs required by the langchain4j model/http modules
+    // (JSON serialization, tokenization, NLP, nullability annotations). Declared
+    // explicitly because jarJar does not bundle transitives — without these the
+    // mod would crash later (e.g. when an OpenAI/Ollama model is first built).
+    [
+            "com.fasterxml.jackson.core:jackson-annotations:2.22",
+            "com.fasterxml.jackson.core:jackson-core:2.22.1",
+            "com.fasterxml.jackson.core:jackson-databind:2.22.1",
+            "com.knuddels:jtokkit:1.1.0",
+            "org.jspecify:jspecify:1.0.0",
+            "org.apache.opennlp:opennlp-tools:2.5.9",
     ].each { coord ->
-        jarJar(implementation("${coord}:[1.18.0,)")) {
-            version { prefer "1.18.0" }
+        jarJar(implementation(coord)) {
             exclude group: "org.slf4j", module: "slf4j-api"
         }
     }
