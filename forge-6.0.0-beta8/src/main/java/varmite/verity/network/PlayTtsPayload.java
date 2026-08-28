@@ -1,0 +1,37 @@
+/*
+ * Decompiled with CFR 0.152.
+ * 
+ * Could not load the following classes:
+ *  net.minecraft.network.FriendlyByteBuf
+ *  net.minecraftforge.api.distmarker.Dist
+ *  net.minecraftforge.fml.DistExecutor
+ *  net.minecraftforge.network.NetworkEvent$Context
+ */
+package varmite.verity.network;
+
+import java.util.function.Supplier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.network.NetworkEvent;
+import varmite.verity.network.PlayTtsClientHandler;
+
+public record PlayTtsPayload(int entityId, String text) {
+    public static void encode(PlayTtsPayload payload, FriendlyByteBuf buf) {
+        buf.writeInt(payload.entityId);
+        buf.m_130070_(payload.text);
+    }
+
+    public static PlayTtsPayload decode(FriendlyByteBuf buf) {
+        int entityId = buf.readInt();
+        String text = buf.m_130136_(Short.MAX_VALUE);
+        return new PlayTtsPayload(entityId, text);
+    }
+
+    public static void handle(PlayTtsPayload payload, Supplier<NetworkEvent.Context> ctxSupplier) {
+        NetworkEvent.Context ctx = ctxSupplier.get();
+        ctx.enqueueWork(() -> DistExecutor.unsafeRunWhenOn((Dist)Dist.CLIENT, () -> () -> PlayTtsClientHandler.handlePacket(payload)));
+        ctx.setPacketHandled(true);
+    }
+}
+
