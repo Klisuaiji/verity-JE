@@ -29,6 +29,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import varmite.verity.entity.custom.VerityDemonEntity;
 import varmite.verity.sounds.ModSounds;
@@ -56,7 +57,11 @@ extends Goal {
         if (this.hasTriggeredTransformation && this.delayTicks <= 0) {
             return false;
         }
-        this.targetPlayer = this.demon.level().getNearestPlayer(this.targetingConditions, (LivingEntity)this.demon, this.demon.getX(), this.demon.getEyeY(), this.demon.getZ());
+        double cx = this.demon.getX();
+        double cy = this.demon.getEyeY();
+        double cz = this.demon.getZ();
+        AABB aabb = new AABB(cx - 64.0, cy - 64.0, cz - 64.0, cx + 64.0, cy + 64.0, cz + 64.0);
+        this.targetPlayer = this.demon.level().getNearestEntity(Player.class, this.targetingConditions, (LivingEntity)this.demon, cx, cy, cz, aabb);
         if (this.targetPlayer != null && (this.targetPlayer.isCreative() || this.targetPlayer.isSpectator())) {
             return false;
         }
@@ -93,7 +98,7 @@ extends Goal {
         this.demon.getLookControl().setLookAt((Entity)this.targetPlayer, 30.0f, 30.0f);
         double distanceSqr = this.demon.distanceToSqr((Entity)this.targetPlayer);
         if (distanceSqr > 1024.0) {
-            this.demon.getNavigation().moveTo((Entity)this.targetPlayer, 1.0);
+            this.demon.getNavigation().createPath((Entity)this.targetPlayer, 0);
         } else {
             this.demon.getNavigation().stop();
         }

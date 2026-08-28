@@ -107,10 +107,8 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -250,24 +248,8 @@ Enemy {
         this.goalSelector.addGoal(6, (Goal)new WaterAvoidingRandomStrollGoal((PathfinderMob)this, 1.0));
         this.goalSelector.addGoal(7, (Goal)new LookAtPlayerGoal((Mob)this, Player.class, 3.0f, 1.0f));
         this.targetSelector.addGoal(0, (Goal)new HurtByTargetGoal((PathfinderMob)this, new Class[0]));
-        this.targetSelector.addGoal(1, (Goal)new NearestAttackableTargetGoal<Villager>((Mob)this, Villager.class, false){
-
-            public boolean canUse() {
-                return !VerityDemonEntity.this.isEating() && !VerityDemonEntity.this.isGrabbing() && super.canUse();
-            }
-
-            public void start() {
-                super.start();
-                VerityDemonEntity.this.setDemonState(1);
-            }
-        });
-        this.targetSelector.addGoal(2, (Goal)new NearestAttackableTargetGoal<Player>((Mob)this, Player.class, false){
-
-            public boolean canUse() {
-                boolean noVillagers = VerityDemonEntity.this.level().getEntitiesOfClass(Villager.class, VerityDemonEntity.this.getBoundingBox().inflate(64.0)).isEmpty();
-                return VerityDemonEntity.this.getDemonState() == 1 && noVillagers && !VerityDemonEntity.this.isEating() && !VerityDemonEntity.this.isGrabbing() && super.canUse();
-            }
-        });
+        this.targetSelector.addGoal(1, (Goal)new Goal() { public boolean canUse() { return false; } });
+        this.targetSelector.addGoal(2, (Goal)new Goal() { public boolean canUse() { return false; } });
     }
 
     public void forceCrawl(int ticks) {
@@ -490,10 +472,6 @@ Enemy {
         return true;
     }
 
-    protected EntityDimensions getDefaultDimensions(Pose pose) {
-        return EntityDimensions.scalable(0.4f, ((Boolean)this.entityData.get(IS_CRAWLING)).booleanValue() ? 1.8f : 4.8f);
-    }
-
     public boolean onClimbable() {
         return (Boolean)this.entityData.get(IS_CLIMBING);
     }
@@ -532,9 +510,6 @@ Enemy {
         controllers.add(new AnimationController[]{actionController});
     }
 
-    public boolean canStandOnFluid(FluidState fluidState) {
-        return fluidState.is(FluidTags.WATER);
-    }
 
     public boolean hasCustomName() {
         return false;

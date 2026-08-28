@@ -11,7 +11,7 @@ package varmite.verity.network;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import varmite.verity.entity.LLM.AiAPI;
+import varmite.verity.entity.AI.AiAPI;
 import varmite.verity.entity.custom.VerityEntity;
 import varmite.verity.network.PlayTtsPayload;
 

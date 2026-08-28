@@ -3,12 +3,12 @@ name: Build
 on:
   push:
     branches: [ "main", "master" ]
+    tags: [ "v*" ]
   pull_request:
     branches: [ "main", "master" ]
 
-# 仅读取仓库内容，不写回（不发版；jar 仅作为 Actions 产物供下载）
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -35,3 +37,12 @@ jobs:
           name: verity-mod
           path: build/libs/*.jar
           if-no-files-found: error
+
+      - name: Publish Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Verity JE ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: build/libs/*.jar

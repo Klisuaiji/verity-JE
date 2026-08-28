@@ -20,7 +20,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import varmite.verity.client.AudioHudRenderer;
 import varmite.verity.client.VerityPreviewTexture;
-import varmite.verity.entity.LLM.AiAPI;
+import varmite.verity.entity.AI.AiAPI;
 import varmite.verity.entity.ModEntities;
 import varmite.verity.entity.client.BoxRenderer;
 import varmite.verity.entity.client.SphereEntityRenderer;

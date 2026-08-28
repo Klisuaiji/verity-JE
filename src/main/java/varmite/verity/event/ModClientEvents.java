@@ -78,7 +78,7 @@ public class ModClientEvents {
     }
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Post event) {
+    public static void onClientTick(ClientTickEvent.Pre event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null && (Double)mc.options.gamma().get() > 0.0) {
             mc.options.gamma().set(0.0);

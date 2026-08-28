@@ -63,7 +63,7 @@ extends Goal {
         if (this.targetedGlass != null) {
             this.shatterGlassArea(this.targetedGlass);
             this.demon.triggerAttack();
-            this.demon.level().playSound(null, this.demon.blockPosition(), (SoundEvent)ModSounds.JUMPSCARE.get(), SoundSource.HOSTILE, 2.0f, 1.0f);
+            this.demon.playSound((SoundEvent)ModSounds.JUMPSCARE.get(), 2.0f, 1.0f);
             double heightDiff = (double)this.targetedGlass.getY() - this.demon.getY();
             double yBoost = 0.5;
             if (heightDiff > 0.0) {

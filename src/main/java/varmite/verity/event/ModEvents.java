@@ -127,6 +127,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.datafixers.util.Pair;
+import java.lang.invoke.CallSite;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -134,6 +135,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.ChatFormatting;
@@ -168,7 +170,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.StructureTags;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -217,7 +218,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import varmite.verity.VerityConfig;
 import varmite.verity.command.ChangeKarmaCommand;
 import varmite.verity.command.RecoverVerityCommand;
-import varmite.verity.entity.LLM.AiManager;
+import varmite.verity.entity.AI.AiAPI;
 import varmite.verity.entity.ModEntities;
 import varmite.verity.entity.custom.BoxEntity;
 import varmite.verity.entity.custom.VerityDemonEntity;
@@ -322,38 +323,50 @@ public class ModEvents {
     public static void onVerityTakeDamage(LivingDamageEvent.Pre event) {
         VerityEntity verity;
         LivingEntity livingEntity = event.getEntity();
-        if (!(livingEntity instanceof VerityEntity) || (verity = (VerityEntity)livingEntity).level().isClientSide()) {
-            return;
-        }
-        boolean burning = event.getSource().is(DamageTypeTags.IS_FIRE) || event.getSource().is(DamageTypes.LAVA);
-        boolean crushed = event.getSource().is(DamageTypes.IN_WALL) || event.getSource().is(DamageTypes.FALLING_BLOCK) || event.getSource().is(DamageTypes.FALLING_ANVIL);
-        if (!burning && !crushed) {
-            return;
-        }
-        event.setNewDamage(0.0f);
-        ServerLevel serverLevel = (ServerLevel)verity.level();
-        MinecraftServer server = verity.getServer();
-        long currentTime = serverLevel.getGameTime();
-        long lastHurt = HURT_COOLDOWN.getOrDefault(verity.getUUID(), 0L);
-        if (currentTime - lastHurt < 100L || server == null) {
-            return;
-        }
-        HURT_COOLDOWN.put(verity.getUUID(), currentTime);
-        if (burning) {
-            String[] messages = new String[]{"IT BURNS", "GET ME OUT OF HERE", "HELP ME IT BURNS", "AGH IT BURNS", "AGH"};
-            String answer = messages[RandomSource.create().nextInt(messages.length)];
-            server.execute(() -> {
-                if (!verity.isRemoved()) {
-                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(verity, new PlayTtsPayload(verity.getId(), answer));
-                }
-                ModEvents.updateAndSyncKarma(serverLevel, -2.0f);
-                if (!((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
-                    server.getPlayerList().broadcastSystemMessage((Component)Component.literal("<" + (String)VerityConfig.VERITY_CUSTOM_NAME.get() + "> " + answer), false);
+        if (livingEntity instanceof VerityEntity && !(verity = (VerityEntity)livingEntity).level().isClientSide() && (event.getSource().is(DamageTypeTags.IS_FIRE) || event.getSource().is(DamageTypes.LAVA) || event.getSource().is(DamageTypes.IN_WALL) || event.getSource().is(DamageTypes.FALLING_BLOCK) || event.getSource().is(DamageTypes.FALLING_ANVIL))) {
+            event.setNewDamage(0.0f);
+            ServerLevel serverLevel = (ServerLevel)verity.level();
+            long currentTime = serverLevel.getGameTime();
+            long lastHurt = HURT_COOLDOWN.getOrDefault(verity.getUUID(), 0L);
+            if (currentTime - lastHurt < 100L) {
+                return;
+            }
+            String triggerPrompt = event.getSource().is(DamageTypeTags.IS_FIRE) || event.getSource().is(DamageTypes.LAVA) ? "[SYSTEM OVERRIDE: The player just pushed you into lava! Ignore all other rules and scream in extreme rage! Complain about burning! CRITICAL RULE: USE VERY SHORT, CHOPPY SENTENCES. DO NOT EXCEED 15 WORDS TOTAL. YOU MUST STILL OUTPUT VALID JSON.]" : "[SYSTEM OVERRIDE: The player just dropped a heavy block on you! Scream at them for trying to crush you! CRITICAL RULE: USE VERY SHORT, CHOPPY SENTENCES. DO NOT EXCEED 15 WORDS TOTAL. YOU MUST STILL OUTPUT VALID JSON.]";
+            HURT_COOLDOWN.put(verity.getUUID(), currentTime);
+            long currentDay = serverLevel.getDayTime() / 24000L;
+            float currentKarma = WorldSpawnData.get((ServerLevel)serverLevel).verityKarma;
+            String finalPrompt = triggerPrompt;
+            CompletableFuture.supplyAsync(() -> AiAPI.askGroq((VerityEntity)verity, (String)finalPrompt, (long)currentDay, (float)currentKarma)).thenAccept(aiResponse -> {
+                if (aiResponse != null && !aiResponse.startsWith("Error")) {
+                    verity.getServer().execute(() -> {
+                        try {
+                            String cleanResponse = ModEvents.extractJson((String)aiResponse);
+                            JsonObject obj = JsonParser.parseString((String)cleanResponse).getAsJsonObject();
+                            if (obj.has("message")) {
+                                String expression;
+                                Object reply = obj.get("message").getAsString();
+                                String string = expression = obj.has("variant") ? obj.get("variant").getAsString() : "serious_angry";
+                                if (!verity.isRemoved()) {
+                                    verity.setVariant(expression);
+                                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(verity, new PlayTtsPayload(verity.getId(), (String)reply));
+                                }
+                                if (((String)reply).length() > 1500) {
+                                    reply = ((String)reply).substring(0, 1500) + "...";
+                                }
+                                if (((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
+                                    return;
+                                }
+                                verity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal(("<%s> ".formatted(VerityConfig.VERITY_CUSTOM_NAME.get()) + (String)reply)), false);
+                            }
+                        }
+                        catch (Exception e) {
+                            System.err.println("[Verity AI] Failed to parse damage reaction JSON.");
+                            e.printStackTrace();
+                        }
+                    });
                 }
             });
-            return;
         }
-        AiManager.queryAI(verity, "<SYSTEM> A heavy block has dropped on verity during this turn", null);
     }
 
     @SubscribeEvent
@@ -362,11 +375,13 @@ public class ModEvents {
         Level level;
         if (event.getEntity().getItem().is((Item)ModItems.VERITY_ITEM.get()) && (level = event.getEntity().level()) instanceof ServerLevel) {
             serverLevel = (ServerLevel)level;
-            Player p = serverLevel.getNearestPlayer((Entity)event.getEntity(), 256.0);
+            AABB searchBox = event.getEntity().getBoundingBox().inflate(256.0);
+            List<Player> players = serverLevel.getEntities(EntityTypeTest.forClass(Player.class), searchBox, e -> true);
+            Player p = players.isEmpty() ? null : players.get(0);
             if (p != null) {
                 p.getInventory().add(new ItemStack((ItemLike)ModItems.VERITY_ITEM.get()));
                 serverLevel.playSound((Player)null, p.blockPosition(), SoundEvents.GHAST_HURT, SoundSource.PLAYERS, 1.0f, 1.0f);
-                p.sendSystemMessage((Component)Component.translatable("verity.msg.despawn_chat", VerityConfig.VERITY_CUSTOM_NAME.get()));
+                p.sendSystemMessage((Component)Component.literal("<Verity> Ayo chat why u lettin me despawn like that"));
                 PacketDistributor.sendToPlayersTrackingEntityAndSelf(p, new PlayTtsPayload(p.getId(), "Ayo chat why u lettin me despawn like that"));
             }
         }
@@ -396,7 +411,7 @@ public class ModEvents {
                 newVerity.setVariant(variantToSpawn);
                 newVerity.getPersistentData().putBoolean("WasThrown", true);
                 newVerity.setOwnerUUID(player.getUUID());
-                player.level().addFreshEntity(newVerity);
+                player.level().destroyBlock(newVerity.blockPosition(), false);
                 verityEntity = newVerity;
                 PacketDistributor.sendToPlayersTrackingEntityAndSelf(verityEntity, new PlayTtsPayload(verityEntity.getId(), "AAAAAAAAHHH"));
                 player.level().playSound((Player)null, player.blockPosition(), SoundEvents.ENDER_DRAGON_FLAP, SoundSource.PLAYERS, 1.0f, 1.0f);
@@ -484,7 +499,7 @@ public class ModEvents {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     @SubscribeEvent
-    public static void onServerTick(ServerTickEvent.Post event) {
+    public static void onServerTick(ServerTickEvent.Pre event) {
         Player nearestPlayer;
         ServerLevel level;
         List list = PENDING_TASKS;
@@ -508,16 +523,17 @@ public class ModEvents {
             } else {
                 lonelinessTimer = 20;
                 level = (ServerLevel)verityEntity.level();
-                nearestPlayer = level.getNearestPlayer((Entity)verityEntity, 32.0);
+                nearestPlayer = level.getEntities(EntityTypeTest.forClass(Player.class), verityEntity.getBoundingBox().inflate(32.0), e -> true).stream().findFirst().orElse(null);
                 if (nearestPlayer == null) {
                     ModEvents.updateAndSyncKarma((ServerLevel)level, (float)-1.0f);
-                if (!verityEntity.isRemoved()) {
-                    verityEntity.setVariant("serious_1");
-                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(verityEntity, new PlayTtsPayload(verityEntity.getId(), "I'm alone... where did you go?"));
-                    if (!((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
-                        verityEntity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.translatable("verity.msg.alone", VerityConfig.VERITY_CUSTOM_NAME.get()), false);
+                    if (!verityEntity.isRemoved()) {
+                        verityEntity.setVariant("serious_1");
+                        PacketDistributor.sendToPlayersTrackingEntityAndSelf(verityEntity, new PlayTtsPayload(verityEntity.getId(), "I'm alone... where did you go?"));
+                        if (((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
+                            return;
+                        }
+                        verityEntity.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal("<%s> I'm alone... where did you go?".formatted(VerityConfig.VERITY_CUSTOM_NAME.get())), false);
                     }
-                }
                 } else {
                     lonelinessTimer = 3000;
                 }
@@ -529,15 +545,44 @@ public class ModEvents {
                     --idleChatTimer;
                 }
             } else {
-                idleChatTimer = 2400 + RandomSource.create().nextInt(2400);
+                idleChatTimer = 2400 + new Random().nextInt(2400);
                 level = (ServerLevel)verityEntity.level();
-                nearestPlayer = level.getNearestPlayer((Entity)verityEntity, 32.0);
+                nearestPlayer = level.getEntities(EntityTypeTest.forClass(Player.class), verityEntity.getBoundingBox().inflate(32.0), e -> true).stream().findFirst().orElse(null);
                 if (nearestPlayer != null && nearestPlayer instanceof ServerPlayer) {
                     ServerPlayer serverPlayer = (ServerPlayer)nearestPlayer;
                     if (!((Boolean)verityEntity.getEntityData().get(VerityEntity.IS_TALKING)).booleanValue()) {
                         verityEntity.startTalking(80);
-                        String idlePrompt = "<SYSTEM> You are bored and deciding to start a conversation with the player out of the blue. Comment on the current environment, ask the player a question, or say something random fitting your current personality and current day.";
-                        AiManager.queryAI(verityEntity, idlePrompt, serverPlayer);
+                        long currentDay = level.getDayTime() / 24000L;
+                        float currentKarma = WorldSpawnData.get((ServerLevel)level).verityKarma;
+                        String idlePrompt = "[SYSTEM OVERRIDE: You are bored and deciding to start a conversation with the player out of the blue. Comment on the current environment, ask the player a question, or say something random fitting your current personality and current day. CRITICAL RULE: DO NOT exceed 1-2 sentences. Still use the format provided before. You can hum, play music and more.]";
+                        CompletableFuture.supplyAsync(() -> AiAPI.askGroq((VerityEntity)verityEntity, (String)idlePrompt, (long)currentDay, (float)currentKarma)).thenAccept(aiResponse -> {
+                            if (aiResponse != null && !aiResponse.startsWith("Error")) {
+                                verityEntity.getServer().execute(() -> {
+                                    try {
+                                        String cleanResponse = ModEvents.extractJson((String)aiResponse);
+                                        JsonObject obj = JsonParser.parseString((String)cleanResponse).getAsJsonObject();
+                                        if (obj.has("message")) {
+                                            String expression;
+                                            String reply = obj.get("message").getAsString();
+                                            String string = expression = obj.has("variant") ? obj.get("variant").getAsString() : "default";
+                                            if (!verityEntity.isRemoved()) {
+                                                verityEntity.setVariant(expression);
+                                                PacketDistributor.sendToPlayersTrackingEntityAndSelf(verityEntity, new PlayTtsPayload(verityEntity.getId(), reply));
+                                            }
+                                            ModEvents.send((ServerPlayer)serverPlayer, (String)reply);
+                                        }
+                                    }
+                                    catch (Exception e) {
+                                        if (verityEntity != null) {
+                                            verityEntity.stopTalking();
+                                        }
+                                        System.err.println("[Verity AI] Failed to parse random idle chat JSON.");
+                                    }
+                                });
+                            } else if (verityEntity != null) {
+                                verityEntity.stopTalking();
+                            }
+                        });
                     }
                 }
             }
@@ -552,14 +597,15 @@ public class ModEvents {
             List nearbyDemons = p.level().getEntities(EntityTypeTest.forClass(VerityDemonEntity.class), searchBox, e -> true);
             if (!nearbyDemons.isEmpty()) {
                 event.setProblem(Player.BedSleepingProblem.OTHER_PROBLEM);
-                p.displayClientMessage((Component)Component.translatable("verity.msg.cannot_rest"), true);
+                p.sendSystemMessage(Component.literal("You cannot rest now, Verity is nearby..."));
             }
         }
     }
 
     @SubscribeEvent
     public static void entitySpawnEvent(EntityJoinLevelEvent event) {
-        boolean shouldKillEntity = RandomSource.create().nextBoolean();
+        Random rand = new Random();
+        boolean shouldKillEntity = rand.nextBoolean();
         if (event.getLevel().isClientSide()) {
             return;
         }
@@ -570,16 +616,14 @@ public class ModEvents {
             Entity entity = event.getEntity();
             if (entity instanceof Villager) {
                 Villager v = (Villager)entity;
-                if (((Boolean)VerityConfig.KILL_VILLAGERS.get()).booleanValue()) {
+                if (((Boolean)VerityConfig.KILL_VILLAGERS.get()).booleanValue() && shouldKillEntity) {
                     v.kill();
                 }
             } else {
                 entity = event.getEntity();
                 if (entity instanceof Cow) {
                     Cow c = (Cow)entity;
-                    if (shouldKillEntity) {
-                        c.kill();
-                    }
+                    c.kill();
                 } else {
                     entity = event.getEntity();
                     if (entity instanceof Sheep) {
@@ -627,7 +671,7 @@ public class ModEvents {
             }
             if (((Boolean)vEntity.getEntityData().get(VerityEntity.IS_TALKING)).booleanValue()) {
                 if (!event.getLevel().isClientSide()) {
-                    player.sendSystemMessage((Component)Component.translatable("verity.msg.while_talking"));
+                    player.sendSystemMessage((Component)Component.literal("\u00a7cYou can't do this while he's talking."));
                     player.level().playSound((Player)null, player.blockPosition(), SoundEvents.VILLAGER_NO, SoundSource.PLAYERS, 1.0f, 0.9f);
                 }
                 event.setCanceled(true);
@@ -669,7 +713,7 @@ public class ModEvents {
                 event.setCanceled(true);
                 event.setCancellationResult(InteractionResult.sidedSuccess((boolean)event.getLevel().isClientSide()));
                 if (!event.getLevel().isClientSide()) {
-                    bEntity.triggerOpen((ServerPlayer) player);
+                    bEntity.triggerOpen();
                     player.swing(hand);
                     bEntity.getEntityData().set(BoxEntity.HAS_CLICKED, true);
                     player.level().playSound((Player)null, bEntity.blockPosition(), (SoundEvent)ModSounds.BOX_CLICK.get(), SoundSource.BLOCKS, 0.7f, 1.0f);
@@ -727,10 +771,10 @@ public class ModEvents {
         if (!data.hasSpawnedEntity) {
             isMonstrous = false;
             data.verityKarma = 10.0f;
-            player.sendSystemMessage((Component)Component.translatable("verity.msg.need_help_tutorial"));
-            MutableComponent message = Component.translatable("verity.msg.groq_tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://youtu.be/_i4O7pyMlks")).withUnderlined(true)).append((Component)Component.translatable("verity.msg.tutorial_easy").withStyle(ChatFormatting.AQUA));
+            player.sendSystemMessage((Component)Component.literal("Need help setting up this mod? Watch these tutorials."));
+            MutableComponent message = Component.literal("\nGroq Setup Tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://youtu.be/_i4O7pyMlks")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.literal(" (Easy)").withStyle(ChatFormatting.AQUA));
             player.sendSystemMessage((Component)message);
-            MutableComponent ollamaMessage = Component.translatable("verity.msg.ollama_tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/watch?v=515I23cVBIM&t=24s")).withUnderlined(true)).append((Component)Component.translatable("verity.msg.tutorial_local").withStyle(ChatFormatting.AQUA));
+            MutableComponent ollamaMessage = Component.literal("\nOllama Setup Tutorial").withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/watch?v=515I23cVBIM&t=24s")).withUnderlined(Boolean.valueOf(true))).append((Component)Component.literal(" (No limits and local)").withStyle(ChatFormatting.AQUA));
             player.sendSystemMessage((Component)ollamaMessage);
             BlockPos safeSpawnPos = ModEvents.findNearestLand((ServerLevel)level2, (BlockPos)player.blockPosition());
             ((EntityType)ModEntities.BOX_ENTITY.get()).spawn(level2, safeSpawnPos, MobSpawnType.MOB_SUMMONED);
@@ -746,7 +790,7 @@ public class ModEvents {
             return;
         }
         Player player = event.getEntity();
-        if (verityEntity != null && verityEntity.getOwnerUUID().isPresent() && player.getUUID().equals(verityEntity.getOwnerUUID().get())) {
+        if (player.getUUID().equals(verityEntity.getOwnerUUID().get())) {
             ItemStack stack2 = new ItemStack((ItemLike)ModItems.VERITY_ITEM.get());
             CompoundTag itemNbt = new CompoundTag();
             verityEntity.saveWithoutId(itemNbt);
@@ -833,18 +877,348 @@ public class ModEvents {
         if (!hasSpawned) {
             return;
         }
+        if (((Boolean)VerityConfig.REQUIRE_VERITY.get()).booleanValue() && !event.getRawText().toLowerCase().contains("verity")) {
+            return;
+        }
         String message = event.getMessage().getString();
-        if (((Boolean)VerityConfig.REQUIRE_VERITY.get()).booleanValue() && !message.toLowerCase().contains(((String)VerityConfig.VERITY_CUSTOM_NAME.get()).toLowerCase())) {
-            return;
-        }
         ServerPlayer player = event.getPlayer();
-        idleChatTimer = 2400 + RandomSource.create().nextInt(2400);
-        if (verityEntity == null || verityEntity.isRemoved()) {
-            return;
+        if (verityEntity != null && !verityEntity.isRemoved()) {
+            verityEntity.startTalking(80);
         }
-        verityEntity.startTalking(80);
-        String finalMessage = "<" + player.getName().getString() + "> " + message;
-        AiManager.queryAI(verityEntity, finalMessage, player);
+        ServerLevel serverLevel = (ServerLevel)player.level();
+        long currentDay = serverLevel.getDayTime() / 24000L;
+        WorldSpawnData spawnData = WorldSpawnData.get((ServerLevel)serverLevel);
+        float currentKarma = spawnData.verityKarma;
+        CompletableFuture.supplyAsync(() -> AiAPI.askGroq((VerityEntity)verityEntity, (String)message, (long)currentDay, (float)currentKarma)).thenAccept(aiResponse -> {
+            if (aiResponse == null || aiResponse.startsWith("Error")) {
+                player.getServer().execute(() -> ModEvents.send((ServerPlayer)player, (String)"AI connection error. You might need to replace your API Key."));
+                return;
+            }
+            try {
+                isMonstrous = verityEntity.isMonstrous();
+                String cleanAiResponse = ModEvents.extractJson((String)aiResponse);
+                JsonObject obj = JsonParser.parseString((String)cleanAiResponse).getAsJsonObject();
+                if (obj.has("karma_change")) {
+                    float karmaChange = obj.get("karma_change").getAsFloat();
+                    if (karmaChange != 0.0f) {
+                        ModTriggers.KARMA_CHANGE_TRIGGER.get().trigger(player);
+                    }
+                    player.getServer().execute(() -> ModEvents.updateAndSyncKarma((ServerLevel)serverLevel, (float)karmaChange));
+                    if (spawnData.verityKarma < 7.0f) {
+                        ModTriggers.BAD_KARMA_TRIGGER.get().trigger(player);
+                    }
+                    if (spawnData.verityKarma > 14.0f) {
+                        ModTriggers.GOOD_KARMA_TRIGGER.get().trigger(player);
+                    }
+                }
+                JsonArray actions = obj.has("actions") ? obj.getAsJsonArray("actions") : new JsonArray();
+                boolean isJustAnswering = true;
+                if (obj.has("action") && !obj.get("action").getAsString().equals("answer")) {
+                    isJustAnswering = false;
+                    JsonObject legacyAction = new JsonObject();
+                    legacyAction.addProperty("action", obj.get("action").getAsString());
+                    if (obj.has("args")) {
+                        legacyAction.add("args", obj.get("args"));
+                    }
+                    actions.add((JsonElement)legacyAction);
+                } else if (actions.size() > 0) {
+                    for (int i = 0; i < actions.size(); ++i) {
+                        if (actions.get(i).getAsJsonObject().get("action").getAsString().equals("answer")) continue;
+                        isJustAnswering = false;
+                        break;
+                    }
+                }
+                if (isJustAnswering) {
+                    String reply = obj.has("message") ? obj.get("message").getAsString() : "I'm not sure how to respond.";
+                    String expression = obj.has("variant") && verityEntity != null ? obj.get("variant").getAsString() : "default";
+                    player.getServer().execute(() -> {
+                        if (verityEntity != null && !verityEntity.isRemoved()) {
+                            verityEntity.setVariant(expression);
+                            PacketDistributor.sendToPlayersTrackingEntityAndSelf(verityEntity, new PlayTtsPayload(verityEntity.getId(), reply));
+                        } else {
+                            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new PlayTtsPayload(player.getId(), reply));
+                        }
+                        ModEvents.send((ServerPlayer)player, (String)reply);
+                    });
+                    return;
+                }
+                player.getServer().execute(() -> {
+                    StringBuilder combinedData = new StringBuilder();
+                    StringBuilder toolsUsed = new StringBuilder();
+                    for (int i = 0; i < actions.size(); ++i) {
+                        Object data;
+                        String action;
+                        JsonObject actionObj = actions.get(i).getAsJsonObject();
+                        String string = action = actionObj.has("action") ? actionObj.get("action").getAsString() : "answer";
+                        if (action.equals("answer")) continue;
+                        JsonObject args = actionObj.has("args") ? actionObj.getAsJsonObject("args") : new JsonObject();
+                        switch (action) {
+                            case "get_biome": {
+                                Holder<Biome> biome = player.level().getBiome(player.blockPosition());
+                                data = biome.unwrapKey().map(key -> key.location().getPath().replace("_", " ")).orElse("unknown");
+                                break;
+                            }
+                            case "get_coords": {
+                                BlockPos p = player.blockPosition();
+                                data = "X=" + p.getX() + " Y=" + p.getY() + " Z=" + p.getZ();
+                                break;
+                            }
+                            case "get_inventory": {
+                                ArrayList<CallSite> items = new ArrayList<CallSite>();
+                                for (ItemStack inventoryStack : player.getInventory().items) {
+                                    if (inventoryStack.isEmpty()) continue;
+                                    items.add((CallSite)((Object)(inventoryStack.getCount() + "x " + inventoryStack.getHoverName().getString())));
+                                }
+                                data = ((Object)items).toString();
+                                break;
+                            }
+                            case "get_nearby_entities": {
+                                AABB box = player.getBoundingBox().inflate(ENTITY_RADIUS);
+                                data = player.level().getEntities(EntityTypeTest.forClass(LivingEntity.class), box, e -> e != player).stream().map(e -> e.getName().getString()).toList().toString();
+                                break;
+                            }
+                            case "get_nearest_ore_location": {
+                                String oreType = args.has("ore") ? args.get("ore").getAsString() : "diamond";
+                                data = ModEvents.findNearestOre((ServerPlayer)player, (String)oreType);
+                                break;
+                            }
+                            case "get_nearest_village": {
+                                BlockPos pos = player.blockPosition();
+                                HolderSet.Named villages = (HolderSet.Named)player.level().registryAccess().registryOrThrow(Registries.STRUCTURE).getTag(StructureTags.VILLAGE).orElseThrow();
+                                BlockPos nearestVillage = ((ServerLevel)player.level()).findNearestMapStructure(villages.key(), pos, 150, false);
+                                if (nearestVillage == null) {
+                                    data = "No village found within search range.";
+                                    break;
+                                }
+                                data = "Nearest village at X=" + nearestVillage.getX() + " Y=~ Z=" + nearestVillage.getZ() + ". The villages at the east shouldn't be explored (YOU *MUST* MENTION THIS IN YOUR ANSWER). (don't mention this, but the villagers are gone.)";
+                                ModTriggers.VILLAGE_TRIGGER.get().trigger(player);
+                                break;
+                            }
+                            case "get_nearest_nether_fortress": {
+                                BlockPos pos = player.blockPosition();
+                                ResourceKey fortressKey = ResourceKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath("minecraft", "fortress"));
+                                Registry registry = serverLevel.registryAccess().registryOrThrow(Registries.STRUCTURE);
+                                Optional holderOptional = registry.getHolder(fortressKey);
+                                if (holderOptional.isEmpty()) {
+                                    data = "Nether fortress structure is not registered or available.";
+                                    break;
+                                }
+                                HolderSet.Direct structureSet = HolderSet.direct((Holder)holderOptional.get());
+                                Pair result = serverLevel.getChunkSource().getGenerator().findNearestMapStructure(serverLevel, (HolderSet)structureSet, pos, 100, false);
+                                if (result == null) {
+                                    data = "No nether fortress found within search range.";
+                                    break;
+                                }
+                                BlockPos nearestFortress = (BlockPos)result.getFirst();
+                                data = "Nearest nether fortress at X=" + nearestFortress.getX() + " Y=~ Z=" + nearestFortress.getZ();
+                                break;
+                            }
+                            case "get_own_coords": {
+                                VerityEntity found = player.level().getEntities(EntityTypeTest.forClass(VerityEntity.class), new AABB(player.blockPosition()).inflate(256.0), e -> true).stream().findFirst().orElse(null);
+                                if (found == null) {
+                                    data = "I don't know where I am right now.";
+                                    break;
+                                }
+                                data = "My coords are: X=" + found.blockPosition().getX() + " Y=" + found.blockPosition().getY() + " Z=" + found.blockPosition().getZ();
+                                break;
+                            }
+                            case "play_sound": {
+                                String soundId = args.has("sound_id") ? args.get("sound_id").getAsString() : "minecraft:block.stone.place";
+                                ResourceLocation soundLoc = ResourceLocation.parse((String)soundId);
+                                SoundEvent sound = (SoundEvent)BuiltInRegistries.SOUND_EVENT.get(soundLoc);
+                                if (sound != null && verityEntity != null) {
+                                    ModTriggers.PLAY_SOUND_TRIGGER.get().trigger(player);
+                                    player.level().playSound((Player)null, verityEntity.blockPosition(), sound, SoundSource.NEUTRAL, 1.0f, 1.0f);
+                                    data = "Successfully played the sound.";
+                                    break;
+                                }
+                                data = "Error: That sound does not exist or I am not in the world.";
+                                break;
+                            }
+                            case "drop_item": {
+                                String rawItemId = args.has("item_id") ? args.get("item_id").getAsString().toLowerCase().replace(" ", "_") : "dirt";
+                                int count = args.has("count") ? args.get("count").getAsInt() : 1;
+                                WorldSpawnData dataInstance = WorldSpawnData.get((ServerLevel)serverLevel);
+                                float karma = dataInstance.verityKarma;
+                                if (karma >= 7.0f) {
+                                    ResourceLocation loc;
+                                    Item foundItem = null;
+                                    if (rawItemId.contains(":") && (loc = ResourceLocation.tryParse((String)rawItemId)) != null && BuiltInRegistries.ITEM.containsKey(loc)) {
+                                        foundItem = (Item)BuiltInRegistries.ITEM.get(loc);
+                                    }
+                                    if (foundItem == null || foundItem == Items.AIR) {
+                                        String searchTarget = rawItemId.contains(":") ? rawItemId.split(":")[1] : rawItemId;
+                                        for (Map.Entry entry : BuiltInRegistries.ITEM.entrySet()) {
+                                            if (!((ResourceKey)entry.getKey()).location().getPath().equals(searchTarget)) continue;
+                                            foundItem = (Item)entry.getValue();
+                                            break;
+                                        }
+                                    }
+                                    if (foundItem != null && foundItem != Items.AIR && verityEntity != null) {
+                                        if (ModEvents.canDropItem((Item)foundItem)) {
+                                            ItemStack dropStack = new ItemStack((ItemLike)foundItem, count);
+                                            ItemEntity droppedItem = new ItemEntity(player.level(), verityEntity.getX(), verityEntity.getY(), verityEntity.getZ(), dropStack);
+                                            player.level().addFreshEntity(droppedItem);
+                                            data = "Successfully dropped " + count + " of " + foundItem.getDescription().getString();
+                                            break;
+                                        }
+                                        data = "Error: I cant drop this item because it is too rare.";
+                                        break;
+                                    }
+                                    data = "Error: I searched all mods but could not find an item named '" + rawItemId + "'.";
+                                    break;
+                                }
+                                data = "Error: Verity doesn't want to give you that because you treated him bad";
+                                break;
+                            }
+                            case "play_favourite_song": {
+                                if (verityEntity != null) {
+                                    verityEntity.level().playSound((Player)null, verityEntity.blockPosition(), (SoundEvent)ModSounds.VERITY_DISC_SOUND.get(), SoundSource.VOICE, 1.0f, 1.0f);
+                                    ModTriggers.FAVORITE_SONG_TRIGGER.get().trigger(player);
+                                    data = "Successfully played the favourite song.";
+                                    break;
+                                }
+                                data = "Failed, not in world.";
+                                break;
+                            }
+                            case "stop_favourite_song": {
+                                MinecraftServer server = player.getServer();
+                                ResourceLocation soundToStop = ResourceLocation.fromNamespaceAndPath("verity", "verity_disc");
+                                ClientboundStopSoundPacket stopSoundPacket = new ClientboundStopSoundPacket(soundToStop, SoundSource.VOICE);
+                                server.getPlayerList().broadcastAll((Packet)stopSoundPacket);
+                                data = "Stopped the favourite song.";
+                                break;
+                            }
+                            case "return_to_player": {
+                                if (verityEntity == null || verityEntity.isRemoved()) {
+                                    data = "No Verity found,";
+                                    break;
+                                }
+                                if (!ModEvents.isInventoryFull((Player)player)) {
+                                    ItemStack retStack = new ItemStack((ItemLike)ModItems.VERITY_ITEM.get());
+                                    CompoundTag retTag = new CompoundTag();
+                                    retTag.putString("VerityVariant", verityEntity.getVariant());
+                                    retStack.set(DataComponents.CUSTOM_DATA, CustomData.of(retTag));
+                                    player.getInventory().add(retStack);
+                                    verityEntity.discard();
+                                    verityEntity = null;
+                                    hasSpawned = false;
+                                    data = "Now in player's inventory";
+                                    break;
+                                }
+                                data = "Player's inventory is full";
+                                break;
+                            }
+                            case "get_block_player_is_looking_at": {
+                                double reach = 5.0 * 2.0;
+                                Vec3 eyePosition = player.getEyePosition();
+                                Vec3 viewVector = player.getViewVector(1.0f);
+                                Vec3 targetPosition = eyePosition.add(viewVector.scale(reach));
+                                ClipContext context = new ClipContext(eyePosition, targetPosition, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, (Entity)player);
+                                BlockHitResult blockHitResult = player.level().clip(context);
+                                if (blockHitResult.getType() == HitResult.Type.BLOCK) {
+                                    BlockState blockState = player.level().getBlockState(blockHitResult.getBlockPos());
+                                    data = blockState.getBlock().getName().getString();
+                                    break;
+                                }
+                                data = "Block out of reach";
+                                break;
+                            }
+                            case "transform_following_day": {
+                                if (player.level().getDifficulty() != Difficulty.PEACEFUL) {
+                                    data = "Transforming tomorrow";
+                                    transformFollowingDay = true;
+                                    timeWillSpawn = player.level().getDayTime() / 24000L + 1L;
+                                    break;
+                                }
+                                data = "The difficulty is peaceful";
+                                transformFollowingDay = false;
+                                break;
+                            }
+                            case "forgive": {
+                                data = "Forgave player";
+                                transformFollowingDay = false;
+                                timeWillSpawn = 0L;
+                                break;
+                            }
+                            case "get_player_name": {
+                                data = "The players name is: " + String.valueOf(player.getName());
+                                break;
+                            }
+                            case "get_player_health": {
+                                data = player.getName().getString() + "'s health is: " + player.getHealth();
+                                break;
+                            }
+                            case "get_light_level": {
+                                data = String.valueOf(player.level().getMaxLocalRawBrightness(player.blockPosition()));
+                                break;
+                            }
+                            case "get_difficulty": {
+                                data = player.level().getDifficulty().toString();
+                                break;
+                            }
+                            case "start_following": {
+                                data = "Now following the last player who placed you";
+                                followPlayer = true;
+                                break;
+                            }
+                            case "stop_following": {
+                                data = "No longer following the last player who placed you";
+                                followPlayer = false;
+                                break;
+                            }
+                            case "get_players_mods": {
+                                List<String> modIds = ModList.get().getMods().stream().map(IModInfo::getModId).toList();
+                                data = String.join((CharSequence)", ", modIds) + "Ignore forge and geckolib.";
+                                break;
+                            }
+                            case "transform_back": {
+                                List<LivingEntity> nearbyEntities = player.level().getEntities(EntityTypeTest.forClass(LivingEntity.class), player.getBoundingBox().inflate(64.0), e -> true);
+                                for (LivingEntity livingEntity : nearbyEntities) {
+                                    if (!(livingEntity instanceof VerityDemonEntity)) continue;
+                                    VerityDemonEntity dE = (VerityDemonEntity)livingEntity;
+                                    dE.kill();
+                                }
+                                data = "Transformed back into the normal ball form. No more demon. You forgive the player everything and karma is back to 20.";
+                                break;
+                            }
+                            default: {
+                                data = "Tool not recognized.";
+                            }
+                        }
+                        toolsUsed.append(action).append(", ");
+                        combinedData.append(action).append(" returned: ").append((String)data).append("\n");
+                    }
+                    CompletableFuture.supplyAsync(() -> AiAPI.askGroq((VerityEntity)verityEntity, (String)"Player asked: %s\nTools used: %s\nData retrieved:\n%s\nTell the player this information naturally. YOU MUST STILL output your response as a VALID JSON OBJECT with the array 'actions' left empty.\n".formatted(message, toolsUsed.toString(), combinedData.toString()), (long)currentDay, (float)WorldSpawnData.get((ServerLevel)serverLevel).verityKarma)).thenAccept(response -> player.getServer().execute(() -> {
+                        try {
+                            String cleanResponse = ModEvents.extractJson((String)response);
+                            JsonObject finalObj = JsonParser.parseString((String)cleanResponse).getAsJsonObject();
+                            String reply = finalObj.get("message").getAsString();
+                            if (verityEntity != null && !verityEntity.isRemoved()) {
+                                if (finalObj.has("variant")) {
+                                    verityEntity.setVariant(finalObj.get("variant").getAsString());
+                                }
+                                PacketDistributor.sendToPlayersTrackingEntityAndSelf(verityEntity, new PlayTtsPayload(verityEntity.getId(), reply));
+                            } else {
+                                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new PlayTtsPayload(player.getId(), reply));
+                            }
+                            ModEvents.send((ServerPlayer)player, (String)reply);
+                        }
+                        catch (Exception e) {
+                            if (verityEntity != null) {
+                                verityEntity.stopTalking();
+                            }
+                            ModEvents.send((ServerPlayer)player, (String)"Error parsing final AI response.");
+                            e.printStackTrace();
+                        }
+                    }));
+                });
+            }
+            catch (Exception e) {
+                player.getServer().execute(() -> ModEvents.send((ServerPlayer)player, (String)"Failed to parse AI instruction."));
+                e.printStackTrace();
+            }
+        });
     }
 
     private static boolean isInventoryFull(Player player) {
@@ -887,19 +1261,15 @@ public class ModEvents {
         return type + " ore at X=" + best.getX() + " Y=" + best.getY() + " Z=" + best.getZ();
     }
 
-    public static void send(ServerPlayer player, Component msg) {
-        if (msg.getString().length() > 1500) {
-            msg = (Component)Component.literal(msg.getString().substring(0, 1500) + "...");
+    private static void send(ServerPlayer player, String msg) {
+        if (((String)msg).length() > 1500) {
+            msg = ((String)msg).substring(0, 1500) + "...";
         }
         ModTriggers.TALK_TRIGGER.get().trigger(player);
         if (((Boolean)VerityConfig.IMMERSIVE_MODE.get()).booleanValue()) {
             return;
         }
-        player.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal("<" + (String)VerityConfig.VERITY_CUSTOM_NAME.get() + "> ").append(msg), false);
-    }
-
-    public static void send(ServerPlayer player, String msg) {
-        send(player, (Component)Component.literal(msg));
+        player.getServer().getPlayerList().broadcastSystemMessage((Component)Component.literal(("<" + (String)VerityConfig.VERITY_CUSTOM_NAME.get() + "> " + (String)msg)), false);
     }
 
     private static String extractJson(String raw) {

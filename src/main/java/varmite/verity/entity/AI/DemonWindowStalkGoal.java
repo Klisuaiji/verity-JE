@@ -36,6 +36,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import varmite.verity.entity.custom.VerityDemonEntity;
 
@@ -64,7 +65,11 @@ extends Goal {
         if (this.demon.getDemonState() != 0 || this.demon.getHuntPhase() != 0) {
             return false;
         }
-        this.targetPlayer = this.demon.level().getNearestPlayer(this.targetingConditions, (LivingEntity)this.demon, this.demon.getX(), this.demon.getEyeY(), this.demon.getZ());
+        double cx = this.demon.getX();
+        double cy = this.demon.getEyeY();
+        double cz = this.demon.getZ();
+        AABB aabb = new AABB(cx - 128.0, cy - 128.0, cz - 128.0, cx + 128.0, cy + 128.0, cz + 128.0);
+        this.targetPlayer = this.demon.level().getNearestEntity(Player.class, this.targetingConditions, (LivingEntity)this.demon, cx, cy, cz, aabb);
         if (this.targetPlayer != null && (this.targetPlayer.isCreative() || this.targetPlayer.isSpectator())) {
             return false;
         }
@@ -115,7 +120,7 @@ extends Goal {
             double newX = this.demon.getX() + Math.cos(angle) * distance;
             double newZ = this.demon.getZ() + Math.sin(angle) * distance;
             int newY = this.demon.level().getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int)newX, (int)newZ);
-            BlockPos groundPos = BlockPos.containing(newX, (double)(newY - 1), newZ);
+            BlockPos groundPos = new BlockPos((int)newX, newY - 1, (int)newZ);
             if (!this.demon.level().getFluidState(groundPos).isEmpty()) continue;
             this.demon.teleportTo(newX, (double)newY, newZ);
             this.demon.getNavigation().stop();

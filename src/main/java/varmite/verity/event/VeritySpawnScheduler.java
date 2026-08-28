@@ -59,11 +59,11 @@ public class VeritySpawnScheduler {
     }
 
     @SubscribeEvent
-    public static void onServerTick(ServerTickEvent.Post event) {
+    public static void onServerTick(ServerTickEvent.Pre event) {
         long currentTick = event.getServer().getTickCount();
-        Iterator<ScheduledSpawn> iterator = SCHEDULED_SPAWNS.iterator();
+        Iterator iterator = SCHEDULED_SPAWNS.iterator();
         while (iterator.hasNext()) {
-            ScheduledSpawn task = iterator.next();
+            ScheduledSpawn task = (ScheduledSpawn)iterator.next();
             if (currentTick < task.executeTick) continue;
             VeritySpawnScheduler.executeVerityEvent((ServerLevel)task.level, (BlockPos)task.pos);
             iterator.remove();
@@ -79,7 +79,7 @@ public class VeritySpawnScheduler {
         if ((verity = ((EntityType)ModEntities.VERITY_ENTITY.get()).create((Level)level)) != null) {
             VerityEntity verityEntity = (VerityEntity)verity;
             verityEntity.variantArea((double)chestPos.getX() + 0.5, (double)chestPos.getY() + 1.0, (double)chestPos.getZ() + 0.5, 0.0f, 0.0f);
-            level.addFreshEntity(verity);
+            level.destroyBlock(verity.blockPosition(), false);
             PacketDistributor.sendToPlayersTrackingEntityAndSelf(verity, new PlayTtsPayload(verity.getId(), "You can't trap me lil bro."));
             level.playSound(null, verity.blockPosition(), SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, 1.0f, 1.0f);
         }

@@ -46,6 +46,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -151,9 +152,12 @@ implements GeoEntity {
         this.delayTicks = -1;
     }
 
-    public void triggerOpen(ServerPlayer player) {
+    public void triggerOpen() {
         this.triggerAnim("action_controller", "open");
-        ModTriggers.UNBOX_VERITY_TRIGGER.get().trigger(player);
+        MinecraftServer server = this.getServer();
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            ModTriggers.UNBOX_VERITY_TRIGGER.get().trigger(player);
+        }
         this.isOpened = true;
     }
 

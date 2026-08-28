@@ -41,7 +41,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 @EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.GAME)
 public class DemonWindowSpawner {
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
+    public static void onPlayerTick(PlayerTickEvent.Pre event) {
         boolean isIndoors;
         Player player = event.getEntity();
         Level level = player.level();
@@ -79,7 +79,7 @@ public class DemonWindowSpawner {
                             ServerLevel serverLevel = (ServerLevel)level;
                             serverLevel.setDayTime(18000L);
                         }
-                        level.addFreshEntity((Entity)demon);
+                        level.destroyBlock(demon.blockPosition(), false);
                         player.addTag("verity_window_scare_done");
                         return;
                     }
@@ -109,7 +109,7 @@ public class DemonWindowSpawner {
                     ServerLevel serverLevel = (ServerLevel)level;
                     serverLevel.setDayTime(18000L);
                 }
-                level.addFreshEntity((Entity)demon);
+                level.destroyBlock(demon.blockPosition(), false);
                 player.addTag("verity_window_scare_done");
             }
         }
