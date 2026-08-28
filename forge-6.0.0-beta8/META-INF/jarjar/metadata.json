@@ -1,0 +1,412 @@
+{
+  "jars": [
+    {
+      "identifier": {
+        "group": "com.k2fsa.sherpa.onnx",
+        "artifact": "sherpa-onnx-native-lib-osx-x64"
+      },
+      "version": {
+        "range": "[1.13.3,)",
+        "artifactVersion": "1.13.3"
+      },
+      "path": "META-INF/jarjar/sherpa-onnx-native-lib-osx-x64-v1.13.3.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "io.grpc",
+        "artifact": "grpc-context"
+      },
+      "version": {
+        "range": "[1.70.0,)",
+        "artifactVersion": "1.70.0"
+      },
+      "path": "META-INF/jarjar/grpc-context-1.70.0.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "dev.langchain4j",
+        "artifact": "langchain4j-http-client-jdk"
+      },
+      "version": {
+        "range": "[1.18.0,)",
+        "artifactVersion": "1.18.0"
+      },
+      "path": "META-INF/jarjar/langchain4j-http-client-jdk-1.18.0.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "com.fasterxml.jackson.core",
+        "artifact": "jackson-databind"
+      },
+      "version": {
+        "range": "[2.22.1,)",
+        "artifactVersion": "2.22.1"
+      },
+      "path": "META-INF/jarjar/jackson-databind-2.22.1.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "varmite.verity.libs",
+        "artifact": "genai-bundle"
+      },
+      "version": {
+        "range": "[1.62.0,)",
+        "artifactVersion": "1.62.0"
+      },
+      "path": "META-INF/jarjar/verity-genai-bundle-1.62.0.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "com.google.http-client",
+        "artifact": "google-http-client"
+      },
+      "version": {
+        "range": "[1.46.2,)",
+        "artifactVersion": "1.46.2"
+      },
+      "path": "META-INF/jarjar/google-http-client-1.46.2.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "dev.langchain4j",
+        "artifact": "langchain4j-core"
+      },
+      "version": {
+        "range": "[1.18.1,)",
+        "artifactVersion": "1.18.1"
+      },
+      "path": "META-INF/jarjar/langchain4j-core-1.18.1.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "dev.langchain4j",
+        "artifact": "langchain4j-open-ai"
+      },
+      "version": {
+        "range": "[1.18.0,)",
+        "artifactVersion": "1.18.0"
+      },
+      "path": "META-INF/jarjar/langchain4j-open-ai-1.18.0.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "com.fasterxml.jackson.core",
+        "artifact": "jackson-annotations"
+      },
+      "version": {
+        "range": "[2.22,)",
+        "artifactVersion": "2.22"
+      },
+      "path": "META-INF/jarjar/jackson-annotations-2.22.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "com.google.protobuf",
+        "artifact": "protobuf-java"
+      },
+      "version": {
+        "range": "[3.25.5,)",
+        "artifactVersion": "3.25.5"
+      },
+      "path": "META-INF/jarjar/protobuf-java-3.25.5.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "dev.langchain4j",
+        "artifact": "langchain4j-google-genai"
+      },
+      "version": {
+        "range": "[1.18.1-beta28,)",
+        "artifactVersion": "1.18.1-beta28"
+      },
+      "path": "META-INF/jarjar/langchain4j-google-genai-1.18.1-beta28.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "dev.langchain4j",
+        "artifact": "langchain4j-ollama"
+      },
+      "version": {
+        "range": "[1.18.0,)",
+        "artifactVersion": "1.18.0"
+      },
+      "path": "META-INF/jarjar/langchain4j-ollama-1.18.0.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "com.google.http-client",
+        "artifact": "google-http-client-gson"
+      },
+      "version": {
+        "range": "[1.46.2,)",
+        "artifactVersion": "1.46.2"
+      },
+      "path": "META-INF/jarjar/google-http-client-gson-1.46.2.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "io.opencensus",
+        "artifact": "opencensus-contrib-http-util"
+      },
+      "version": {
+        "range": "[0.31.1,)",
+        "artifactVersion": "0.31.1"
+      },
+      "path": "META-INF/jarjar/opencensus-contrib-http-util-0.31.1.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "org.java-websocket",
+        "artifact": "Java-WebSocket"
+      },
+      "version": {
+        "range": "[1.6.0,)",
+        "artifactVersion": "1.6.0"
+      },
+      "path": "META-INF/jarjar/Java-WebSocket-1.6.0.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "dev.langchain4j",
+        "artifact": "langchain4j-http-client"
+      },
+      "version": {
+        "range": "[1.18.0,)",
+        "artifactVersion": "1.18.0"
+      },
+      "path": "META-INF/jarjar/langchain4j-http-client-1.18.0.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "com.google.auth",
+        "artifact": "google-auth-library-credentials"
+      },
+      "version": {
+        "range": "[1.33.0,)",
+        "artifactVersion": "1.33.0"
+      },
+      "path": "META-INF/jarjar/google-auth-library-credentials-1.33.0.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "org.apache.opennlp",
+        "artifact": "opennlp-tools"
+      },
+      "version": {
+        "range": "[2.5.9,)",
+        "artifactVersion": "2.5.9"
+      },
+      "path": "META-INF/jarjar/opennlp-tools-2.5.9.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "dev.langchain4j",
+        "artifact": "langchain4j-mistral-ai"
+      },
+      "version": {
+        "range": "[1.18.0,)",
+        "artifactVersion": "1.18.0"
+      },
+      "path": "META-INF/jarjar/langchain4j-mistral-ai-1.18.0.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "io.grpc",
+        "artifact": "grpc-api"
+      },
+      "version": {
+        "range": "[1.70.0,)",
+        "artifactVersion": "1.70.0"
+      },
+      "path": "META-INF/jarjar/grpc-api-1.70.0.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "com.fasterxml.jackson.datatype",
+        "artifact": "jackson-datatype-jdk8"
+      },
+      "version": {
+        "range": "[2.22.1,)",
+        "artifactVersion": "2.22.1"
+      },
+      "path": "META-INF/jarjar/jackson-datatype-jdk8-2.22.1.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "org.jspecify",
+        "artifact": "jspecify"
+      },
+      "version": {
+        "range": "[1.0.0,)",
+        "artifactVersion": "1.0.0"
+      },
+      "path": "META-INF/jarjar/jspecify-1.0.0.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "com.google.api",
+        "artifact": "api-common"
+      },
+      "version": {
+        "range": "[2.45.0,)",
+        "artifactVersion": "2.45.0"
+      },
+      "path": "META-INF/jarjar/api-common-2.45.0.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "com.k2fsa.sherpa.onnx",
+        "artifact": "sherpa-onnx"
+      },
+      "version": {
+        "range": "[1.13.3,)",
+        "artifactVersion": "1.13.3"
+      },
+      "path": "META-INF/jarjar/sherpa-onnx-v1.13.3.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "com.knuddels",
+        "artifact": "jtokkit"
+      },
+      "version": {
+        "range": "[1.1.0,)",
+        "artifactVersion": "1.1.0"
+      },
+      "path": "META-INF/jarjar/jtokkit-1.1.0.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "com.fasterxml.jackson.datatype",
+        "artifact": "jackson-datatype-jsr310"
+      },
+      "version": {
+        "range": "[2.22.1,)",
+        "artifactVersion": "2.22.1"
+      },
+      "path": "META-INF/jarjar/jackson-datatype-jsr310-2.22.1.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "com.google.auth",
+        "artifact": "google-auth-library-oauth2-http"
+      },
+      "version": {
+        "range": "[1.33.0,)",
+        "artifactVersion": "1.33.0"
+      },
+      "path": "META-INF/jarjar/google-auth-library-oauth2-http-1.33.0.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "com.fasterxml.jackson.core",
+        "artifact": "jackson-core"
+      },
+      "version": {
+        "range": "[2.22.1,)",
+        "artifactVersion": "2.22.1"
+      },
+      "path": "META-INF/jarjar/jackson-core-2.22.1.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "io.opencensus",
+        "artifact": "opencensus-api"
+      },
+      "version": {
+        "range": "[0.31.1,)",
+        "artifactVersion": "0.31.1"
+      },
+      "path": "META-INF/jarjar/opencensus-api-0.31.1.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "dev.langchain4j",
+        "artifact": "langchain4j"
+      },
+      "version": {
+        "range": "[1.18.0,)",
+        "artifactVersion": "1.18.0"
+      },
+      "path": "META-INF/jarjar/langchain4j-1.18.0.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "com.google.auto.value",
+        "artifact": "auto-value-annotations"
+      },
+      "version": {
+        "range": "[1.11.0,)",
+        "artifactVersion": "1.11.0"
+      },
+      "path": "META-INF/jarjar/auto-value-annotations-1.11.0.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "javax.annotation",
+        "artifact": "javax.annotation-api"
+      },
+      "version": {
+        "range": "[1.3.2,)",
+        "artifactVersion": "1.3.2"
+      },
+      "path": "META-INF/jarjar/javax.annotation-api-1.3.2.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "com.k2fsa.sherpa.onnx",
+        "artifact": "sherpa-onnx-native-lib-linux-x64"
+      },
+      "version": {
+        "range": "[1.13.3,)",
+        "artifactVersion": "1.13.3"
+      },
+      "path": "META-INF/jarjar/sherpa-onnx-native-lib-linux-x64-v1.13.3.jar",
+      "isObfuscated": false
+    },
+    {
+      "identifier": {
+        "group": "com.k2fsa.sherpa.onnx",
+        "artifact": "sherpa-onnx-native-lib-win-x64"
+      },
+      "version": {
+        "range": "[1.13.3,)",
+        "artifactVersion": "1.13.3"
+      },
+      "path": "META-INF/jarjar/sherpa-onnx-native-lib-win-x64-v1.13.3.jar",
+      "isObfuscated": false
+    }
+  ]
+}

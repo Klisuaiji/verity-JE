@@ -1,0 +1,47 @@
+{
+  "item.verity.verity_item": "Verity™",
+  "item.verity.verity_disc.desc": "Verity™ が大好きな代表曲。",
+  "item.verity.verity_disc": "Verity™ のレコード",
+  "item.verity.flashlight": "懐中電灯",
+
+  "minecraft:key.categories.multiplayer": "マルチプレイ (開発中)",
+
+  "creativetab.verity.verity_tab": "Verity™",
+
+  "key.verity.push_to_talk": "Verity に話す (プッシュトゥトーク)",
+  "category.verity.keys": "Verity Mod",
+  "key.verity.cycle_mic": "マイクを切り替え",
+
+  "entity.verity.box": "箱",
+  "entity.verity.verity": "Verity™",
+  "entity.verity.verity_demon": "§4§lVERITY",
+
+  "verity.configuration.AISettings": "AI 設定",
+  "verity.config.title": "Verity 設定",
+  "verity.config.general": "一般",
+  "verity.configuration.apiKey": "Groq API キー",
+  "verity.configuration.apiKey.tooltip": "あなたの Groq API キー。Verity の AI を動作させるために必要です。",
+  "verity.configuration.canCrash": "キックを許可",
+  "verity.configuration.canCrash.tooltip": "悪魔に殺されたときに Verity がサーバーからキックするのを許可します。",
+  "verity.configuration.aiModel": "知能レベル",
+  "verity.configuration.aiModel.tooltip": "Fast-lite (最速・最安)、Fast (バランス)、Intelligent (最高品質)。",
+  "verity.configuration.requireVerity": "\"Verity\" 必須",
+  "verity.configuration.requireVerity.tooltip": "彼と話すにはすべての文章に \"Verity\" を含める必要があります。",
+  "verity.configuration.playVideo": "イントロ動画を再生",
+  "verity.configuration.playVideo.tooltip": "クライアント起動時に Verity のイントロシネマティックを再生します。",
+  "verity.configuration.useNativeTts": "システム TTS を使用",
+  "verity.configuration.useNativeTts.tooltip": "Groq クラウド TTS の代わりに OS 内蔵のナレーターを使用します。",
+  "verity.configuration.clearPeacefulMobs": "友好 Mob を除去",
+  "verity.configuration.clearPeacefulMobs.tooltip": "より孤立したホラーな雰囲気のために友好 Mob (村人、牛、羊、豚、鶏) を除去します。",
+
+  "sounds.verity.box_click": "箱のクリック",
+  "sounds.verity.box_open": "箱を開ける",
+  "sounds.verity.box_verity_0": "Verity™ が箱の中",
+  "sounds.verity.box_verity_1": "Verity™ が箱の中",
+  "sounds.verity.box_verity_2": "Verity™ が箱の中",
+  "sounds.verity.intro": "イントロダクション",
+  "sounds.verity.impact": "Verity™ インパクト",
+  "sounds.verity.intro_cinematic": "イントロシネマティック",
+  "sounds.verity.chase": "§l§4逃げろ",
+  "sounds.verity.bone_break": "骨が砕ける"
+}

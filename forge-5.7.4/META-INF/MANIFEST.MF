@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Specification-Title: verity
+Specification-Vendor: Varmite, ThatMob (Creator of Verity), BlockMaster2
+ 9, JJack
+Specification-Version: 1
+Implementation-Title: Verity-JE
+Implementation-Version: 5.7.4
+Implementation-Vendor: Varmite, ThatMob (Creator of Verity), BlockMaster
+ 29, JJack
+Implementation-Timestamp: 2026-08-17T22:06:51+0000
+MixinConfigs: mixins.verity.json
+

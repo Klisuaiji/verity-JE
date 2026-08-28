@@ -1,0 +1,44 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+
+license="All Rights Reserved"
+issueTrackerURL="https://legacy.curseforge.com/minecraft/mc-mods/verity-je/settings/issues"
+showAsResourcePack=false
+
+[[mods]]
+modId="verity"
+version="6.0.0-beta.8"
+displayName="Verity JE"
+logoFile="icon.png"
+authors="Varmite, BlockMaster29, JJack, ErrorCezar"
+credits = "ThatMob (Verity's Creator)"
+description='''Hello, I'm Verity! Your personal helper friend. You can ask me anything, I know everything.'''
+
+[[dependencies."verity"]]
+modId="forge"
+mandatory=true
+versionRange="[47,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies."verity"]]
+modId="yet_another_config_lib_v3"
+mandatory=true
+versionRange="[3.6,)"
+ordering="NONE"
+side="CLIENT"
+
+[[dependencies."verity"]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.21)"
+ordering="NONE"
+side="BOTH"
+
+# This tells Forge that your mod requires GeckoLib to launch
+[[dependencies."verity"]]
+modId="geckolib"
+mandatory=true
+versionRange="[4.4,)"
+ordering="NONE"
+side="BOTH"

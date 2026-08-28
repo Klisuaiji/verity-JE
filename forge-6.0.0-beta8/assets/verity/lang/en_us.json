@@ -1,0 +1,30 @@
+{
+  "item.verity.verity_item": "Verity™",
+  "item.verity.verity_disc.desc": "The signature song that Verity™ loves.",
+  "item.verity.verity_disc": "Verity™'s Disc",
+  "item.verity.flashlight": "Flashlight",
+  "item.verity.verity_edit_disc": "Verity™'s Edit Music",
+  "item.verity.verity_edit_disc.desc": "Verity™'s signature edit song",
+
+  "creativetab.verity.verity_tab": "Verity™",
+
+  "key.verity.push_to_talk": "Talk to Verity (Push to talk)",
+  "category.verity.keys": "Verity Mod",
+  "key.verity.cycle_mic": "Cycle Selected Mic",
+
+  "entity.verity.box": "Box",
+  "entity.verity.verity": "Verity™",
+  "entity.verity.verity_demon": "§4§lVERITY",
+
+  "sounds.verity.box_click": "Box Click",
+  "sounds.verity.box_open": "Open Box",
+  "sounds.verity.box_verity_0": "Verity™ In Box",
+  "sounds.verity.box_verity_1": "Verity™ In Box",
+  "sounds.verity.box_verity_2": "Verity™ In Box",
+  "sounds.verity.intro": "Introduction",
+  "sounds.verity.impact": "Verity™ Impact",
+  "sounds.verity.intro_cinematic": "Intro Cinematic",
+  "sounds.verity.chase": "§l§4RUN",
+  "sounds.verity.bone_break": "Bones break",
+  "sounds.verity.edit": "Edit Disc"
+}

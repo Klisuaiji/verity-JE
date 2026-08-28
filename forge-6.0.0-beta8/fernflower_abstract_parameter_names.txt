@@ -1,0 +1,1 @@
+varmite/verity/entity/llm/AiAPI$Assistant chat (Ljava/lang/String;)Ljava/lang/String; var1

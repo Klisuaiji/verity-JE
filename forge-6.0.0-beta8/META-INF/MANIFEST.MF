@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Specification-Title: verity
+Specification-Vendor: Varmite, BlockMaster29, JJack, ErrorCezar
+Specification-Version: 1
+Implementation-Title: Verity-JE
+Implementation-Version: 6.0.0-beta.8
+Implementation-Vendor: Varmite, BlockMaster29, JJack, ErrorCezar
+MixinConfigs: verity.mixins.json
+

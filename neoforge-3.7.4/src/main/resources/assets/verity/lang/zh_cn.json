@@ -1,0 +1,47 @@
+{
+  "item.verity.verity_item": "Verity™",
+  "item.verity.verity_disc.desc": "Verity™ 最喜欢的标志性歌曲。",
+  "item.verity.verity_disc": "Verity™ 唱片",
+  "item.verity.flashlight": "手电筒",
+
+  "minecraft:key.categories.multiplayer": "多人游戏 (开发中)",
+
+  "creativetab.verity.verity_tab": "Verity™",
+
+  "key.verity.push_to_talk": "与 Verity 对话 (按住说话)",
+  "category.verity.keys": "Verity 模组",
+  "key.verity.cycle_mic": "切换麦克风",
+
+  "entity.verity.box": "盒子",
+  "entity.verity.verity": "Verity™",
+  "entity.verity.verity_demon": "§4§lVERITY",
+
+  "verity.configuration.AISettings": "AI 设置",
+  "verity.config.title": "Verity 配置",
+  "verity.config.general": "常规",
+  "verity.configuration.apiKey": "Groq API 密钥",
+  "verity.configuration.apiKey.tooltip": "你的 Groq API 密钥，Verity 的 AI 大脑需要它才能运作。",
+  "verity.configuration.canCrash": "允许踢出",
+  "verity.configuration.canCrash.tooltip": "被恶魔杀死时允许 Verity 将你踢出服务器。",
+  "verity.configuration.aiModel": "智能等级",
+  "verity.configuration.aiModel.tooltip": "Fast-lite (最快、最便宜)，Fast (平衡)，Intelligent (最佳质量)。",
+  "verity.configuration.requireVerity": "需要说 \"Verity\"",
+  "verity.configuration.requireVerity.tooltip": "每句话中需要包含 \"Verity\" 这个词才能与他对话。",
+  "verity.configuration.playVideo": "播放开场动画",
+  "verity.configuration.playVideo.tooltip": "在客户端启动时播放 Verity 开场过场动画。",
+  "verity.configuration.useNativeTts": "使用系统 TTS",
+  "verity.configuration.useNativeTts.tooltip": "使用操作系统内置的语音引擎，而不是 Groq 云端 TTS。",
+  "verity.configuration.clearPeacefulMobs": "清除友好生物",
+  "verity.configuration.clearPeacefulMobs.tooltip": "移除友好生物 (村民、牛、羊、猪、鸡) 以营造更孤立的恐怖氛围。",
+
+  "sounds.verity.box_click": "盒子点击",
+  "sounds.verity.box_open": "打开盒子",
+  "sounds.verity.box_verity_0": "Verity™ 在盒子中",
+  "sounds.verity.box_verity_1": "Verity™ 在盒子中",
+  "sounds.verity.box_verity_2": "Verity™ 在盒子中",
+  "sounds.verity.intro": "开场介绍",
+  "sounds.verity.impact": "Verity™ 撞击",
+  "sounds.verity.intro_cinematic": "开场过场动画",
+  "sounds.verity.chase": "§l§4快跑",
+  "sounds.verity.bone_break": "骨头碎裂"
+}

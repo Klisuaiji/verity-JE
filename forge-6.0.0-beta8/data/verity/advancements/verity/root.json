@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "verity:verity_item"
+    },
+    "title": {
+      "text": "Hello, I'm Verity"
+    },
+    "description": {
+      "text": "Your minecraft helper friend."
+    },
+    "background": "minecraft:textures/block/yellow_wool.png",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "open_box": {
+      "trigger": "verity:open_box"
+    }
+  },
+  "requirements": [
+    [
+      "open_box"
+    ]
+  ]
+}
