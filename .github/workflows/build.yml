@@ -2,9 +2,9 @@ name: Build
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "beta", "main", "master" ]
   pull_request:
-    branches: [ "main", "master" ]
+    branches: [ "beta", "main", "master" ]
 
 # 仅读取仓库内容，不写回（不发版；jar 仅作为 Actions 产物供下载）
 permissions:
