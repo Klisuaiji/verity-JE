@@ -1,0 +1,6 @@
+build/
+.gradle/
+run/
+*.log
+_backup_*/
+_toolchain/
