@@ -527,32 +527,40 @@ Enemy {
     }
 
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        // 6.0.0-beta.8 — this build's verity_demon.animation.json ships the animations
+        // "idle", "chase", "climb", "eat", "attack", "window", "prepare_for_chase",
+        // "attack_throw" (NOT the "animation.model.*" names the upstream controller asked
+        // for). The previous names never resolved, so the demon rendered stiff/static.
+        // We now point the controller at the animations that actually exist, using
+        // "chase" (a real leg/arm locomotion loop) for walking and a faster speed while hunting.
         controllers.add(new AnimationController[]{new AnimationController((GeoAnimatable)this, "movement_controller", 5, state -> {
             if (this.isDeadOrDying()) {
-                return state.setAndContinue(RawAnimation.begin().thenPlayAndHold("animation.model.death"));
+                return state.setAndContinue(RawAnimation.begin().thenPlayAndHold("idle"));
             }
             if (this.isGrabbing()) {
-                return state.setAndContinue(RawAnimation.begin().thenPlay("animation.model.grab"));
+                return state.setAndContinue(RawAnimation.begin().thenLoop("attack"));
             }
             if (((Boolean)this.entityData.get(IS_CLIMBING)).booleanValue()) {
-                return state.setAndContinue(RawAnimation.begin().thenLoop("model.animation.climb"));
+                return state.setAndContinue(RawAnimation.begin().thenLoop("climb"));
             }
-            if (state.isMoving() || ((Boolean)this.entityData.get(IS_CLIMBING)).booleanValue()) {
+            if (state.isMoving()) {
                 if (this.getDemonState() == 1) {
-                    return state.setAndContinue(RawAnimation.begin().thenLoop("animation.model.sprint"));
+                    state.getController().setAnimationSpeed(1.5f);
+                } else {
+                    state.getController().setAnimationSpeed(1.0f);
                 }
-                return state.setAndContinue(RawAnimation.begin().thenLoop("animation.model.walk"));
+                return state.setAndContinue(RawAnimation.begin().thenLoop("chase"));
             }
-            state.getController().setAnimationSpeed(1.0);
-            return PlayState.STOP;
+            state.getController().setAnimationSpeed(1.0f);
+            return state.setAndContinue(RawAnimation.begin().thenLoop("idle"));
         })});
         AnimationController actionController = new AnimationController((GeoAnimatable)this, "action_controller", 5, state -> {
             if (((Boolean)this.entityData.get(IS_EATING)).booleanValue()) {
-                return state.setAndContinue(RawAnimation.begin().thenLoop("animation.model.eat"));
+                return state.setAndContinue(RawAnimation.begin().thenLoop("eat"));
             }
             return PlayState.STOP;
         });
-        actionController.triggerableAnim("attack_trigger", RawAnimation.begin().thenPlay("animation.model.attack"));
+        actionController.triggerableAnim("attack_trigger", RawAnimation.begin().thenPlay("attack"));
         controllers.add(new AnimationController[]{actionController});
     }
 
