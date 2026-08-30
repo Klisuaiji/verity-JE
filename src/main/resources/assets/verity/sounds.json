@@ -97,7 +97,7 @@
     "subtitle": "sounds.verity.edit",
     "sounds": [
       {
-        "name": "verity:intro_video_audio",
+        "name": "verity:verity_edit_song",
         "stream": true
       }
     ]
