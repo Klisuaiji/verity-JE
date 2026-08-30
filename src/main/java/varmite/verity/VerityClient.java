@@ -11,6 +11,9 @@ import varmite.verity.types.STTProvider;
 import varmite.verity.types.TTSProvider;
 
 import java.util.Locale;
+import varmite.verity.types.VerityVoice;
+import varmite.verity.types.AiProvider;
+import varmite.verity.types.KokoroVoice;
 
 /**
  * YACL configuration screen, rebuilt for the Verity 6.1 configuration schema.

@@ -10,6 +10,7 @@ import dev.langchain4j.model.mistralai.MistralAiChatModel;
 import dev.langchain4j.model.mistralai.MistralAiChatModelName;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import varmite.verity.VerityConfig;
 import varmite.verity.types.AiProvider;
 
 public class LLMBuilder {
@@ -54,6 +55,7 @@ public class LLMBuilder {
                     .numCtx(16000)
                     .think(this.thinking)
                     .temperature(0.8)
+                    .logResponses(VerityConfig.DEV_MODE.get())
                     .build();
             case OPENAI -> OpenAiChatModel.builder()
                     .baseUrl(this.endpoint)
@@ -61,11 +63,13 @@ public class LLMBuilder {
                     .modelName(this.model)
                     .returnThinking(this.thinking)
                     .temperature(0.8)
+                    .logResponses(VerityConfig.DEV_MODE.get())
                     .build();
             case GEMINI -> GoogleAiGeminiChatModel.builder()
                     .apiKey(this.apiKey)
                     .modelName(this.model)
                     .temperature(0.8)
+                    .logResponses(VerityConfig.DEV_MODE.get())
                     .build();
             case GROQ -> OpenAiChatModel.builder()
                     .baseUrl("https://api.groq.com/openai/v1/")
@@ -73,6 +77,7 @@ public class LLMBuilder {
                     .modelName(this.model)
                     .returnThinking(this.thinking)
                     .temperature(0.8)
+                    .logResponses(VerityConfig.DEV_MODE.get())
                     .build();
             case OPENROUTER -> OpenAiChatModel.builder()
                     .baseUrl("https://openrouter.ai/api/v1/")
@@ -80,11 +85,13 @@ public class LLMBuilder {
                     .modelName(this.model)
                     .returnThinking(this.thinking)
                     .temperature(0.8)
+                    .logResponses(VerityConfig.DEV_MODE.get())
                     .build();
             case MISTRAL -> MistralAiChatModel.builder()
                     .apiKey(this.apiKey)
                     .modelName(MistralAiChatModelName.MISTRAL_SMALL_LATEST)
                     .temperature(0.8)
+                    .logResponses(VerityConfig.DEV_MODE.get())
                     .build();
         };
     }

@@ -66,6 +66,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import varmite.verity.types.AiProvider;
 import varmite.verity.types.KokoroVoice;
+import varmite.verity.Verity;
 import varmite.verity.VerityConfig;
 import varmite.verity.entity.AI.SherpaBridge;
 import varmite.verity.entity.llm.actions.Tools;
@@ -236,11 +237,15 @@ public class AiAPI {
             Assistant assistant = AiServices.builder(Assistant.class)
                     .chatModel(model)
                     .tools(tools)
-                    .toolExecutionErrorHandler((error, errorContext) -> {
-                        error.printStackTrace();
-                        System.out.println(errorContext);
-                        return ToolErrorHandlerResult.text("Tool execution failed.");
-                    })
+            .toolExecutionErrorHandler((error, errorContext) -> {
+                if (VerityConfig.DEV_MODE.get()) {
+                    error.printStackTrace();
+                    System.out.println(errorContext);
+                } else {
+                    Verity.LOGGER.error("[Verity AI] Tool call failed: {}", error.toString());
+                }
+                return ToolErrorHandlerResult.text("Tool execution failed.");
+            })
                     .chatMemory((ChatMemory) memory)
                     .systemMessageProvider(id -> getSystemPrompt(currentDay, currentKarma))
                     .build();

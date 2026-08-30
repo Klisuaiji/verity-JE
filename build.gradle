@@ -135,12 +135,10 @@ dependencies {
     // constraints are unresolvable, so slf4j-api is excluded from the langchain4j graph
     // — the Minecraft runtime already provides an API-compatible slf4j-api on the
     // classpath, and langchain4j only uses it for logging.
-    def langchain4jJar(String coord, String v = "1.18.0") {
-        jarJar(implementation("${coord}:[${v},)")) {
-            version { prefer v }
-            exclude group: "org.slf4j", module: "slf4j-api"
-        }
-    }
+    // NOTE: this used to be a `def langchain4jJar(String coord, String v)` helper,
+    // but Groovy does not allow method declarations inside the `dependencies { }`
+    // closure — it was a hard parse error ("Unexpected input: '{'") that made the
+    // whole project unbuildable. Inlined into the each{} below instead.
     [
             "dev.langchain4j:langchain4j",
             "dev.langchain4j:langchain4j-core",
@@ -149,7 +147,12 @@ dependencies {
             "dev.langchain4j:langchain4j-ollama",
             "dev.langchain4j:langchain4j-mistral-ai",
             "dev.langchain4j:langchain4j-google-ai-gemini",
-    ].each { coord -> langchain4jJar(coord) }
+    ].each { coord ->
+        jarJar(implementation("${coord}:[1.18.0,)")) {
+            version { prefer "1.18.0" }
+            exclude group: "org.slf4j", module: "slf4j-api"
+        }
+    }
 
     // Transitive runtime libs required by the langchain4j model/http modules
     // (JSON serialization, tokenization, NLP, nullability annotations). Declared

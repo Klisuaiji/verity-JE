@@ -171,5 +171,8 @@
   "verity.configuration.ttsEndpoint": "TTS 端点",
   "verity.configuration.ttsEndpoint.tooltip": "文本转语音 API 的自定义基址。",
   "verity.configuration.ttsProvider": "TTS 提供商",
-  "verity.configuration.ttsProvider.tooltip": "选择文本转语音的提供商。"
+  "verity.configuration.ttsProvider.tooltip": "选择文本转语音的提供商。",
+  "item.verity.verity_edit_disc": "Verity™ 的剪辑音乐",
+  "item.verity.verity_edit_disc.desc": "Verity™ 的标志性剪辑歌曲",
+  "sounds.verity.edit": "剪辑唱片"
 }

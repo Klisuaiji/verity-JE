@@ -68,7 +68,8 @@ public final class BedrockPolyMesh {
                     if (baked.length <= 0) {
                         continue;
                     }
-                    meshes.put(GsonHelper.getString(bone, "name"), baked);
+                    // 1.21.1: GsonHelper has no getString(JsonObject, String) — it is getAsString(...)
+                    meshes.put(GsonHelper.getAsString(bone, "name"), baked);
                 }
             }
             LOGGER.info("Loaded poly_mesh geometry for {} bone(s) from {}", meshes.size(), modelLocation);

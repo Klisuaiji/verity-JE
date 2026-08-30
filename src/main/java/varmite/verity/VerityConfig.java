@@ -3,6 +3,8 @@ package varmite.verity;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import varmite.verity.types.STTProvider;
 import varmite.verity.types.TTSProvider;
+import varmite.verity.types.AiProvider;
+import varmite.verity.types.KokoroVoice;
 
 /**
  * Verity 6.1 configuration.
@@ -36,6 +38,7 @@ public class VerityConfig {
     public static final ModConfigSpec.BooleanValue CLEAR_PEACEFUL_MOBS;
     public static final ModConfigSpec.BooleanValue SHOW_VERITYS_KARMA;
     public static final ModConfigSpec.BooleanValue IMMERSIVE_MODE;
+    public static final ModConfigSpec.BooleanValue DEV_MODE;
 
     // ── AI ────────────────────────────────────────────────────────────────────
     public static final ModConfigSpec.ConfigValue<String> API_KEY;
@@ -107,6 +110,10 @@ public class VerityConfig {
         COLOR = builder.comment("The Hue of Verity's texture color (0 to 360 degrees).").defineInRange("colorHue", 0, 0, 360);
         VERITY_CUSTOM_NAME = builder.comment("The custom name for Verity. Leave empty to use default 'Verity'.").define("customName", "Verity");
         PERSONALITY = builder.comment("The custom personality for Verity.").define("customPersonality", "normal");
+        builder.pop();
+
+        builder.push("AdvancedSettings");
+        DEV_MODE = builder.comment("Enables dev mode (verbose AI logging).").define("devMode", false);
         builder.pop();
 
         builder.pop();

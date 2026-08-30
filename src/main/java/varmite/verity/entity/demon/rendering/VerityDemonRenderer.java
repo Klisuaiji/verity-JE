@@ -19,8 +19,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.Map;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.Entity;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
@@ -49,27 +49,32 @@ extends GeoEntityRenderer<VerityDemonEntity> {
      * 6.0.0-beta.8 — the upstream geo.json is bone-hierarchy only (no cubes), so the
      * normal GeckoLib cube pass draws nothing. The visible surface comes from the
      * Bedrock poly_mesh file, emitted here per bone on top of the default pass.
+     *
+     * Signature note: GeckoLib 4.8.3 packs the colour into a single {@code int}
+     * (6 params), unlike the 9-param float-RGBA form used by the 1.20.1 decompile.
      */
     @Override
-    public void renderCubesOfBone(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderCubesOfBone(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight, int packedOverlay, int packedColor) {
+        super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, packedColor);
         Map<String, float[]> meshes = BedrockPolyMesh.forModel(VerityDemonModel.MESH);
         float[] vertices = meshes.get(bone.getName());
         if (vertices == null) {
             return;
         }
+        float red = FastColor.ARGB32.red(packedColor) / 255.0f;
+        float green = FastColor.ARGB32.green(packedColor) / 255.0f;
+        float blue = FastColor.ARGB32.blue(packedColor) / 255.0f;
+        float alpha = FastColor.ARGB32.alpha(packedColor) / 255.0f;
         PoseStack.Pose pose = poseStack.last();
         Matrix4f position = pose.pose();
-        Matrix3f normal = pose.normal();
         // STRIDE = 8: position xyz, uv, normal xyz
         for (int i = 0; i < vertices.length; i += BedrockPolyMesh.STRIDE) {
-            buffer.vertex(position, vertices[i], vertices[i + 1], vertices[i + 2])
-                    .color(red, green, blue, alpha)
-                    .uv(vertices[i + 3], vertices[i + 4])
-                    .overlayCoords(packedOverlay)
-                    .uv2(packedLight)
-                    .normal(normal, vertices[i + 5], vertices[i + 6], vertices[i + 7])
-                    .endVertex();
+            buffer.addVertex(position, vertices[i], vertices[i + 1], vertices[i + 2])
+                    .setColor(red, green, blue, alpha)
+                    .setUv(vertices[i + 3], vertices[i + 4])
+                    .setOverlay(packedOverlay)
+                    .setLight(packedLight)
+                    .setNormal(pose, vertices[i + 5], vertices[i + 6], vertices[i + 7]);
         }
     }
 }

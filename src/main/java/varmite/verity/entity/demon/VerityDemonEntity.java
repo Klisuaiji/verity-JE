@@ -138,6 +138,7 @@ import varmite.verity.entity.demon.goals.DemonGlassBreakAndLeapGoal;
 import varmite.verity.entity.demon.goals.DemonStareAndBreakGoal;
 import varmite.verity.entity.demon.goals.DemonWindowStalkGoal;
 import varmite.verity.entity.demon.pathfinding.DemonPathNavigation;
+import varmite.verity.entity.demon.goals.DemonClimbGoal;
 
 public class VerityDemonEntity
 extends PathfinderMob
@@ -509,7 +510,7 @@ Enemy {
      * IS_CLIMBING was already registered here; only the setter was missing.
      */
     public void setClimbing(boolean climbing) {
-        this.entityData.set(IS_CLIMBING, (Object)climbing);
+        this.entityData.set(IS_CLIMBING, climbing);
     }
 
     /** True while DemonClimbGoal is driving the ascent. */
