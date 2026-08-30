@@ -87,5 +87,8 @@
   "verity.configuration.customName": "自定义名称",
   "verity.configuration.customName.tooltip": "Verity 的自定义名称。留空则使用默认值'Verity'。",
   "verity.configuration.personality": "性格",
-  "verity.configuration.personality.tooltip": "Verity 行为的性格预设。"
+  "verity.configuration.personality.tooltip": "Verity 行为的性格预设。",
+  "item.verity.verity_edit_disc": "Verity™ 的剪辑音乐",
+  "item.verity.verity_edit_disc.desc": "Verity™ 的标志性剪辑歌曲",
+  "sounds.verity.edit": "剪辑唱片"
 }

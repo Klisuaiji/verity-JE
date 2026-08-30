@@ -87,5 +87,8 @@
   "verity.configuration.customName": "Custom Name",
   "verity.configuration.customName.tooltip": "Custom name for Verity. Leave empty for default 'Verity'.",
   "verity.configuration.personality": "Personality",
-  "verity.configuration.personality.tooltip": "Personality preset for Verity's behavior."
+  "verity.configuration.personality.tooltip": "Personality preset for Verity's behavior.",
+  "item.verity.verity_edit_disc": "Музыка Verity™ (Edit)",
+  "item.verity.verity_edit_disc.desc": "Фирменная песня Verity™",
+  "sounds.verity.edit": "Пластинка Edit"
 }
