@@ -7,8 +7,8 @@
  *  net.minecraft.sounds.SoundSource
  *  net.minecraft.util.RandomSource
  *  varmite.verity.client.sound.DemonChaseSoundInstance
- *  varmite.verity.entity.custom.VerityDemonEntity
- *  varmite.verity.sounds.ModSounds
+ *  varmite.verity.entity.demon.VerityDemonEntity
+ *  varmite.verity.environment.sounds.ModSounds
  */
 package varmite.verity.client.sound;
 
@@ -16,8 +16,8 @@ import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import varmite.verity.entity.custom.VerityDemonEntity;
-import varmite.verity.sounds.ModSounds;
+import varmite.verity.entity.demon.VerityDemonEntity;
+import varmite.verity.environment.sounds.ModSounds;
 
 public class DemonChaseSoundInstance
 extends AbstractTickableSoundInstance {

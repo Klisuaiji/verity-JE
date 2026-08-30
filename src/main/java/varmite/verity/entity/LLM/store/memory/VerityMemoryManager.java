@@ -1,7 +1,7 @@
 /*
  * Ported from Verity 6.1 (Forge 1.20.1) to NeoForge 1.21.1.
  */
-package varmite.verity.entity.LLM.store.memory;
+package varmite.verity.entity.llm.store.memory;
 
 import java.io.File;
 import net.minecraft.server.MinecraftServer;

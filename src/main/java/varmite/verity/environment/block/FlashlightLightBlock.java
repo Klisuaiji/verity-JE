@@ -1,0 +1,104 @@
+/*
+ * Decompiled with CFR 0.152.
+ * 
+ * Could not load the following classes:
+ *  net.minecraft.core.BlockPos
+ *  net.minecraft.core.Direction
+ *  net.minecraft.world.level.BlockGetter
+ *  net.minecraft.world.level.LevelAccessor
+ *  net.minecraft.world.level.LevelReader
+ *  net.minecraft.world.level.block.Block
+ *  net.minecraft.world.level.block.RenderShape
+ *  net.minecraft.world.level.block.SimpleWaterloggedBlock
+ *  net.minecraft.world.level.block.state.BlockBehaviour$Properties
+ *  net.minecraft.world.level.block.state.BlockState
+ *  net.minecraft.world.level.block.state.StateDefinition$Builder
+ *  net.minecraft.world.level.block.state.properties.BlockStateProperties
+ *  net.minecraft.world.level.block.state.properties.BooleanProperty
+ *  net.minecraft.world.level.block.state.properties.Property
+ *  net.minecraft.world.level.material.Fluid
+ *  net.minecraft.world.level.material.FluidState
+ *  net.minecraft.world.level.material.Fluids
+ *  net.minecraft.world.level.material.PushReaction
+ *  net.minecraft.world.phys.shapes.CollisionContext
+ *  net.minecraft.world.phys.shapes.Shapes
+ *  net.minecraft.world.phys.shapes.VoxelShape
+ *  varmite.verity.environment.block.FlashlightLightBlock
+ */
+package varmite.verity.environment.block;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+public class FlashlightLightBlock
+extends Block
+implements SimpleWaterloggedBlock {
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+
+    public FlashlightLightBlock() {
+        super(BlockBehaviour.Properties.of().replaceable().noCollission().noOcclusion().noLootTable().pushReaction(PushReaction.DESTROY).lightLevel(state -> 15));
+        this.registerDefaultState((BlockState)((BlockState)this.stateDefinition.any()).setValue(WATERLOGGED, Boolean.valueOf(false)));
+    }
+
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(WATERLOGGED);
+    }
+
+    public FluidState getFluidState(BlockState state) {
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+    }
+
+    // 6.1 在 updateShape（原版含水方块的标准钩子）里排水流刻，而不是 neighborChanged。
+    @Override
+    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        if (state.getValue(WATERLOGGED)) {
+            level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+        }
+        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+    }
+
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.INVISIBLE;
+    }
+
+    // The light block is purely visual light; it must not show a block selection
+    // outline (the black wireframe) when the player looks at it. Both the solid
+    // shape and the selection shape are empty. (Original 1.20.1 overrode getShape;
+    // in 1.21.1 the selection outline is driven by getSelectionShape, which
+    // defaults to getShape — overriding both keeps the outline gone.)
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.empty();
+    }
+
+    @Override
+    public VoxelShape getInteractionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        return Shapes.empty();
+    }
+
+    // 6.1 的 m_7420_：光源方块不得阻挡天空光传播。
+    @Override
+    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+        return true;
+    }
+}
+

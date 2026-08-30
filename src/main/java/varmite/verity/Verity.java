@@ -16,15 +16,15 @@
  *  org.slf4j.Logger
  *  varmite.verity.Verity
  *  varmite.verity.VerityConfig
- *  varmite.verity.block.ModBlocks
+ *  varmite.verity.environment.block.ModBlocks
  *  varmite.verity.entity.ModEntities
  *  varmite.verity.event.ModBusCommonSetup
  *  varmite.verity.event.ModEvents
- *  varmite.verity.item.ModCreativeModeTabs
- *  varmite.verity.item.ModItems
+ *  varmite.verity.environment.items.ModCreativeModeTabs
+ *  varmite.verity.environment.items.ModItems
  *  varmite.verity.network.ModMessages
  *  varmite.verity.network.ModNetwork
- *  varmite.verity.sounds.ModSounds
+ *  varmite.verity.environment.sounds.ModSounds
  *  varmite.verity.triggers.ModTriggers
  */
 package varmite.verity;
@@ -41,14 +41,14 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.ModContainer;
 import org.slf4j.Logger;
 import varmite.verity.VerityConfig;
-import varmite.verity.block.ModBlocks;
+import varmite.verity.environment.block.ModBlocks;
 import varmite.verity.entity.ModEntities;
 import varmite.verity.event.ModBusCommonSetup;
 import varmite.verity.event.ModEvents;
-import varmite.verity.gui.PlayerKarmaProvider;
-import varmite.verity.item.ModCreativeModeTabs;
-import varmite.verity.item.ModItems;
-import varmite.verity.sounds.ModSounds;
+import varmite.verity.client.gui.PlayerKarmaProvider;
+import varmite.verity.environment.items.ModCreativeModeTabs;
+import varmite.verity.environment.items.ModItems;
+import varmite.verity.environment.sounds.ModSounds;
 import varmite.verity.triggers.ModTriggers;
 
 @Mod(value="verity")

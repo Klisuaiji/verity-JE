@@ -100,22 +100,22 @@
  *  varmite.verity.VerityConfig
  *  varmite.verity.command.ChangeKarmaCommand
  *  varmite.verity.command.RecoverVerityCommand
- *  varmite.verity.entity.AI.AiAPI
+ *  varmite.verity.entity.llm.AiAPI
  *  varmite.verity.entity.ModEntities
- *  varmite.verity.entity.custom.BoxEntity
- *  varmite.verity.entity.custom.VerityDemonEntity
- *  varmite.verity.entity.custom.VerityEntity
+ *  varmite.verity.entity.veritybox.BoxEntity
+ *  varmite.verity.entity.demon.VerityDemonEntity
+ *  varmite.verity.entity.verity.VerityEntity
  *  varmite.verity.event.ModEvents
  *  varmite.verity.event.ModEvents$ScheduledTask
  *  varmite.verity.event.WorldSpawnData
- *  varmite.verity.gui.PlayerKarma
- *  varmite.verity.gui.PlayerKarmaProvider
- *  varmite.verity.item.ModItems
+ *  varmite.verity.client.gui.PlayerKarma
+ *  varmite.verity.client.gui.PlayerKarmaProvider
+ *  varmite.verity.environment.items.ModItems
  *  varmite.verity.network.KarmaSyncS2CPacket
  *  varmite.verity.network.ModMessages
  *  varmite.verity.network.ModNetwork
  *  varmite.verity.network.PlayTtsPayload
- *  varmite.verity.sounds.ModSounds
+ *  varmite.verity.environment.sounds.ModSounds
  *  varmite.verity.triggers.ModTriggers
  */
 package varmite.verity.event;
@@ -217,18 +217,18 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import varmite.verity.VerityConfig;
 import varmite.verity.command.ChangeKarmaCommand;
 import varmite.verity.command.RecoverVerityCommand;
-import varmite.verity.entity.LLM.AiManager;
+import varmite.verity.entity.llm.AiManager;
 import varmite.verity.entity.ModEntities;
-import varmite.verity.entity.custom.BoxEntity;
-import varmite.verity.entity.custom.VerityDemonEntity;
-import varmite.verity.entity.custom.VerityEntity;
+import varmite.verity.entity.veritybox.BoxEntity;
+import varmite.verity.entity.demon.VerityDemonEntity;
+import varmite.verity.entity.verity.VerityEntity;
 import varmite.verity.event.ModEvents;
 import varmite.verity.event.WorldSpawnData;
-import varmite.verity.gui.PlayerKarma;
-import varmite.verity.item.ModItems;
+import varmite.verity.client.gui.PlayerKarma;
+import varmite.verity.environment.items.ModItems;
 import varmite.verity.network.KarmaSyncS2CPacket;
 import varmite.verity.network.PlayTtsPayload;
-import varmite.verity.sounds.ModSounds;
+import varmite.verity.environment.sounds.ModSounds;
 import varmite.verity.triggers.ModTriggers;
 
 import net.neoforged.neoforge.event.tick.ServerTickEvent;

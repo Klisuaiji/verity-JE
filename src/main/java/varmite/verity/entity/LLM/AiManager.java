@@ -2,7 +2,7 @@
  * Ported from Verity 6.1 (Forge 1.20.1) to NeoForge 1.21.1.
  * Async entry point that drives a single Verity conversation turn.
  */
-package varmite.verity.entity.LLM;
+package varmite.verity.entity.llm;
 
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.network.chat.Component;
@@ -11,7 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import varmite.verity.VerityConfig;
-import varmite.verity.entity.custom.VerityEntity;
+import varmite.verity.entity.verity.VerityEntity;
 import varmite.verity.event.ModEvents;
 import varmite.verity.event.WorldSpawnData;
 import varmite.verity.network.PlayTtsPayload;

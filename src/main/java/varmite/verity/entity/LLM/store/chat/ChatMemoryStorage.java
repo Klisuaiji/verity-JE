@@ -3,7 +3,7 @@
  * JSON-backed persistence for langchain4j chat memories (replaces the
  * chatHistory NBT list that used to live in WorldSpawnData in 5.7.3).
  */
-package varmite.verity.entity.LLM.store.chat;
+package varmite.verity.entity.llm.store.chat;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

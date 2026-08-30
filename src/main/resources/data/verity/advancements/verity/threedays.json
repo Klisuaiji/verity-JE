@@ -2,7 +2,7 @@
   "parent": "verity:verity/badday",
   "display": {
     "icon": {
-      "id": "minecraft:spider_eye"
+      "item": "minecraft:spider_eye"
     },
     "title": {
       "text": "Something is coming in 3 days"

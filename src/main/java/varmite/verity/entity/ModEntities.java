@@ -12,9 +12,9 @@
  *  net.neoforged.neoforge.registries.NeoForgeRegistries
  *  net.neoforged.neoforge.registries.IForgeRegistry
  *  varmite.verity.entity.ModEntities
- *  varmite.verity.entity.custom.BoxEntity
- *  varmite.verity.entity.custom.VerityDemonEntity
- *  varmite.verity.entity.custom.VerityEntity
+ *  varmite.verity.entity.veritybox.BoxEntity
+ *  varmite.verity.entity.demon.VerityDemonEntity
+ *  varmite.verity.entity.verity.VerityEntity
  */
 package varmite.verity.entity;
 
@@ -27,9 +27,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import varmite.verity.entity.custom.BoxEntity;
-import varmite.verity.entity.custom.VerityDemonEntity;
-import varmite.verity.entity.custom.VerityEntity;
+import varmite.verity.entity.veritybox.BoxEntity;
+import varmite.verity.entity.demon.VerityDemonEntity;
+import varmite.verity.entity.verity.VerityEntity;
 
 public class ModEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, "verity");

@@ -25,9 +25,9 @@
  *  net.neoforged.neoforge.event.entity.player.PlayerEvent$PlayerLoggedOutEvent
  *  net.neoforged.bus.api.SubscribeEvent
  *  net.neoforged.fml.common.EventBusSubscriber
- *  varmite.verity.block.ModBlocks
+ *  varmite.verity.environment.block.ModBlocks
  *  varmite.verity.event.FlashlightServerLogic
- *  varmite.verity.item.ModItems
+ *  varmite.verity.environment.items.ModItems
  */
 package varmite.verity.event;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -58,8 +58,8 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
-import varmite.verity.block.ModBlocks;
-import varmite.verity.item.ModItems;
+import varmite.verity.environment.block.ModBlocks;
+import varmite.verity.environment.items.ModItems;
 
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 /*

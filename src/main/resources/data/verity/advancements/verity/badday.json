@@ -2,7 +2,7 @@
   "parent": "verity:verity/talk",
   "display": {
     "icon": {
-      "id": "minecraft:coal"
+      "item": "minecraft:coal"
     },
     "title": {
       "text": "Bad Day"

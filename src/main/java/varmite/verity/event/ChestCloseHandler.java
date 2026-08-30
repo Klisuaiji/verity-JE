@@ -19,7 +19,7 @@
  *  net.neoforged.fml.common.EventBusSubscriber
  *  varmite.verity.event.ChestCloseHandler
  *  varmite.verity.event.VeritySpawnScheduler
- *  varmite.verity.item.ModItems
+ *  varmite.verity.environment.items.ModItems
  */
 package varmite.verity.event;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -40,7 +40,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import varmite.verity.event.VeritySpawnScheduler;
-import varmite.verity.item.ModItems;
+import varmite.verity.environment.items.ModItems;
 
 @EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.GAME)
 public class ChestCloseHandler {

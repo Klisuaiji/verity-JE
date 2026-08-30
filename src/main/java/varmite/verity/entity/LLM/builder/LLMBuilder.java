@@ -2,7 +2,7 @@
  * Ported from Verity 6.1 (Forge 1.20.1) to NeoForge 1.21.1.
  * Builds a langchain4j ChatModel for the configured provider.
  */
-package varmite.verity.entity.LLM.builder;
+package varmite.verity.entity.llm.builder;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
@@ -10,7 +10,7 @@ import dev.langchain4j.model.mistralai.MistralAiChatModel;
 import dev.langchain4j.model.mistralai.MistralAiChatModelName;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
-import varmite.verity.AiProvider;
+import varmite.verity.types.AiProvider;
 
 public class LLMBuilder {
     private AiProvider provider;

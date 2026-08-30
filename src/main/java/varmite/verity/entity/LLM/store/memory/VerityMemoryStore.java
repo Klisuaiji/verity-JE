@@ -2,7 +2,7 @@
  * Ported from Verity 6.1 (Forge 1.20.1) to NeoForge 1.21.1.
  * Long-term key/value "facts" Verity remembers about the world and the player.
  */
-package varmite.verity.entity.LLM.store.memory;
+package varmite.verity.entity.llm.store.memory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

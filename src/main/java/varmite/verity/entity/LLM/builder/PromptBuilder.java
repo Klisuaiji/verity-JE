@@ -1,4 +1,4 @@
-package varmite.verity.entity.LLM.builder;
+package varmite.verity.entity.llm.builder;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;

@@ -2,7 +2,7 @@
  * Ported from Verity 6.1 (Forge 1.20.1) to NeoForge 1.21.1.
  * langchain4j ChatMemoryStore backed by the world save directory.
  */
-package varmite.verity.entity.LLM.store.chat;
+package varmite.verity.entity.llm.store.chat;
 
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.ChatMessageDeserializer;

@@ -14,7 +14,7 @@
  *  net.minecraft.world.level.Level
  *  varmite.verity.command.RecoverVerityCommand
  *  varmite.verity.entity.ModEntities
- *  varmite.verity.entity.custom.VerityEntity
+ *  varmite.verity.entity.verity.VerityEntity
  */
 package varmite.verity.command;
 
@@ -29,7 +29,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import varmite.verity.entity.ModEntities;
-import varmite.verity.entity.custom.VerityEntity;
+import varmite.verity.entity.verity.VerityEntity;
 import varmite.verity.event.WorldSpawnData;
 
 public class RecoverVerityCommand {

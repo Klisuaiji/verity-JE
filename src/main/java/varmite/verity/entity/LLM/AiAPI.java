@@ -15,7 +15,7 @@
  *   - Client-only feedback (Minecraft.getInstance()) is guarded behind
  *     FMLEnvironment.dist so a dedicated server never loads client classes.
  */
-package varmite.verity.entity.LLM;
+package varmite.verity.entity.llm;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -64,23 +64,23 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
-import varmite.verity.AiProvider;
-import varmite.verity.KokoroVoice;
+import varmite.verity.types.AiProvider;
+import varmite.verity.types.KokoroVoice;
 import varmite.verity.VerityConfig;
 import varmite.verity.entity.AI.SherpaBridge;
-import varmite.verity.entity.LLM.actions.Tools;
-import varmite.verity.entity.LLM.builder.LLMBuilder;
-import varmite.verity.entity.LLM.builder.LocalTTSBuilder;
-import varmite.verity.entity.LLM.builder.PromptBuilder;
-import varmite.verity.entity.LLM.store.chat.ChatMemoryManager;
-import varmite.verity.entity.LLM.store.chat.MinecraftChatMemoryStore;
+import varmite.verity.entity.llm.actions.Tools;
+import varmite.verity.entity.llm.builder.LLMBuilder;
+import varmite.verity.entity.llm.builder.LocalTTSBuilder;
+import varmite.verity.entity.llm.builder.PromptBuilder;
+import varmite.verity.entity.llm.store.chat.ChatMemoryManager;
+import varmite.verity.entity.llm.store.chat.MinecraftChatMemoryStore;
 import varmite.verity.entity.VerityState;
-import varmite.verity.entity.custom.VerityEntity;
+import varmite.verity.entity.verity.VerityEntity;
 import varmite.verity.event.WorldSpawnData;
 import varmite.verity.triggers.ModTriggers;
 import varmite.verity.types.STTProvider;
 import varmite.verity.types.TTSProvider;
-import varmite.verity.util.ModelExtractor;
+import varmite.verity.entity.llm.builder.ModelExtractor;
 
 public class AiAPI {
     private static final String GLOBAL_MEMORY_ID = "verity-chat-memory";

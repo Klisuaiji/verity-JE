@@ -7,7 +7,7 @@
  *   ResourceLocation.m_135820_  -> ResourceLocation.tryParse
  *   SRG field/method names      -> official Mojang mappings
  */
-package varmite.verity.entity.LLM;
+package varmite.verity.entity.llm;
 
 import com.mojang.datafixers.util.Pair;
 import java.util.Map;

@@ -12,7 +12,7 @@ public class ModTriggers {
             DeferredRegister.create(Registries.TRIGGER_TYPE, Verity.MOD_ID);
 
     public static final DeferredHolder<CriterionTrigger<?>, OpenBoxTrigger> UNBOX_VERITY_TRIGGER =
-            TRIGGERS.register("openbox", OpenBoxTrigger::new);
+            TRIGGERS.register("open_box", OpenBoxTrigger::new);
     public static final DeferredHolder<CriterionTrigger<?>, TalkTrigger> TALK_TRIGGER =
             TRIGGERS.register("talk", TalkTrigger::new);
     public static final DeferredHolder<CriterionTrigger<?>, VillageTrigger> VILLAGE_TRIGGER =

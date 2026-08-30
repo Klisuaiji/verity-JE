@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "varmite.verity.mixin",
+  "package": "varmite.verity.environment.mixins",
   "compatibilityLevel": "JAVA_21",
   "refmap": "verity.refmap.json",
   "client": [

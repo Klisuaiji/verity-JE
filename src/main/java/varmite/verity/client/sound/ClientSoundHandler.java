@@ -6,14 +6,14 @@
  *  net.minecraft.client.resources.sounds.SoundInstance
  *  varmite.verity.client.sound.ClientSoundHandler
  *  varmite.verity.client.sound.DemonChaseSoundInstance
- *  varmite.verity.entity.custom.VerityDemonEntity
+ *  varmite.verity.entity.demon.VerityDemonEntity
  */
 package varmite.verity.client.sound;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import varmite.verity.client.sound.DemonChaseSoundInstance;
-import varmite.verity.entity.custom.VerityDemonEntity;
+import varmite.verity.entity.demon.VerityDemonEntity;
 
 public class ClientSoundHandler {
     public static void playDemonChaseSound(VerityDemonEntity demon) {

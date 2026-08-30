@@ -7,7 +7,7 @@
  * sherpa-onnx jar is absent — voice then degrades to silence instead of
  * crashing the game.
  */
-package varmite.verity.entity.LLM.builder;
+package varmite.verity.entity.llm.builder;
 
 import java.io.InputStream;
 import java.nio.file.Files;

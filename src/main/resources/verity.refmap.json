@@ -1,20 +1,20 @@
 {
   "mappings": {
-    "varmite/verity/mixin/LightTextureMixin": {
+    "varmite/verity/environment/mixins/LightTextureMixin": {
       "updateLightTexture": "Lnet/minecraft/client/renderer/LightTexture;updateLightTexture(F)V",
       "Lnet/minecraft/client/renderer/texture/DynamicTexture;upload()V": "Lnet/minecraft/client/renderer/texture/DynamicTexture;upload()V"
     },
-    "varmite/verity/mixin/TitleScreenMixin": {
+    "varmite/verity/environment/mixins/TitleScreenMixin": {
       "init": "Lnet/minecraft/client/gui/screens/TitleScreen;init()V"
     }
   },
   "data": {
     "searge": {
-      "varmite/verity/mixin/LightTextureMixin": {
+      "varmite/verity/environment/mixins/LightTextureMixin": {
         "updateLightTexture": "Lnet/minecraft/client/renderer/LightTexture;updateLightTexture(F)V",
         "Lnet/minecraft/client/renderer/texture/DynamicTexture;upload()V": "Lnet/minecraft/client/renderer/texture/DynamicTexture;upload()V"
       },
-      "varmite/verity/mixin/TitleScreenMixin": {
+      "varmite/verity/environment/mixins/TitleScreenMixin": {
         "init": "Lnet/minecraft/client/gui/screens/TitleScreen;init()V"
       }
     }

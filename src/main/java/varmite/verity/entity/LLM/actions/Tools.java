@@ -12,7 +12,7 @@
  *   - ItemStack NBT (getOrCreateTag) replaced by DataComponents.CUSTOM_DATA (1.20.5+).
  *   - ModTriggers entries are DeferredHolder here, so they need .get() before .trigger().
  */
-package varmite.verity.entity.LLM.actions;
+package varmite.verity.entity.llm.actions;
 
 import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;
@@ -53,13 +53,13 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforgespi.language.IModInfo;
-import varmite.verity.entity.LLM.LLMUtility;
-import varmite.verity.entity.LLM.store.memory.VerityMemoryManager;
+import varmite.verity.entity.llm.LLMUtility;
+import varmite.verity.entity.llm.store.memory.VerityMemoryManager;
 import varmite.verity.entity.VerityState;
-import varmite.verity.entity.custom.VerityDemonEntity;
-import varmite.verity.entity.custom.VerityEntity;
-import varmite.verity.item.ModItems;
-import varmite.verity.sounds.ModSounds;
+import varmite.verity.entity.demon.VerityDemonEntity;
+import varmite.verity.entity.verity.VerityEntity;
+import varmite.verity.environment.items.ModItems;
+import varmite.verity.environment.sounds.ModSounds;
 import varmite.verity.event.ModEvents;
 import varmite.verity.event.WorldSpawnData;
 import varmite.verity.triggers.ModTriggers;

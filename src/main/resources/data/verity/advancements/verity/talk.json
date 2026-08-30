@@ -1,13 +1,14 @@
 {
+  "parent": "verity:verity/root",
   "display": {
     "icon": {
-      "id": "verity:verity_item"
+      "item": "verity:verity_item"
     },
     "title": {
-      "translate": "advancements.verity.talk.title"
+      "text": "Talk to Verity"
     },
     "description": {
-      "translate": "advancements.verity.talk.description"
+      "text": "Introduce yourself."
     },
     "frame": "task",
     "show_toast": true,
@@ -23,6 +24,5 @@
     [
       "talk"
     ]
-  ],
-  "parent": "verity:verity/root"
+  ]
 }

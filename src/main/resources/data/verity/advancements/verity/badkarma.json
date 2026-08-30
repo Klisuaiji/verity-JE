@@ -1,13 +1,14 @@
 {
+  "parent": "verity:verity/karmachange",
   "display": {
     "icon": {
-      "id": "minecraft:rotten_flesh"
+      "item": "minecraft:rotten_flesh"
     },
     "title": {
-      "translate": "advancements.verity.badkarma.title"
+      "text": "I have feelings too"
     },
     "description": {
-      "translate": "advancements.verity.badkarma.description"
+      "text": "Make Verity mad."
     },
     "frame": "task",
     "show_toast": true,
@@ -23,6 +24,5 @@
     [
       "badkarma"
     ]
-  ],
-  "parent": "verity:verity/karmachange"
+  ]
 }

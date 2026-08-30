@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 public class OpenBoxTrigger extends SimpleCriterionTrigger<OpenBoxTrigger.TriggerInstance> {
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath("verity", "openbox");
+    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath("verity", "open_box");
     public ResourceLocation getId() { return ID; }
 
     @Override

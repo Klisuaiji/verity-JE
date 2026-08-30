@@ -1,28 +1,28 @@
 {
   "display": {
     "icon": {
-      "id": "verity:verity_item"
+      "item": "verity:verity_item"
     },
     "title": {
-      "translate": "advancements.verity.root.title"
+      "text": "Hello, I'm Verity"
     },
     "description": {
-      "translate": "advancements.verity.root.description"
+      "text": "Your minecraft helper friend."
     },
+    "background": "minecraft:textures/block/yellow_wool.png",
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,
-    "hidden": false,
-    "background": "minecraft:textures/block/yellow_wool.png"
+    "hidden": false
   },
   "criteria": {
-    "openbox": {
-      "trigger": "verity:openbox"
+    "open_box": {
+      "trigger": "verity:open_box"
     }
   },
   "requirements": [
     [
-      "openbox"
+      "open_box"
     ]
   ]
 }

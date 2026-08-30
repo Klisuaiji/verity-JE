@@ -6,7 +6,7 @@
  *  net.neoforged.api.distmarker.OnlyIn
  *  varmite.verity.client.audio.MicrophoneManager
  *  varmite.verity.client.audio.MicrophoneRecorder
- *  varmite.verity.entity.LLM.AiAPI
+ *  varmite.verity.entity.llm.AiAPI
  */
 package varmite.verity.client.audio;
 
@@ -22,7 +22,7 @@ import javax.sound.sampled.TargetDataLine;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import varmite.verity.client.audio.MicrophoneManager;
-import varmite.verity.entity.LLM.AiAPI;
+import varmite.verity.entity.llm.AiAPI;
 
 @OnlyIn(value=Dist.CLIENT)
 public class MicrophoneRecorder {

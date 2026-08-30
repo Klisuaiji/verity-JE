@@ -38,7 +38,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 import varmite.verity.entity.ModEntities;
-import varmite.verity.entity.custom.VerityEntity;
+import varmite.verity.entity.verity.VerityEntity;
 import varmite.verity.event.VeritySpawnScheduler;
 import varmite.verity.network.PlayTtsPayload;
 

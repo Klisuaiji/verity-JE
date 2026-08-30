@@ -12,7 +12,7 @@
  *  varmite.verity.client.KeybindRegistry
  *  varmite.verity.client.audio.MicrophoneManager
  *  varmite.verity.client.audio.MicrophoneRecorder
- *  varmite.verity.entity.LLM.AiAPI
+ *  varmite.verity.entity.llm.AiAPI
  */
 package varmite.verity.client;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -27,7 +27,7 @@ import net.neoforged.fml.common.Mod;
 import varmite.verity.client.KeybindRegistry;
 import varmite.verity.client.audio.MicrophoneManager;
 import varmite.verity.client.audio.MicrophoneRecorder;
-import varmite.verity.entity.LLM.AiAPI;
+import varmite.verity.entity.llm.AiAPI;
 
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 @EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.GAME, value={Dist.CLIENT})

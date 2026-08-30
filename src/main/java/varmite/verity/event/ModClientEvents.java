@@ -24,7 +24,7 @@
  *  varmite.verity.client.DynamicLightManager$Beam
  *  varmite.verity.client.IntroVideoScreen
  *  varmite.verity.event.ModClientEvents
- *  varmite.verity.item.ModItems
+ *  varmite.verity.environment.items.ModItems
  */
 package varmite.verity.event;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -52,7 +52,7 @@ import net.neoforged.fml.common.Mod;
 import varmite.verity.VerityConfig;
 import varmite.verity.client.DynamicLightManager;
 import varmite.verity.client.IntroVideoScreen;
-import varmite.verity.item.ModItems;
+import varmite.verity.environment.items.ModItems;
 
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderFrameEvent;

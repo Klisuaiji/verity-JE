@@ -1,13 +1,14 @@
 {
+  "parent": "verity:verity/talk",
   "display": {
     "icon": {
-      "id": "minecraft:creeper_head"
+      "item": "minecraft:creeper_head"
     },
     "title": {
-      "translate": "advancements.verity.playsound.title"
+      "text": "Make a sound"
     },
     "description": {
-      "translate": "advancements.verity.playsound.description"
+      "text": "Ask Verity to make a sound."
     },
     "frame": "task",
     "show_toast": true,
@@ -23,6 +24,5 @@
     [
       "playsound"
     ]
-  ],
-  "parent": "verity:verity/talk"
+  ]
 }

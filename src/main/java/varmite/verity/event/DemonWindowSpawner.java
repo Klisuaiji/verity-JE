@@ -16,7 +16,7 @@
  *  net.neoforged.bus.api.SubscribeEvent
  *  net.neoforged.fml.common.EventBusSubscriber
  *  varmite.verity.entity.ModEntities
- *  varmite.verity.entity.custom.VerityDemonEntity
+ *  varmite.verity.entity.demon.VerityDemonEntity
  *  varmite.verity.event.DemonWindowSpawner
  */
 package varmite.verity.event;
@@ -35,7 +35,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import varmite.verity.entity.ModEntities;
-import varmite.verity.entity.custom.VerityDemonEntity;
+import varmite.verity.entity.demon.VerityDemonEntity;
 
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 @EventBusSubscriber(modid="verity", bus=EventBusSubscriber.Bus.GAME)

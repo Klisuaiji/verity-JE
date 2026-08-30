@@ -1,13 +1,14 @@
 {
+  "parent": "verity:verity/talk",
   "display": {
     "icon": {
-      "id": "verity:verity_disc"
+      "item": "verity:verity_disc"
     },
     "title": {
-      "translate": "advancements.verity.favoritesong.title"
+      "text": "Favorite Song"
     },
     "description": {
-      "translate": "advancements.verity.favoritesong.description"
+      "text": "Ask Verity to play his favorite song."
     },
     "frame": "task",
     "show_toast": true,
@@ -23,6 +24,5 @@
     [
       "favoritesong"
     ]
-  ],
-  "parent": "verity:verity/talk"
+  ]
 }

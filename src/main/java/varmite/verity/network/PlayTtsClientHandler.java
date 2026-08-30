@@ -6,8 +6,8 @@
  *  net.minecraft.client.player.LocalPlayer
  *  net.minecraft.world.entity.Entity
  *  net.minecraft.world.entity.player.Player
- *  varmite.verity.entity.LLM.AiAPI
- *  varmite.verity.entity.custom.VerityEntity
+ *  varmite.verity.entity.llm.AiAPI
+ *  varmite.verity.entity.verity.VerityEntity
  *  varmite.verity.network.PlayTtsClientHandler
  *  varmite.verity.network.PlayTtsPayload
  */
@@ -17,8 +17,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import varmite.verity.entity.LLM.AiAPI;
-import varmite.verity.entity.custom.VerityEntity;
+import varmite.verity.entity.llm.AiAPI;
+import varmite.verity.entity.verity.VerityEntity;
 import varmite.verity.network.PlayTtsPayload;
 
 public class PlayTtsClientHandler {
