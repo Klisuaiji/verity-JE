@@ -1,12 +1,50 @@
-Copyright (c) 2026 Kulisaiji
+Copyright (c) 2026 Kulisaiji.
+Porting work (NeoForge/Fabric adaptation, localization, configuration) © 2026 Kulisaiji.
+All original Verity-JE code, including any decompiled output derived from Verity-JE,
+remains the copyright of the original author (ThatMob) and respective rights holders.
 
-本仓库所有代码（含反编译产物）的版权归属于原始模组作者。
-本仓库仅以“学习研究”目的提供代码阅读参考。
+This repository is published **without any open-source license**.
+No permission is granted to use, reproduce, modify, compile into distributable
+artifacts (.jar), redistribute, or create derivative works based on this code
+for any purpose other than **private study and research**.
 
-严禁以下行为：
-1. 编译本仓库代码生成可运行的 .jar 文件并进行二次分发，该编译产品仅供学习使用；
-2. 将本仓库代码用于任何商业用途；
-3. 将本仓库代码作为基础进行二次开发并发布；
-4. 移除或篡改本声明。
+You may:
+- View and read the source for learning purposes.
 
-本仓库不授予任何形式的开源许可。
+You may NOT:
+1. Compile this repository into a runnable .jar and redistribute it.
+2. Use this code for any commercial purpose.
+3. Use this repository as a base for secondary development and publish it.
+4. Remove or alter this notice.
+
+The decompiled portions are included only to aid understanding of the original
+work and do not transfer any rights to the reader.
+
+If you are the copyright holder of Verity-JE and object to this repository,
+please contact the porter for removal.
+
+==============================================================================
+
+版权所有 (c) 2026 Kulisaiji。
+移植工作（NeoForge/Fabric 适配、本地化、配置）© 2026 Kulisaiji。
+所有 Verity-JE 原始代码，包括任何由 Verity-JE 反编译得出的产物，
+其版权仍归原作者（ThatMob）及相关权利持有人所有。
+
+本仓库以**无开源许可证**方式发布。
+除**个人学习与研究**之外，不授予任何使用、复制、修改、编译为可分发包（.jar）、
+再分发或基于此代码创作衍生作品的权利。
+
+您可以：
+- 出于学习目的查看并阅读源代码。
+
+您不可以：
+1. 将本仓库编译为可运行的 .jar 并再分发。
+2. 将此代码用于任何商业用途。
+3. 以本仓库为基础进行二次开发并发布。
+4. 移除或更改本声明。
+
+反编译部分仅用于辅助理解原始作品，
+并不向读者转让任何权利。
+
+若您是 Verity-JE 的版权持有人且反对本仓库存在，
+请联系移植者要求移除。
