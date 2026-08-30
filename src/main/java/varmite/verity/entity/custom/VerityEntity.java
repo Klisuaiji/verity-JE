@@ -112,6 +112,7 @@ import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -272,7 +273,22 @@ extends PathfinderMob {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(1, (Goal)new FollowPlacerGoal(this, this, 1.25, 8.0f, 3.0f));
-        this.goalSelector.addGoal(2, (Goal)new Goal() { public boolean canUse() { return false; } });
+        // 5.7.4 — restores the "look at player" goal that the 5.7.3 port stubbed out with a
+        // no-op Goal (the obfuscated `f_25512_` reference could not be resolved at the time).
+        // Verity watches the player when placed / unboxed, but a *thrown* Verity is annoyed
+        // and deliberately ignores you — ModEvents sets "WasThrown"=true only on the throw path.
+        // NOTE: upstream 5.7.4 uses `contains("WasThrown")`, but ModEvents writes that tag in
+        // all three spawn paths (throw=true, unbox=false, place=false), so `contains` would
+        // disable the goal everywhere and make the two `false` writes meaningless.
+        // `getBoolean` is what those three write sites actually intend.
+        this.goalSelector.addGoal(2, (Goal)new LookAtPlayerGoal((Mob)this, Player.class, 3.0f) {
+            public boolean canUse() {
+                if (VerityEntity.this.getPersistentData().getBoolean("WasThrown")) {
+                    return false;
+                }
+                return super.canUse();
+            }
+        });
         this.goalSelector.addGoal(3, (Goal)new RandomLookAroundGoal((Mob)this));
     }
 

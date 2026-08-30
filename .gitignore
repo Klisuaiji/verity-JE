@@ -33,3 +33,7 @@ Thumbs.db
 
 # Porting tools (local utilities, not mod source)
 tools/
+build/
+.gradle/
+run/
+*.log

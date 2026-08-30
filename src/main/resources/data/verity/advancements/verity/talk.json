@@ -1,0 +1,28 @@
+{
+  "parent": "verity:verity/root",
+  "display": {
+    "icon": {
+      "item": "verity:verity_item"
+    },
+    "title": {
+      "text": "Talk to Verity"
+    },
+    "description": {
+      "text": "Introduce yourself."
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "talk": {
+      "trigger": "verity:talk"
+    }
+  },
+  "requirements": [
+    [
+      "talk"
+    ]
+  ]
+}
