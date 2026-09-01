@@ -277,10 +277,8 @@ extends PathfinderMob {
         // no-op Goal (the obfuscated `f_25512_` reference could not be resolved at the time).
         // Verity watches the player when placed / unboxed, but a *thrown* Verity is annoyed
         // and deliberately ignores you — ModEvents sets "WasThrown"=true only on the throw path.
-        // NOTE: upstream 5.7.4 uses `contains("WasThrown")`, but ModEvents writes that tag in
-        // all three spawn paths (throw=true, unbox=false, place=false), so `contains` would
-        // disable the goal everywhere and make the two `false` writes meaningless.
-        // `getBoolean` is what those three write sites actually intend.
+        // NOTE: upstream 5.7.4 also reads this tag via `getBoolean` (verified against the
+        // jar bytecode), matching the three spawn-path writes below.
         this.goalSelector.addGoal(2, (Goal)new LookAtPlayerGoal((Mob)this, Player.class, 3.0f) {
             public boolean canUse() {
                 if (VerityEntity.this.getPersistentData().getBoolean("WasThrown")) {

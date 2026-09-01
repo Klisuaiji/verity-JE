@@ -242,13 +242,17 @@ public class AiAPI {
                     root.addProperty("think", (Boolean)VerityConfig.THINKING_MODE.get());
                 }
             } else {
-                String modelId = "llama-3.3-70b-versatile";
+                String modelId = "";
+                if (provider == AiProvider.GROQ) {
+                    modelId = "openai/gpt-oss-120b";
+                    if (currentModel == AiModel.FAST_LITE) {
+                        modelId = "qwen/qwen3.6-27b";
+                    } else if (currentModel == AiModel.FAST) {
+                        modelId = "openai/gpt-oss-20b";
+                    }
+                }
                 if (provider == AiProvider.OPENROUTER) {
                     modelId = currentModel == AiModel.INTELLIGENT ? "openai/gpt-oss-120b" : "meta-llama/llama-3.1-70b-instruct";
-                } else if (currentModel == AiModel.FAST_LITE) {
-                    modelId = "llama-3.1-8b-instant";
-                } else if (currentModel == AiModel.FAST) {
-                    modelId = "llama-3.3-70b-versatile";
                 }
                 root.addProperty("model", modelId);
             }
