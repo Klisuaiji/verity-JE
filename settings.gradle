@@ -1,0 +1,14 @@
+pluginManagement {
+    repositories {
+        // Plugin Portal first: it carries the full plugin-marker (jar + pom) for
+        // net.neoforged.moddev, so Gradle's marker probe succeeds here.
+        gradlePluginPortal()
+        // NeoForge artifacts mirror (SJTUG BMCLAPI). The canonical maven.neoforged.net
+        // host is unreachable from this environment; this mirror serves the same files.
+        maven { url "https://mirror.sjtu.edu.cn/bmclapi/" }
+    }
+}
+
+// Foojay toolchain resolver intentionally omitted: JDK 21 is supplied explicitly
+// (CI via setup-java, local builds via _toolchain/jdk21) and auto-download is disabled
+// in gradle.properties. Keeping it would require an extra plugin download.

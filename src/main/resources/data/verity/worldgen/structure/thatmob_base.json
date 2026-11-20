@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:jigsaw",
+  "biomes": [
+    "minecraft:plains"
+  ],
+  "step": "surface_structures",
+  "terrain_adaptation": "beard_thin",
+  "spawn_overrides": {},
+  "start_pool": "verity:thatmob_base",
+  "size": 1,
+  "start_height": {
+    "absolute": -12
+  },
+  "project_start_to_heightmap": "WORLD_SURFACE_WG",
+  "max_distance_from_center": 1,
+  "use_expansion_hack": false
+}

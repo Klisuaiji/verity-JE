@@ -1,0 +1,756 @@
+/*
+ * Decompiled with CFR 0.152.
+ * 
+ * Could not load the following classes:
+ *  com.google.gson.JsonObject
+ *  com.google.gson.JsonParser
+ *  javax.annotation.Nullable
+ *  net.minecraft.core.BlockPos
+ *  net.minecraft.core.Vec3i
+ *  net.minecraft.core.particles.ParticleOptions
+ *  net.minecraft.core.particles.ParticleTypes
+ *  net.minecraft.nbt.CompoundTag
+ *  net.minecraft.network.chat.Component
+ *  net.minecraft.network.syncher.EntityDataAccessor
+ *  net.minecraft.network.syncher.EntityDataSerializer
+ *  net.minecraft.network.syncher.EntityDataSerializers
+ *  net.minecraft.network.syncher.SynchedEntityData
+ *  net.minecraft.resources.ResourceLocation
+ *  net.minecraft.server.level.ServerLevel
+ *  net.minecraft.sounds.SoundEvent
+ *  net.minecraft.sounds.SoundEvents
+ *  net.minecraft.sounds.SoundSource
+ *  net.minecraft.tags.DamageTypeTags
+ *  net.minecraft.util.Mth
+ *  net.minecraft.world.Difficulty
+ *  net.minecraft.world.DifficultyInstance
+ *  net.minecraft.world.damagesource.DamageSource
+ *  net.minecraft.world.damagesource.DamageTypes
+ *  net.minecraft.world.entity.Entity
+ *  net.minecraft.world.entity.Entity$RemovalReason
+ *  net.minecraft.world.entity.EntityType
+ *  net.minecraft.world.entity.EquipmentSlot
+ *  net.minecraft.world.entity.HumanoidArm
+ *  net.minecraft.world.entity.LivingEntity
+ *  net.minecraft.world.entity.Mob
+ *  net.minecraft.world.entity.MobSpawnType
+ *  net.minecraft.world.entity.PathfinderMob
+ *  net.minecraft.world.entity.SpawnGroupData
+ *  net.minecraft.world.entity.ai.attributes.AttributeSupplier$Builder
+ *  net.minecraft.world.entity.ai.attributes.Attributes
+ *  net.minecraft.world.entity.ai.goal.Goal
+ *  net.minecraft.world.entity.ai.goal.RandomLookAroundGoal
+ *  net.minecraft.world.entity.player.Player
+ *  net.minecraft.world.item.ItemStack
+ *  net.minecraft.world.level.BlockGetter
+ *  net.minecraft.world.level.ChunkPos
+ *  net.minecraft.world.level.GameRules
+ *  net.minecraft.world.level.GameRules$BooleanValue
+ *  net.minecraft.world.level.Level
+ *  net.minecraft.world.level.ServerLevelAccessor
+ *  net.minecraft.world.level.block.FallingBlock
+ *  net.minecraft.world.level.block.state.BlockState
+ *  net.minecraft.world.level.levelgen.Heightmap$Types
+ *  net.minecraft.world.phys.Vec3
+ *  net.neoforged.neoforge.network.PacketDistributor
+ *  varmite.verity.VerityConfig
+ *  varmite.verity.entity.llm.AiManager
+ *  varmite.verity.entity.ModEntities
+ *  varmite.verity.entity.verity.rendering.VerityEntityTexture
+ *  varmite.verity.entity.veritybox.BoxEntity
+ *  varmite.verity.entity.demon.VerityDemonEntity
+ *  varmite.verity.entity.verity.VerityEntity
+ *  varmite.verity.entity.verity.VerityEntity$FollowPlacerGoal
+ *  varmite.verity.event.ModEvents
+ *  varmite.verity.event.WorldSpawnData
+ *  varmite.verity.network.ModNetwork
+ *  varmite.verity.network.PlayTtsPayload
+ *  varmite.verity.environment.sounds.ModSounds
+ */
+package varmite.verity.entity.verity;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import javax.annotation.Nullable;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.Mth;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.entity.EntityTypeTest;
+import net.minecraft.world.phys.AABB;
+import java.util.EnumSet;
+import net.neoforged.neoforge.network.PacketDistributor;
+import varmite.verity.VerityConfig;
+import varmite.verity.entity.llm.AiManager;
+import varmite.verity.entity.ModEntities;
+import varmite.verity.entity.verity.rendering.VerityEntityTexture;
+import varmite.verity.entity.veritybox.BoxEntity;
+import varmite.verity.entity.demon.VerityDemonEntity;
+import varmite.verity.entity.verity.VerityEntity;
+import varmite.verity.event.ModEvents;
+import varmite.verity.event.WorldSpawnData;
+import varmite.verity.network.PlayTtsPayload;
+import varmite.verity.environment.sounds.ModSounds;
+
+/*
+ * Exception performing whole class analysis ignored.
+ */
+public class VerityEntity
+extends PathfinderMob {
+    private ChunkPos lastForcedChunk = null;
+    private volatile boolean isAiProcessing = false;
+    private int lastTriggerTick = -100;
+    private static final EntityDataAccessor<String> TEXTURE_PATH = SynchedEntityData.defineId(VerityEntity.class, (EntityDataSerializer)EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<Boolean> IS_TALKING = SynchedEntityData.defineId(VerityEntity.class, (EntityDataSerializer)EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> TALK_FRAME = SynchedEntityData.defineId(VerityEntity.class, (EntityDataSerializer)EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> BOUNCE_START_TICK = SynchedEntityData.defineId(VerityEntity.class, (EntityDataSerializer)EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Optional<UUID>> OWNER_UUID = SynchedEntityData.defineId(VerityEntity.class, (EntityDataSerializer)EntityDataSerializers.OPTIONAL_UUID);
+    public static final EntityDataAccessor<Boolean> IS_MONSTROUS = SynchedEntityData.defineId(VerityEntity.class, (EntityDataSerializer)EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Integer> APOLOGY_COUNT = SynchedEntityData.defineId(VerityEntity.class, (EntityDataSerializer)EntityDataSerializers.INT);
+    private final List<UUID> playersWhoLooked = new ArrayList();
+    public int pleadingTimer = -1;
+    private int consecutiveBadMessages = 0;
+    private int talkTicks = 0;
+    private int talkEndTick = -1;
+    public int animationTicks = 140;
+    public int clientAnimationTicks = -1;
+    public int clientIntroTicks = 0;
+    public int clientIntroDelay = 0;
+    public volatile boolean clientIsTalking = false;
+    public float clientRollAngle = 0.0f;
+    public float clientRollAngleO = 0.0f;
+    private boolean hasTriggeredDay2 = false;
+    public static final List<String> VALID_VARIANTS = List.of("crazy_talking", "happy", "happy_sleep", "happy_talking", "hurt", "neutral", "noface", "serious_1", "serious_2", "serious_3", "serious_talking", "evil", "evil_talking", "smiling_evil", "crazy", "neutral_talking");
+    public static final String VARIANT_DEFAULT = "happy";
+
+    public VerityEntity(EntityType<? extends PathfinderMob> type, Level level) {
+        super(type, level);
+        this.noCulling = true;
+        this.setPersistenceRequired();
+    }
+
+    public boolean isPushable() {
+        return true;
+    }
+
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(TEXTURE_PATH, "verity:textures/entity/happy.png");
+        builder.define(IS_TALKING, false);
+        builder.define(TALK_FRAME, 0);
+        builder.define(BOUNCE_START_TICK, -1000);
+        builder.define(OWNER_UUID, Optional.empty());
+        builder.define(IS_MONSTROUS, false);
+        builder.define(APOLOGY_COUNT, 0);
+    }
+
+    public Optional<UUID> getOwnerUUID() {
+        return (Optional)this.entityData.get(OWNER_UUID);
+    }
+
+    public void setOwnerUUID(@Nullable UUID uuid) {
+        this.entityData.set(OWNER_UUID, Optional.ofNullable(uuid));
+    }
+
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData) {
+        List<Player> nearby = this.level().getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox().inflate(10.0), e -> true);
+        Player closestPlayer = null;
+        double closestDist = Double.MAX_VALUE;
+        for (Player p : nearby) {
+            double d = p.distanceToSqr(this);
+            if (d < closestDist) {
+                closestDist = d;
+                closestPlayer = p;
+            }
+        }
+        if (closestPlayer != null) {
+            this.setOwnerUUID(closestPlayer.getUUID());
+        }
+        return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData);
+    }
+
+    public void triggerBoxDrop() {
+        if (!this.level().isClientSide) {
+            this.getServer().execute(() -> {
+                WorldSpawnData data = WorldSpawnData.get((ServerLevel)((ServerLevel)this.level()));
+                data.verityKarma = 10.0f;
+                data.setDirty();
+            });
+            this.setVariant("hurt");
+            this.animationTicks = 0;
+            this.entityData.set(BOUNCE_START_TICK, 1);
+        }
+    }
+
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+        super.onSyncedDataUpdated(key);
+        if (this.level().isClientSide && BOUNCE_START_TICK.equals(key) && (Integer)this.entityData.get(BOUNCE_START_TICK) > 0) {
+            this.clientAnimationTicks = 50;
+        }
+    }
+
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
+        if (!this.level().isClientSide) {
+            if (fallDistance > 0.75f) {
+                ModEvents.schedule(() -> {
+                    if (!this.isRemoved()) {
+                        double bounceStrength = Math.min(Math.sqrt(fallDistance) * 0.22, 0.7);
+                        this.setDeltaMovement(this.getDeltaMovement().x, bounceStrength, this.getDeltaMovement().z);
+                        this.hasImpulse = true;
+                        int i = this.random.nextInt(3);
+                        this.setVariant("hurt");
+                        PacketDistributor.sendToPlayersTrackingEntityAndSelf(this, new PlayTtsPayload(this.getId(), "Ouch"));
+                        if (i == 0) {
+                            this.playSound((SoundEvent)ModSounds.IMPACT_0.get(), 1.0f, 1.0f);
+                        } else if (i == 1) {
+                            this.playSound((SoundEvent)ModSounds.IMPACT_1.get(), 1.0f, 1.0f);
+                        } else {
+                            this.playSound((SoundEvent)ModSounds.IMPACT_2.get(), 1.0f, 1.0f);
+                        }
+                    }
+                }, (int)1);
+                ModEvents.schedule(() -> {
+                    if (!this.isRemoved()) {
+                        this.setVariant("happy");
+                    }
+                }, (int)20);
+            }
+            this.resetFallDistance();
+        }
+        return false;
+    }
+
+    protected void registerGoals() {
+        super.registerGoals();
+        this.goalSelector.addGoal(1, (Goal)new FollowPlacerGoal(this, this, 1.25, 8.0f, 3.0f));
+        this.goalSelector.addGoal(2, (Goal)new Goal() { public boolean canUse() { return false; } });
+        this.goalSelector.addGoal(3, (Goal)new RandomLookAroundGoal((Mob)this));
+    }
+
+    public void tick() {
+        Vec3 motionBeforeCollision = this.getDeltaMovement();
+        super.tick();
+        if (this.level().isClientSide) {
+            double dz;
+            this.clientRollAngleO = this.clientRollAngle;
+            double dx = this.getX() - this.xo;
+            double distanceMoved = Math.sqrt(dx * dx + (dz = this.getZ() - this.zo) * dz);
+            if (distanceMoved > 0.005) {
+                this.clientRollAngle += (float)(distanceMoved * 150.0);
+            }
+            if (this.clientAnimationTicks > 0) {
+                --this.clientAnimationTicks;
+            } else if (this.clientAnimationTicks == 0) {
+                this.clientAnimationTicks = -1;
+                this.setVariant("happy");
+                this.clientIntroDelay = 10;
+            }
+            if (this.clientIntroDelay > 0) {
+                --this.clientIntroDelay;
+                if (this.clientIntroDelay == 0) {
+                    this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), (SoundEvent)ModSounds.INTRODUCTION.get(), this.getSoundSource(), 1.0f, 1.0f, false);
+                    this.clientIntroTicks = 90;
+                }
+            }
+            if (this.clientIntroTicks > 0) {
+                --this.clientIntroTicks;
+            } else if (this.clientIntroTicks < 0) {
+                this.clientIntroTicks = 0;
+            }
+        } else {
+            Player player;
+            Player player2;
+            boolean destroyed;
+            ServerLevel serverLevel = (ServerLevel)this.level();
+            ChunkPos currentChunk = this.chunkPosition();
+            long currentDay = serverLevel.getDayTime() / 24000L;
+            WorldSpawnData data = WorldSpawnData.get((ServerLevel)serverLevel);
+            BlockState currentBlockState = serverLevel.getBlockState(this.blockPosition());
+            if (currentBlockState.getBlock() instanceof FallingBlock && (destroyed = serverLevel.removeBlock(this.blockPosition(), false)) && this.tickCount - this.lastTriggerTick > 100) {
+                this.lastTriggerTick = this.tickCount;
+                AiManager.queryAI(this, "<SYSTEM> The player just dropped a block on verity during this turn. React with very short, angry sentences.", null);
+            }
+            if (this.lastForcedChunk == null || !this.lastForcedChunk.equals((Object)currentChunk)) {
+                if (this.lastForcedChunk != null) {
+                    serverLevel.setChunkForced(this.lastForcedChunk.x, this.lastForcedChunk.z, false);
+                }
+                serverLevel.setChunkForced(currentChunk.x, currentChunk.z, true);
+                this.lastForcedChunk = currentChunk;
+            }
+            if (this.isMonstrous()) {
+                if (this.pleadingTimer > 0) {
+                    --this.pleadingTimer;
+                } else if (this.pleadingTimer == 0) {
+                    this.setMonstrous(false);
+                    this.setApologyCount(0);
+                    this.clearPlayersWhoLooked();
+                    this.setVariant("evil");
+                    this.pleadingTimer = -1;
+                }
+                List<Player> nearbyPlayers = this.level().getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox().inflate(10.0), e -> true);
+                for (Player nearbyPlayer : nearbyPlayers) {
+                    if (!this.isPlayerLookingAtMe(nearbyPlayer)) continue;
+                    this.addPlayerWhoLooked(nearbyPlayer.getUUID());
+                }
+            }
+            if (this.horizontalCollision) {
+                double newX = this.getDeltaMovement().x;
+                double newZ = this.getDeltaMovement().z;
+                boolean bounced = false;
+                if (Math.abs(motionBeforeCollision.x) > 0.1 && Math.abs(newX) < 0.02) {
+                    newX = -motionBeforeCollision.x * 0.6;
+                    bounced = true;
+                }
+                if (Math.abs(motionBeforeCollision.z) > 0.1 && Math.abs(newZ) < 0.02) {
+                    newZ = -motionBeforeCollision.z * 0.6;
+                    bounced = true;
+                }
+                if (bounced) {
+                    this.setDeltaMovement(newX, this.getDeltaMovement().y, newZ);
+                    this.hasImpulse = true;
+                    int i = this.random.nextInt(3);
+                    this.setVariant("hurt");
+                    if (i == 0) {
+                        this.playSound((SoundEvent)ModSounds.IMPACT_0.get(), 1.0f, 1.0f);
+                    } else if (i == 1) {
+                        this.playSound((SoundEvent)ModSounds.IMPACT_1.get(), 1.0f, 1.0f);
+                    } else {
+                        this.playSound((SoundEvent)ModSounds.IMPACT_2.get(), 1.0f, 1.0f);
+                    }
+                }
+            }
+            if (this.blockPosition().getY() <= -63) {
+                this.setDeltaMovement(0.0, 0.0, 0.0);
+                this.hasImpulse = true;
+            }
+            if ((Integer)this.entityData.get(BOUNCE_START_TICK) > 0 && this.tickCount > 100) {
+                this.entityData.set(BOUNCE_START_TICK, -1000);
+            }
+            this.talkTicks = this.isTalking() ? ++this.talkTicks : 0;
+            serverLevel = (ServerLevel)this.level();
+            currentDay = serverLevel.getDayTime() / 24000L;
+            WorldSpawnData worldSpawnData = WorldSpawnData.get((ServerLevel)serverLevel);
+            float currentKarma = worldSpawnData.verityKarma;
+            if (currentDay >= (long)((Integer)VerityConfig.DAY_COUNT.get()).intValue() && currentKarma < 9000.0f && !worldSpawnData.hasSpawnedDemon && !this.isRemoved() && (player2 = this.nearestPlayer(64.0)) != null && this.transformIntoDemon(player2)) {
+                this.setVariant("noface");
+                worldSpawnData.hasSpawnedDemon = true;
+                worldSpawnData.setDirty();
+            }
+            if (currentDay >= ModEvents.timeWillSpawn && ModEvents.transformFollowingDay && !worldSpawnData.hasSpawnedDemonAngered && !this.isRemoved() && (player = this.nearestPlayer(64.0)) != null && this.transformIntoDemon(player)) {
+                this.setVariant("noface");
+                worldSpawnData.hasSpawnedDemonAngered = true;
+                worldSpawnData.setDirty();
+            }
+            if (this.animationTicks < 60) {
+                ++this.animationTicks;
+                if (this.animationTicks == 50) {
+                    this.setVariant("happy");
+                }
+            }
+            if (this.tickCount % 40 == 0 && (currentDay = serverLevel.getDayTime() / 24000L) >= (long)((Integer)VerityConfig.DAY_COUNT.get() / 2) && !this.hasTriggeredDay2 && currentKarma < 9000.0f) {
+                this.hasTriggeredDay2 = true;
+                ((GameRules.BooleanValue)serverLevel.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING)).set(false, serverLevel.getServer());
+                ArrayList<Entity> entitiesToKill = new ArrayList<Entity>();
+                for (Entity entity : serverLevel.getAllEntities()) {
+                    if (entity instanceof Player || entity instanceof VerityEntity || entity instanceof BoxEntity || entity instanceof VerityDemonEntity || !(entity instanceof LivingEntity)) continue;
+                    entitiesToKill.add(entity);
+                }
+                for (Entity entity : entitiesToKill) {
+                    entity.kill();
+                }
+            }
+            if (this.isTalking() && this.talkEndTick > 0 && this.tickCount >= this.talkEndTick) {
+                this.stopTalking();
+            }
+        }
+    }
+
+    public void onRemovedFromLevel() {
+        if (!this.level().isClientSide() && this.lastForcedChunk != null) {
+            ((ServerLevel)this.level()).setChunkForced(this.lastForcedChunk.x, this.lastForcedChunk.z, false);
+            this.lastForcedChunk = null;
+        }
+        super.onRemovedFromLevel();
+    }
+
+    private static String extractJson(String raw) {
+        int start = raw.indexOf(123);
+        int end = raw.lastIndexOf(125);
+        if (start != -1 && end != -1 && end >= start) {
+            return raw.substring(start, end + 1);
+        }
+        return raw;
+    }
+
+    public boolean isPersistenceRequired() {
+        return true;
+    }
+
+    private boolean transformIntoDemon(Player player) {
+        if (player.level().getDifficulty() == Difficulty.PEACEFUL) {
+            return false;
+        }
+        ServerLevel serverLevel = (ServerLevel)this.level();
+        for (Entity entity : serverLevel.getAllEntities()) {
+            if (!(entity instanceof VerityDemonEntity)) continue;
+            return false;
+        }
+        ModEvents.transformFollowingDay = false;
+        if ((Integer)VerityConfig.DAY_COUNT.get() <= (int)player.level().getDayTime() / 24000) {
+            VerityConfig.DAY_COUNT.set(((int)player.level().getDayTime() / 24000));
+        }
+        ModEvents.timeWillSpawn = 0L;
+        BlockPos spawnPos = this.getCreepyDemonSpawnPos(serverLevel, player.blockPosition());
+        Entity demonEntity = ((EntityType)ModEntities.VERITY_DEMON_ENTITY.get()).spawn(serverLevel, spawnPos, MobSpawnType.CONVERSION);
+        if (demonEntity != null) {
+            this.setMonstrous(true);
+            this.setApologyCount(0);
+            this.clearPlayersWhoLooked();
+            this.pleadingTimer = 6000;
+            player.sendSystemMessage((Component)Component.translatable("verity.msg.face_blank"));
+            double dX = player.getX() - demonEntity.getX();
+            double dZ = player.getZ() - demonEntity.getZ();
+            double dY = player.getEyeY() - demonEntity.getEyeY();
+            float yaw = (float)(Mth.atan2((double)dZ, (double)dX) * 57.29577951308232) - 90.0f;
+            float pitch = (float)(-(Mth.atan2((double)dY, (double)Math.sqrt(dX * dX + dZ * dZ)) * 57.29577951308232));
+            demonEntity.setYRot(yaw);
+            demonEntity.setYHeadRot(yaw);
+            demonEntity.setXRot(pitch);
+            demonEntity.yRotO = yaw;
+            demonEntity.xRotO = pitch;
+            long currentDay = serverLevel.getDayTime() / 24000L;
+            serverLevel.setDayTime(currentDay * 24000L + 18000L);
+            serverLevel.playSound((Player)null, player.blockPosition(), SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 1.0f, 0.5f);
+            serverLevel.sendParticles((ParticleOptions)ParticleTypes.LARGE_SMOKE, this.getX(), this.getY() + 1.0, this.getZ(), 30, 0.5, 0.5, 0.5, 0.05);
+            return true;
+        }
+        return false;
+    }
+
+    private BlockPos getCreepyDemonSpawnPos(ServerLevel level, BlockPos playerPos) {
+        boolean isAboveGround = level.canSeeSky(playerPos) || playerPos.getY() >= level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, playerPos).getY() - 2;
+        int attempts = 40;
+        BlockPos verityPos = this.blockPosition();
+        for (int i = 0; i < attempts; ++i) {
+            int dz;
+            int dx = (this.random.nextBoolean() ? 1 : -1) * (this.random.nextInt(16) + 16);
+            BlockPos checkPos = playerPos.offset(dx, 0, dz = (this.random.nextBoolean() ? 1 : -1) * (this.random.nextInt(16) + 16));
+            if (checkPos.distSqr((Vec3i)verityPos) < 256.0) continue;
+            if (isAboveGround) {
+                BlockPos surfacePos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, checkPos);
+                if (!level.getBlockState(surfacePos.below()).isSolidRender((BlockGetter)level, surfacePos.below())) continue;
+                return surfacePos;
+            }
+            for (int dy = -4; dy <= 4; ++dy) {
+                BlockPos cavePos = checkPos.offset(0, dy, 0);
+                if (!level.isEmptyBlock(cavePos) || !level.isEmptyBlock(cavePos.above()) || !level.getBlockState(cavePos.below()).isSolidRender((BlockGetter)level, cavePos.below()) || level.canSeeSky(cavePos)) continue;
+                return cavePos;
+            }
+        }
+        BlockPos fallbackPos = verityPos.offset(16, 0, 16);
+        if (isAboveGround) {
+            return level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, fallbackPos);
+        }
+        return fallbackPos;
+    }
+
+    public void startTalking(int durationTicks) {
+        if (!this.level().isClientSide) {
+            this.entityData.set(IS_TALKING, true);
+            this.entityData.set(TALK_FRAME, this.random.nextInt(2));
+            this.talkTicks = 0;
+            this.talkEndTick = durationTicks > 0 ? this.tickCount + durationTicks : -1;
+        }
+    }
+
+    public void stopTalking() {
+        if (!this.level().isClientSide) {
+            this.entityData.set(IS_TALKING, false);
+            this.talkTicks = 0;
+            this.talkEndTick = -1;
+        }
+    }
+
+    public boolean hasCustomName() {
+        return super.hasCustomName();
+    }
+
+    public boolean shouldShowName() {
+        return false;
+    }
+
+    public boolean isTalking() {
+        return (Boolean)this.entityData.get(IS_TALKING);
+    }
+
+    public boolean isMonstrous() {
+        return (Boolean)this.entityData.get(IS_MONSTROUS);
+    }
+
+    public void setMonstrous(boolean monstrous) {
+        this.entityData.set(IS_MONSTROUS, monstrous);
+    }
+
+    public int getApologyCount() {
+        return (Integer)this.entityData.get(APOLOGY_COUNT);
+    }
+
+    public void setApologyCount(int count) {
+        this.entityData.set(APOLOGY_COUNT, count);
+    }
+
+    public void addPlayerWhoLooked(UUID playerUUID) {
+        if (!this.playersWhoLooked.contains(playerUUID)) {
+            this.playersWhoLooked.add(playerUUID);
+        }
+    }
+
+    public boolean hasPlayerLooked(UUID playerUUID) {
+        return this.playersWhoLooked.contains(playerUUID);
+    }
+
+    public void clearPlayersWhoLooked() {
+        this.playersWhoLooked.clear();
+    }
+
+    public String getVariant() {
+        String path = this.getTexturePath();
+        if (path == null) {
+            return "happy";
+        }
+        String fileName = path.substring(path.lastIndexOf(47) + 1);
+        if (fileName.endsWith(".png")) {
+            fileName = fileName.substring(0, fileName.length() - 4);
+        }
+        return fileName;
+    }
+
+    public ResourceLocation getTextureRL() {
+        ResourceLocation texture;
+        String path = this.getTexturePath();
+        if (path == null) {
+            texture = ResourceLocation.fromNamespaceAndPath("verity", "textures/entity/happy.png");
+        } else {
+            boolean visuallyTalking;
+            boolean bl = visuallyTalking = this.isTalking() || this.clientIsTalking || this.clientIntroTicks > 0;
+            if (!visuallyTalking) {
+                texture = ResourceLocation.parse(path);
+            } else {
+                String fileName;
+                String talkingTexture = switch (fileName = path.substring(path.lastIndexOf(47) + 1).replace(".png", "")) {
+                    case "happy" -> "happy_talking";
+                    case "crazy" -> "crazy_talking";
+                    case "evil" -> "evil_talking";
+                    case "serious_1", "serious_2", "serious_3" -> "serious_talking";
+                    default -> fileName;
+                };
+                texture = ResourceLocation.fromNamespaceAndPath("verity", "textures/entity/" + talkingTexture + ".png");
+            }
+        }
+        VerityEntityTexture.setBaseTexture((ResourceLocation)texture);
+        VerityEntityTexture.applyHue((int)((Integer)VerityConfig.COLOR.get()));
+        return VerityEntityTexture.id();
+    }
+
+    public void setVariant(String variant) {
+        if (variant == null) {
+            variant = "happy";
+        }
+        if (variant.endsWith(".png")) {
+            variant = variant.replace(".png", "");
+        }
+        if (!VALID_VARIANTS.contains(variant)) {
+            int threshold;
+            long currentDay = this.level().getDayTime() / 24000L;
+            variant = currentDay >= (long)(threshold = Math.max(1, (Integer)VerityConfig.DAY_COUNT.get() / 2)) ? "evil" : "happy";
+        }
+        this.entityData.set(TEXTURE_PATH, ("verity:textures/entity/" + variant + ".png"));
+    }
+
+    public String getTexturePath() {
+        return (String)this.entityData.get(TEXTURE_PATH);
+    }
+
+    public void setTexturePath(String path) {
+        this.entityData.set(TEXTURE_PATH, path);
+    }
+
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putString("TexturePath", this.getTexturePath());
+        tag.putBoolean("HasTriggeredDay2", this.hasTriggeredDay2);
+        tag.putInt("ConsecutiveBadMessages", this.consecutiveBadMessages);
+        tag.putBoolean("IsMonstrous", this.isMonstrous());
+        tag.putInt("ApologyCount", this.getApologyCount());
+        tag.putInt("PleadingTimer", this.pleadingTimer);
+        if (this.getOwnerUUID().isPresent()) {
+            tag.putUUID("Owner", (UUID)this.getOwnerUUID().get());
+        }
+    }
+
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        String path = tag.getString("TexturePath");
+        if (path == null || path.isBlank() || path.contains("null.png")) {
+            path = "verity:textures/entity/happy.png";
+        }
+        this.setTexturePath(path);
+        if (tag.contains("HasTriggeredDay2")) {
+            this.hasTriggeredDay2 = tag.getBoolean("HasTriggeredDay2");
+        }
+        if (tag.contains("ConsecutiveBadMessages")) {
+            this.consecutiveBadMessages = tag.getInt("ConsecutiveBadMessages");
+        }
+        if (tag.hasUUID("Owner")) {
+            this.setOwnerUUID(tag.getUUID("Owner"));
+        }
+        if (tag.contains("IsMonstrous")) {
+            this.setMonstrous(tag.getBoolean("IsMonstrous"));
+        }
+        if (tag.contains("ApologyCount")) {
+            this.setApologyCount(tag.getInt("ApologyCount"));
+        }
+        if (tag.contains("PleadingTimer")) {
+            this.pleadingTimer = tag.getInt("PleadingTimer");
+        }
+    }
+
+    public boolean isPlayerLookingAtMe(Player player) {
+        Vec3 normalizedToVerity;
+        Vec3 eyePosition = player.getEyePosition();
+        Vec3 lookVector = player.getViewVector(1.0f);
+        Vec3 verityCenter = this.getBoundingBox().getCenter();
+        Vec3 toVerity = verityCenter.subtract(eyePosition);
+        Vec3 normalizedLook = lookVector.normalize();
+        double dotProduct = normalizedLook.dot(normalizedToVerity = toVerity.normalize());
+        return dotProduct > 0.95 && (double)player.distanceTo((Entity)this) < 20.0;
+    }
+
+    public boolean isInvulnerableTo(DamageSource source) {
+        if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return false;
+        }
+        return !source.is(DamageTypes.IN_WALL) && !source.is(DamageTypes.FALLING_BLOCK) && !source.is(DamageTypes.FALLING_ANVIL) && !source.is(DamageTypeTags.IS_FIRE) && !source.is(DamageTypes.LAVA) && !source.is(DamageTypes.FALL);
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return LivingEntity.createLivingAttributes().add(Attributes.MAX_HEALTH, 20.0).add(Attributes.MOVEMENT_SPEED, 0.25).add(Attributes.FOLLOW_RANGE, 32.0);
+    }
+
+    public Iterable<ItemStack> getArmorSlots() {
+        return Collections.emptyList();
+    }
+
+    public ItemStack getItemBySlot(EquipmentSlot slot) {
+        return ItemStack.EMPTY;
+    }
+
+    public HumanoidArm getMainArm() {
+        return HumanoidArm.RIGHT;
+    }
+
+    public void setItemSlot(EquipmentSlot slot, ItemStack stack) {
+    }
+
+    private Player nearestPlayer(double radius) {
+        List<Player> players = this.level().getEntities(EntityTypeTest.forClass(Player.class), this.getBoundingBox().inflate(radius), e -> true);
+        Player best = null;
+        double bestDist = Double.MAX_VALUE;
+        for (Player p : players) {
+            double d = p.distanceToSqr(this);
+            if (d < bestDist) {
+                bestDist = d;
+                best = p;
+            }
+        }
+        return best;
+    }
+
+    public void variantArea(double x, double y, double z, float yRot, float xRot) {
+        this.moveTo(x, y, z, yRot, xRot);
+    }
+
+    public static class FollowPlacerGoal extends Goal {
+        private final VerityEntity mob;
+        private final VerityEntity follow;
+        private final double speed;
+        private final float maxDist;
+        private final float minDist;
+
+        public FollowPlacerGoal(VerityEntity mob, VerityEntity follow, double speed, float maxDist, float minDist) {
+            this.mob = mob;
+            this.follow = follow;
+            this.speed = speed;
+            this.maxDist = maxDist;
+            this.minDist = minDist;
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            return this.follow != null && this.follow.isAlive();
+        }
+
+        @Override
+        public void tick() {
+            if (this.follow == null) {
+                return;
+            }
+            this.mob.getLookControl().setLookAt(this.follow, 10.0f, (float)this.mob.getMaxHeadYRot());
+            double d = this.mob.distanceToSqr(this.follow);
+            if (d > (double)(this.minDist * this.minDist)) {
+                this.mob.getNavigation().moveTo(this.follow, this.speed);
+            } else if (d < (double)(this.maxDist * this.maxDist)) {
+                this.mob.getNavigation().stop();
+            }
+        }
+    }
+}
+

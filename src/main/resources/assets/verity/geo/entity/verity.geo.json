@@ -1,0 +1,35 @@
+{
+	"format_version": "1.21.110",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.verity_item",
+				"texture_width": 16,
+				"texture_height": 16,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "body",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{
+							"origin": [-4, 0, 0.5],
+							"size": [8, 8, 0.01],
+							"uv": {
+								"north": {"uv": [0, 0], "uv_size": [16, 16]},
+								"east": {"uv": [2, 15.01563], "uv_size": [0.8125, 0.98437]},
+								"south": {"uv": [0, 0], "uv_size": [16, 16]},
+								"west": {"uv": [0, 15.14063], "uv_size": [0.70313, 0.85937]},
+								"up": {"uv": [1.20313, 0.90625], "uv_size": [-1.20313, -0.90625]},
+								"down": {"uv": [0.70313, 2.59375], "uv_size": [-0.70313, -0.59375]}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,28 @@
+{
+  "parent": "verity:verity/karmachange",
+  "display": {
+    "icon": {
+      "item": "minecraft:diamond"
+    },
+    "title": {
+      "text": "Friendy Minecraft Helper"
+    },
+    "description": {
+      "text": "Make Verity happy."
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "goodkarma": {
+      "trigger": "verity:goodkarma"
+    }
+  },
+  "requirements": [
+    [
+      "goodkarma"
+    ]
+  ]
+}
