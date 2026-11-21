@@ -33,7 +33,11 @@ public class VerityAbandonmentTracker {
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
-        ServerPlayer player = (ServerPlayer) event.getEntity();
+        // PlayerTickEvent.Post fires on both logical sides. Casting before the
+        // side check crashes singleplayer with LocalPlayer -> ServerPlayer.
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
         ServerLevel level = (ServerLevel) player.level();
         if (level.isClientSide()) {
             return;
