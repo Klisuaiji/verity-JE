@@ -12,3 +12,23 @@ pluginManagement {
 // Foojay toolchain resolver intentionally omitted: JDK 21 is supplied explicitly
 // (CI via setup-java, local builds via _toolchain/jdk21) and auto-download is disabled
 // in gradle.properties. Keeping it would require an extra plugin download.
+
+// Redirect the blocked canonical NeoForge Maven host to the official CDN.
+// Only the host changes: /releases/ and /mojang-meta/ host different artifacts.
+// This lives here so `./gradlew build` works without passing an external -I script.
+gradle.projectsLoaded {
+    gradle.rootProject.allprojects { p ->
+        def redirectRepo = { repo ->
+            if (repo instanceof org.gradle.api.artifacts.repositories.MavenArtifactRepository) {
+                def u = repo.url?.toString()
+                if (u?.contains('maven.neoforged.net')) {
+                    repo.url = u.replace('maven.neoforged.net', 'neoforged.forgecdn.net')
+                }
+            }
+        }
+        p.repositories.each(redirectRepo)
+        p.repositories.whenObjectAdded(redirectRepo)
+        p.buildscript.repositories.each(redirectRepo)
+        p.buildscript.repositories.whenObjectAdded(redirectRepo)
+    }
+}
